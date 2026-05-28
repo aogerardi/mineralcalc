@@ -61,6 +61,7 @@
     .nav-links { display: flex; gap: 28px; list-style: none; }
     .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s; }
     .nav-links a:hover { color: var(--gold); }
+    .nav-links a.nav-active { color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
     .nav-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text); padding: 5px 10px; cursor: pointer; font-size: 1rem; }
 
     /* ===== HERO ===== */
@@ -385,13 +386,15 @@
   <a href="#" class="nav-logo">Mineral<span class="accent">Calc</span></a>
   <ul class="nav-links" id="navLinks">
     <li><a href="https://aogerardi.github.io/aogerardi/" target="_blank" rel="noopener">Portfolio ↗</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#calculator">Calculator</a></li>
-    <li><a href="#bonus">Lease Bonus</a></li>
-    <li><a href="#methodology">Education</a></li>
+    <li><a href="#about" onclick="showView('main')">About</a></li>
+    <li><a href="#calculator" onclick="showView('main')">Calculator</a></li>
+    <li><a href="#bonus" onclick="showView('main')">Lease Bonus</a></li>
+    <li><a href="#" id="nav-edu" onclick="showView('education'); return false;">Education</a></li>
   </ul>
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
 </nav>
+
+<div id="main-view">
 
 <!-- ===== HERO ===== -->
 <section class="hero" id="about">
@@ -752,10 +755,10 @@
   </div>
 </div>
 
-<div class="divider"></div>
+</div><!-- /main-view -->
 
-<!-- ===== METHODOLOGY ===== -->
-<div class="meth-wrap" id="methodology">
+<!-- ===== EDUCATION TAB ===== -->
+<div id="education-view" class="meth-wrap" style="display:none; padding-top:100px; min-height:calc(100vh - 60px)">
   <div class="section-label">Education</div>
   <h2 style="margin-bottom:32px">Methodology &amp; Resources</h2>
 
@@ -1344,6 +1347,18 @@ function toggleAcc(btn) {
 
 /* ===== MOBILE NAV ===== */
 function toggleNav() { $('navLinks').classList.toggle('open'); }
+
+function showView(tab) {
+  const isEdu = tab === 'education';
+  $('main-view').style.display      = isEdu ? 'none' : '';
+  $('education-view').style.display = isEdu ? 'block' : 'none';
+  // active nav state
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-active'));
+  if (isEdu) $('nav-edu').classList.add('nav-active');
+  // close mobile nav
+  $('navLinks').classList.remove('open');
+  if (isEdu) window.scrollTo(0, 0);
+}
 document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => $('navLinks').classList.remove('open'));
 });
