@@ -449,15 +449,15 @@
         <div class="label-row">
           Royalty Rate
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Fraction of gross production you receive cost-free under your lease. Common: 1/8 (older), 3/16–1/4 (standard), 3/8–1/2 (premium). Negotiated at lease signing.</div>
+            <div class="tip-box">Fraction of gross production you receive cost-free under your lease. Common: 1/8 (older), 3/16–1/5 (standard), 1/4 (premium). Negotiated at lease signing.</div>
           </div>
         </div>
         <select id="royaltySelect">
           <option value="0.125">1/8 (12.5%)</option>
+          <option value="0.16667">1/6 (16.667%)</option>
           <option value="0.1875">3/16 (18.75%)</option>
+          <option value="0.2">1/5 (20%)</option>
           <option value="0.25">1/4 (25%)</option>
-          <option value="0.375">3/8 (37.5%)</option>
-          <option value="0.5">1/2 (50%)</option>
           <option value="custom">Custom %</option>
         </select>
         <div class="sub-input" id="royaltyCustomWrap">
@@ -969,9 +969,10 @@ function renderSensitivity(r) {
   const ROW_MULTS = [-0.40, -0.30, -0.20, -0.10, 0, 0.10, 0.20, 0.30, 0.40];
   const COLS = [
     { label: '1/8',  val: 0.125 },
+    { label: '1/6',  val: 0.16667 },
     { label: '3/16', val: 0.1875 },
+    { label: '1/5',  val: 0.2 },
     { label: '1/4',  val: 0.25 },
-    { label: '3/8',  val: 0.375 },
   ];
 
   const basePrice  = r.ep;
