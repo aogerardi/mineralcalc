@@ -7,25 +7,28 @@
   <meta name="description" content="Free mineral rights royalty income calculator for oil and gas leases. Model royalty income, run sensitivity analysis, and understand your mineral rights value.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230a0f1e'/><line x1='50' y1='9' x2='16' y2='84' stroke='%23c8a84b' stroke-width='5.5' stroke-linecap='round'/><line x1='50' y1='9' x2='84' y2='84' stroke='%23c8a84b' stroke-width='5.5' stroke-linecap='round'/><line x1='11' y1='84' x2='89' y2='84' stroke='%23c8a84b' stroke-width='5.5' stroke-linecap='round'/><rect x='45' y='4' width='10' height='6' rx='2' fill='%23c8a84b'/><line x1='37' y1='38' x2='63' y2='38' stroke='%23c8a84b' stroke-width='3.5' stroke-linecap='round'/><line x1='27' y1='60' x2='73' y2='60' stroke='%23c8a84b' stroke-width='3.5' stroke-linecap='round'/><line x1='37' y1='38' x2='73' y2='60' stroke='%23c8a84b' stroke-width='2' stroke-linecap='round'/><line x1='63' y1='38' x2='27' y2='60' stroke='%23c8a84b' stroke-width='2' stroke-linecap='round'/><line x1='27' y1='60' x2='84' y2='84' stroke='%23c8a84b' stroke-width='2' stroke-linecap='round'/><line x1='73' y1='60' x2='16' y2='84' stroke='%23c8a84b' stroke-width='2' stroke-linecap='round'/></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%231D3C2B'/><line x1='50' y1='9' x2='16' y2='84' stroke='%23A0845C' stroke-width='5.5' stroke-linecap='round'/><line x1='50' y1='9' x2='84' y2='84' stroke='%23A0845C' stroke-width='5.5' stroke-linecap='round'/><line x1='11' y1='84' x2='89' y2='84' stroke='%23A0845C' stroke-width='5.5' stroke-linecap='round'/><rect x='45' y='4' width='10' height='6' rx='2' fill='%23A0845C'/><line x1='37' y1='38' x2='63' y2='38' stroke='%23A0845C' stroke-width='3.5' stroke-linecap='round'/><line x1='27' y1='60' x2='73' y2='60' stroke='%23A0845C' stroke-width='3.5' stroke-linecap='round'/></svg>">
   <style>
     /* ===== RESET & VARIABLES ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:          #0a0f1e;
-      --card:        #111827;
-      --card2:       #0d1626;
-      --gold:        #c8a84b;
-      --gold-light:  #e8c86a;
-      --gold-dim:    rgba(200,168,75,0.15);
-      --gold-border: rgba(200,168,75,0.4);
-      --text:        #f5f0e8;
-      --muted:       #8a9bb0;
-      --dim:         #3a4a5e;
-      --border:      #1e2d42;
-      --red:         #e05252;
-      --green:       #4caf7d;
+      --bg:           #F7F3EC;
+      --card:         #FFFDF8;
+      --card2:        #F0EBE0;
+      --nav-bg:       #1D3C2B;
+      --nav-border:   #2E5A3E;
+      --amber:        #A0845C;
+      --amber-light:  #C4A878;
+      --amber-dim:    rgba(160,132,92,0.1);
+      --amber-border: rgba(160,132,92,0.38);
+      --text:         #1C1C1C;
+      --muted:        #6B5A42;
+      --dim:          #9A8870;
+      --border:       #D8CFC0;
+      --border-dark:  #C4B89A;
+      --red:          #A03030;
+      --pos-green:    #3A6A4A;
     }
     html { scroll-behavior: smooth; }
     body {
@@ -36,84 +39,108 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-    h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; line-height: 1.2; }
-    a { color: var(--gold); }
+    h1,h2,h3,h4 { font-family: 'Playfair Display', serif; font-weight: 700; line-height: 1.2; }
+    a { color: var(--amber); }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--dim); }
+    ::-webkit-scrollbar-thumb { background: var(--border-dark); }
 
     /* ===== NAVBAR ===== */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       height: 60px; padding: 0 48px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(10,15,30,0.88);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
+      background: var(--nav-bg);
+      border-bottom: 3px solid var(--amber);
     }
     .nav-logo {
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.15rem;
-      color: var(--text); text-decoration: none;
+      font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.15rem;
+      color: #F7F3EC; text-decoration: none; letter-spacing: 0.01em;
     }
-    .nav-logo .accent { color: var(--gold); }
+    .nav-logo .accent { color: var(--amber); }
     .nav-links { display: flex; gap: 28px; list-style: none; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-links a.nav-active { color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
-    .nav-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text); padding: 5px 10px; cursor: pointer; font-size: 1rem; }
+    .nav-links a {
+      color: #A8C0B0; text-decoration: none;
+      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em;
+      text-transform: uppercase; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #F7F3EC; }
+    .nav-links a.nav-active { color: #F7F3EC; border-bottom: 2px solid var(--amber); padding-bottom: 2px; }
+    .nav-toggle { display: none; background: none; border: 1px solid rgba(255,255,255,0.2); color: #F7F3EC; padding: 5px 10px; cursor: pointer; font-size: 1rem; }
 
     /* ===== HERO ===== */
     .hero {
-      position: relative; min-height: 100vh;
+      background: var(--nav-bg);
+      min-height: 68vh;
       display: flex; align-items: center; justify-content: center;
-      text-align: center; overflow: hidden; padding: 80px 24px 60px;
+      text-align: center; padding: 100px 24px 80px;
+      border-bottom: 1px solid var(--nav-border);
     }
-    #particle-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
     .hero-content { position: relative; z-index: 2; max-width: 700px; }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: var(--gold-dim); border: 1px solid var(--gold-border);
-      color: var(--gold); font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; margin-bottom: 26px;
+      border: 1px solid var(--amber-border);
+      color: var(--amber); font-family: 'Inter', sans-serif;
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 5px 16px; margin-bottom: 28px;
     }
-    .hero h1 { font-size: clamp(2rem,5vw,3.4rem); letter-spacing: -0.02em; margin-bottom: 20px; }
-    .hero h1 .gold { color: var(--gold); }
-    .hero-sub { font-size: 1rem; color: var(--muted); max-width: 540px; margin: 0 auto 36px; line-height: 1.75; }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      letter-spacing: -0.01em; line-height: 1.15;
+      margin-bottom: 20px; color: #F7F3EC;
+    }
+    .hero h1 .gold { color: var(--amber); }
+    .hero-sub {
+      font-size: 1rem; color: #A8C0B0; max-width: 520px;
+      margin: 0 auto 36px; line-height: 1.75; font-weight: 300;
+    }
     .btn-cta {
       display: inline-flex; align-items: center; gap: 8px;
-      background: var(--gold); color: #0a0f1e;
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.88rem;
-      letter-spacing: 0.03em; padding: 13px 30px; border: none; cursor: pointer;
-      text-decoration: none; transition: background 0.2s, transform 0.1s;
+      background: var(--amber); color: #FFFDF8;
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.82rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 13px 32px; border: none; cursor: pointer;
+      text-decoration: none; transition: background 0.2s;
     }
-    .btn-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-cta:hover { background: var(--amber-light); }
 
     /* ===== SHARED SECTION STYLES ===== */
     .wrap { max-width: 1380px; margin: 0 auto; padding: 80px 48px; }
-    .section-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-    .wrap h2 { font-size: clamp(1.5rem,2.5vw,2rem); letter-spacing: -0.01em; margin-bottom: 36px; }
-    .divider { height: 1px; background: linear-gradient(90deg,transparent,var(--border),transparent); margin: 0 48px; }
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-dark); }
+    .wrap h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); letter-spacing: -0.01em; margin-bottom: 36px; color: var(--text); }
+    .divider { height: 1px; background: var(--border-dark); margin: 0 48px; }
 
     /* ===== CALCULATOR GRID ===== */
     .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-    .panel { background: var(--card); border: 1px solid var(--border); padding: 28px; }
-    .results-panel { position: sticky; top: 72px; }
+    .panel { background: var(--card); border: 1px solid var(--border-dark); padding: 28px; }
+    .results-panel {
+      position: sticky; top: 72px;
+      background: var(--nav-bg) !important;
+      border-color: var(--nav-border) !important;
+      color: #F7F3EC;
+    }
 
     /* ===== INPUT COMPONENTS ===== */
     .input-section {
-      font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
-      border-bottom: 1px solid var(--border); padding-bottom: 6px;
+      font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber);
+      border-bottom: 1px solid var(--border-dark); padding-bottom: 6px;
       margin: 24px 0 16px;
     }
     .input-section:first-child { margin-top: 0; }
     .input-group { margin-bottom: 14px; }
     .label-row {
       display: flex; align-items: center; gap: 5px;
-      font-size: 0.76rem; font-weight: 500; color: var(--muted);
-      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 5px;
+      font-size: 0.74rem; font-weight: 500; color: var(--muted);
+      letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 5px;
     }
     .tip-wrap { position: relative; display: inline-flex; }
     .tip-icon {
@@ -123,212 +150,210 @@
     }
     .tip-box {
       position: absolute; left: 18px; top: -6px; width: 210px; z-index: 200;
-      background: #1a2a3e; border: 1px solid var(--gold-border); color: var(--text);
-      font-size: 0.73rem; font-weight: 400; line-height: 1.55; padding: 9px 11px;
+      background: var(--card); border: 1px solid var(--border-dark);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      color: var(--text); font-size: 0.73rem; font-weight: 400;
+      line-height: 1.55; padding: 9px 11px;
       pointer-events: none; opacity: 0; transition: opacity 0.15s;
       text-transform: none; letter-spacing: 0; font-family: 'Inter', sans-serif;
     }
     .tip-wrap:hover .tip-box { opacity: 1; }
     input[type="number"], select {
-      width: 100%; background: var(--card2); border: 1px solid var(--border);
+      width: 100%; background: var(--bg); border: 1px solid var(--border-dark);
       color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.92rem;
       padding: 9px 12px; outline: none; transition: border-color 0.15s;
-      -moz-appearance: textfield;
+      border-radius: 0; -moz-appearance: textfield;
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-    input[type="number"]:focus, select:focus { border-color: var(--gold); }
-    input.err { border-color: var(--red); background: rgba(224,82,82,0.08); }
+    input[type="number"]:focus, select:focus { border-color: var(--nav-bg); }
+    input.err { border-color: var(--red); background: rgba(160,48,48,0.06); }
     .err-msg { font-size: 0.72rem; color: var(--red); margin-top: 3px; display: none; }
     .err-msg.show { display: block; }
     select {
       cursor: pointer; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238a9bb0' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%236B5A42' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
     }
     .slide-row { display: flex; align-items: center; gap: 10px; }
     input[type="range"] {
-      flex: 1; -webkit-appearance: none; height: 3px; background: var(--border); outline: none; cursor: pointer;
+      flex: 1; -webkit-appearance: none; height: 3px; background: var(--border-dark); outline: none; cursor: pointer;
     }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--gold); border-radius: 0; cursor: pointer; }
-    input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; background: var(--gold); border: none; border-radius: 0; cursor: pointer; }
-    .slide-val { font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; font-weight: 600; color: var(--gold); min-width: 52px; text-align: right; }
-    .toggle-row { display: flex; border: 1px solid var(--border); }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--amber); border-radius: 0; cursor: pointer; }
+    input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; background: var(--amber); border: none; border-radius: 0; cursor: pointer; }
+    .slide-val { font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; font-weight: 500; color: var(--amber); min-width: 52px; text-align: right; }
+    .toggle-row { display: flex; border: 1px solid var(--border-dark); }
     .toggle-row button {
       flex: 1; background: none; border: none; color: var(--muted);
       font-family: 'Inter', sans-serif; font-size: 0.83rem; font-weight: 500;
       padding: 9px; cursor: pointer; transition: all 0.15s;
     }
-    .toggle-row button.active { background: var(--gold); color: #0a0f1e; font-weight: 600; }
+    .toggle-row button.active { background: var(--nav-bg); color: #F7F3EC; font-weight: 600; }
     .sub-input { display: none; margin-top: 6px; }
     .sub-input.show { display: block; }
     .price-input-row { display: flex; gap: 8px; align-items: center; }
     .price-input-row input { flex: 1; min-width: 0; }
     .btn-live-price {
       display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
-      background: none; border: 1px solid var(--gold-border); color: var(--gold);
+      background: none; border: 1px solid var(--amber-border); color: var(--amber);
       font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600;
       letter-spacing: 0.02em; padding: 0 10px; height: 38px; cursor: pointer;
       text-decoration: none; white-space: nowrap; transition: background 0.15s, color 0.15s;
     }
-    .btn-live-price:hover { background: var(--gold-dim); color: var(--gold-light); }
+    .btn-live-price:hover { background: var(--amber-dim); color: var(--amber-light); }
 
     /* ===== ACTION BUTTONS ===== */
     .action-row { display: flex; gap: 7px; margin-top: 18px; flex-wrap: wrap; }
     .btn-sm {
-      flex: 1; min-width: 90px; background: none; border: 1px solid var(--border);
+      flex: 1; min-width: 90px; background: none; border: 1px solid var(--border-dark);
       color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.75rem;
       font-weight: 500; padding: 8px 10px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em;
     }
-    .btn-sm:hover { border-color: var(--gold); color: var(--gold); }
-    .btn-sm.ok { border-color: var(--green); color: var(--green); }
+    .btn-sm:hover { border-color: var(--nav-bg); color: var(--nav-bg); }
+    .btn-sm.ok { border-color: var(--pos-green); color: var(--pos-green); }
 
     /* ===== RESULTS PANEL ===== */
     .results-panel h3 {
-      font-size: 0.9rem; color: var(--muted); font-weight: 500; margin-bottom: 20px;
+      font-size: 0.88rem; color: #A8C0B0; font-weight: 500; margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .live-badge { display: flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(--green); letter-spacing: 0.06em; }
-    .live-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: blink 2s infinite; }
+    .live-badge { display: flex; align-items: center; gap: 5px; font-size: 0.68rem; color: #6BA87E; letter-spacing: 0.06em; }
+    .live-dot { width: 5px; height: 5px; background: #6BA87E; border-radius: 50%; animation: blink 2s infinite; }
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .stat-card { background: var(--card2); border: 1px solid var(--border); padding: 14px; }
-    .stat-card.gold-border { border-color: var(--gold-border); }
+    .stat-card { background: rgba(0,0,0,0.18); border: 1px solid var(--nav-border); padding: 14px; }
+    .stat-card.gold-border { border-color: var(--amber-border); }
     .stat-card.span2 { grid-column: 1/-1; }
-    .stat-lbl { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-    .stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
-    .stat-card.gold-border .stat-val { color: var(--gold); font-size: 1.65rem; }
-    .stat-sub { font-size: 0.7rem; color: var(--dim); margin-top: 3px; }
+    .stat-lbl { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #A8C0B0; margin-bottom: 5px; }
+    .stat-val { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #F7F3EC; }
+    .stat-card.gold-border .stat-val { color: var(--amber-light); font-size: 1.65rem; }
+    .stat-sub { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: #7A9A86; margin-top: 3px; }
 
-    .rows-area { border-top: 1px solid var(--border); padding-top: 14px; }
-    .data-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(30,45,66,0.45); font-size: 0.8rem; }
+    .rows-area { border-top: 1px solid var(--nav-border); padding-top: 14px; }
+    .data-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0; border-bottom: 1px solid rgba(46,90,62,0.45); font-size: 0.8rem;
+    }
     .data-row:last-child { border-bottom: none; }
-    .data-row span:first-child { color: var(--muted); }
-    .data-row span:last-child { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+    .data-row span:first-child { color: #A8C0B0; font-family: 'Inter', sans-serif; }
+    .data-row span:last-child { font-family: 'IBM Plex Mono', monospace; font-weight: 500; color: #F7F3EC; }
 
     .formula-box {
-      margin-top: 16px; background: #07091a; border: 1px solid var(--border);
-      border-left: 3px solid var(--gold); padding: 12px 14px;
-      font-size: 0.76rem; color: var(--muted); line-height: 1.75;
-      font-family: 'Space Grotesk', sans-serif;
+      margin-top: 16px; background: rgba(0,0,0,0.18); border: 1px solid var(--nav-border);
+      border-left: 3px solid var(--amber); padding: 12px 14px;
+      font-size: 0.76rem; color: #A8C0B0; line-height: 1.75;
+      font-family: 'Inter', sans-serif;
     }
-    .formula-box b { color: var(--gold); }
+    .formula-box b { color: var(--amber-light); }
 
     /* ===== SENSITIVITY TABLES ===== */
     .sens-wrap { max-width: 1380px; margin: 0 auto; padding: 0 48px 80px; }
     .tbl-hdr { margin-top: 60px; }
-    .tbl-title { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .tbl-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
     .tbl-sub { font-size: 0.77rem; color: var(--muted); margin-bottom: 14px; }
     .tbl-scroll { overflow-x: auto; margin-bottom: 48px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th {
-      background: var(--card2); color: var(--muted);
-      font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 600;
+      background: var(--nav-bg); color: var(--amber);
+      font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600;
       letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 13px;
-      border: 1px solid var(--border); text-align: center; white-space: nowrap;
+      border: 1px solid var(--nav-border); text-align: center; white-space: nowrap;
     }
-    th:first-child { text-align: left; }
-    td { padding: 8px 13px; border: 1px solid var(--border); text-align: center; font-family: 'Space Grotesk', sans-serif; font-weight: 500; }
+    th:first-child { text-align: left; color: #A8C0B0; }
+    td {
+      padding: 8px 13px; border: 1px solid var(--border); text-align: center;
+      font-family: 'Inter', sans-serif; font-weight: 500; color: var(--text);
+    }
     td:first-child { text-align: left; color: var(--muted); font-size: 0.75rem; background: var(--card2); white-space: nowrap; }
-    .c-lo  { background: rgba(180,50,50,0.3);  color: #f09090; }
-    .c-mlo { background: rgba(180,50,50,0.14); color: #c49090; }
-    .c-mid { background: rgba(212,160,23,0.12); color: #d4b060; }
-    .c-mhi { background: rgba(76,175,125,0.12); color: #80c4a0; }
-    .c-hi  { background: rgba(76,175,125,0.28); color: #4caf7d; }
-    .c-cur { outline: 2px solid var(--gold); outline-offset: -2px; }
+    .c-lo  { background: rgba(160,60,60,0.14);  color: #8B2C2C; }
+    .c-mlo { background: rgba(160,60,60,0.07);  color: #9A4040; }
+    .c-mid { background: rgba(160,132,92,0.13); color: #7A6030; }
+    .c-mhi { background: rgba(60,100,70,0.10);  color: #3A6048; }
+    .c-hi  { background: rgba(60,100,70,0.22);  color: #2A5038; }
+    .c-cur { outline: 2px solid var(--amber); outline-offset: -2px; }
 
-    /* Decline table bar */
     .bar-cell { text-align: left !important; min-width: 140px; }
-    .bar-fill { color: var(--gold); font-size: 0.66rem; letter-spacing: -1.5px; }
+    .bar-fill { color: var(--amber); font-size: 0.66rem; letter-spacing: -1.5px; }
 
     /* ===== METHODOLOGY ===== */
     .meth-wrap { max-width: 1380px; margin: 0 auto; padding: 0 48px 80px; }
-    .accordion-item { border-bottom: 1px solid var(--border); }
+    .accordion-item { border-bottom: 1px solid var(--border-dark); }
     .acc-btn {
       width: 100%; background: none; border: none; color: var(--text);
-      font-family: 'Space Grotesk', sans-serif; font-size: 0.92rem; font-weight: 600;
+      font-family: 'Inter', sans-serif; font-size: 0.92rem; font-weight: 600;
       text-align: left; padding: 17px 0; cursor: pointer;
       display: flex; justify-content: space-between; align-items: center; transition: color 0.15s;
     }
-    .acc-btn:hover { color: var(--gold); }
-    .acc-icon { font-size: 1.15rem; color: var(--gold); transition: transform 0.2s; flex-shrink: 0; }
+    .acc-btn:hover { color: var(--amber); }
+    .acc-icon { font-size: 1.15rem; color: var(--amber); transition: transform 0.2s; flex-shrink: 0; }
     .accordion-item.open .acc-icon { transform: rotate(45deg); }
     .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
     .acc-inner { padding-bottom: 18px; color: var(--muted); font-size: 0.85rem; line-height: 1.8; }
     .acc-inner p { margin-bottom: 9px; }
     .acc-inner strong { color: var(--text); }
     .gloss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin-top: 8px; }
-    .gloss-item { background: var(--card); border: 1px solid var(--border); padding: 11px 13px; }
-    .gloss-term { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--gold); font-size: 0.82rem; margin-bottom: 3px; }
+    .gloss-item { background: var(--card); border: 1px solid var(--border-dark); padding: 11px 13px; }
+    .gloss-term { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--amber); font-size: 0.85rem; margin-bottom: 3px; }
     .gloss-def { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
 
     /* ===== FOOTER ===== */
-    footer { background: #060a14; border-top: 1px solid var(--border); padding: 40px 48px; text-align: center; }
-    .footer-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.88rem; margin-bottom: 14px; }
+    footer { background: var(--nav-bg); border-top: 3px solid var(--amber); padding: 40px 48px; text-align: center; }
+    .footer-name { font-family: 'Playfair Display', serif; font-weight: 400; font-size: 0.95rem; margin-bottom: 14px; color: #F7F3EC; }
     .footer-links { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
-    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color 0.15s; }
-    .footer-links a:hover { color: var(--gold); }
+    .footer-links a { color: #A8C0B0; text-decoration: none; font-size: 0.8rem; transition: color 0.15s; font-family: 'Inter', sans-serif; }
+    .footer-links a:hover { color: var(--amber-light); }
     .footer-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: var(--gold-dim); border: 1px solid var(--gold-border);
-      color: var(--gold); font-size: 0.68rem; font-weight: 600;
+      border: 1px solid var(--amber-border); color: var(--amber);
+      font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600;
       letter-spacing: 0.05em; padding: 4px 12px; margin: 10px 0;
     }
-    .footer-disc { font-size: 0.72rem; color: var(--dim); max-width: 580px; margin: 10px auto 0; line-height: 1.65; }
+    .footer-disc { font-size: 0.72rem; color: #7A9A86; max-width: 580px; margin: 10px auto 0; line-height: 1.65; font-family: 'Inter', sans-serif; }
 
     /* ===== DISCLAIMER BANNER ===== */
     .disc-banner {
       display: flex; align-items: flex-start; gap: 8px;
-      background: rgba(200,168,75,0.07); border: 1px solid rgba(200,168,75,0.28);
-      border-left: 3px solid var(--gold); padding: 9px 12px; margin-bottom: 18px;
-      font-size: 0.73rem; color: #c8a84b; line-height: 1.55;
+      background: var(--amber-dim); border: 1px solid var(--amber-border);
+      border-left: 3px solid var(--amber); padding: 9px 12px; margin-bottom: 18px;
+      font-size: 0.73rem; color: var(--amber); line-height: 1.55; font-family: 'Inter', sans-serif;
     }
     .disc-icon { flex-shrink: 0; font-size: 0.85rem; margin-top: 1px; }
 
     /* ===== MINERAL VALUE RANGE ===== */
     .value-range-card {
-      margin-top: 14px; background: rgba(76,175,125,0.06);
-      border: 1px solid rgba(76,175,125,0.25); padding: 14px 16px;
+      margin-top: 14px; background: rgba(60,100,70,0.12);
+      border: 1px solid rgba(60,100,70,0.3); padding: 14px 16px;
     }
-    .value-range-lbl {
-      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--green); margin-bottom: 5px;
-    }
-    .value-range-val {
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem;
-      font-weight: 700; color: var(--text); letter-spacing: -0.01em;
-    }
-    .value-range-sub { font-size: 0.7rem; color: var(--dim); margin-top: 3px; }
+    .value-range-lbl { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6BA87E; margin-bottom: 5px; }
+    .value-range-val { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: #F7F3EC; letter-spacing: -0.01em; }
+    .value-range-sub { font-size: 0.7rem; color: #7A9A86; margin-top: 3px; font-family: 'Inter', sans-serif; }
 
     /* ===== LEASE BONUS SECTION ===== */
     .bonus-wrap { max-width: 1380px; margin: 0 auto; padding: 0 48px 80px; }
-    .bonus-intro { font-size: 0.87rem; color: var(--muted); margin-bottom: 4px; line-height: 1.65; max-width: 680px; }
+    .bonus-intro { font-size: 0.87rem; color: var(--muted); margin-bottom: 4px; line-height: 1.65; max-width: 680px; font-family: 'Inter', sans-serif; }
     .bonus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; margin-top: 28px; }
-    .bonus-note {
-      margin-top: 12px; padding: 9px 12px; background: var(--card2);
-      border: 1px solid var(--border); font-size: 0.77rem; color: var(--muted); line-height: 1.6;
-    }
+    .bonus-note { margin-top: 12px; padding: 9px 12px; background: var(--card2); border: 1px solid var(--border-dark); font-size: 0.77rem; color: var(--muted); line-height: 1.6; font-family: 'Inter', sans-serif; }
     .bonus-note strong { color: var(--text); }
     .bonus-primary { margin-bottom: 18px; }
-    .bonus-big { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--green); letter-spacing: -0.02em; }
-    .bonus-rows { border-top: 1px solid var(--border); padding-top: 14px; }
+    .bonus-big { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--pos-green); letter-spacing: -0.02em; }
+    .bonus-rows { border-top: 1px solid var(--border-dark); padding-top: 14px; }
     .bonus-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 7px 0; border-bottom: 1px solid rgba(30,45,66,0.45); font-size: 0.81rem;
+      padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.81rem;
     }
     .bonus-row:last-child { border-bottom: none; }
-    .bonus-row span:first-child { color: var(--muted); }
-    .bonus-row span:last-child { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+    .bonus-row span:first-child { color: var(--muted); font-family: 'Inter', sans-serif; }
+    .bonus-row span:last-child { font-family: 'IBM Plex Mono', monospace; font-weight: 500; color: var(--text); }
     .bonus-verdict {
-      margin-top: 16px; background: #07091a; border: 1px solid var(--border);
-      border-left: 3px solid var(--green); padding: 12px 14px;
-      font-size: 0.77rem; color: var(--muted); line-height: 1.75;
-      font-family: 'Space Grotesk', sans-serif;
+      margin-top: 16px; background: var(--card2); border: 1px solid var(--border-dark);
+      border-left: 3px solid var(--pos-green); padding: 12px 14px;
+      font-size: 0.77rem; color: var(--muted); line-height: 1.75; font-family: 'Inter', sans-serif;
     }
-    .bonus-verdict b { color: var(--green); }
+    .bonus-verdict b { color: var(--pos-green); }
 
-    /* ===== PRINT HEADER (hidden on screen) ===== */
+    /* ===== PRINT HEADER ===== */
     .print-header { display: none; }
 
     /* ===== PRINT ===== */
@@ -340,19 +365,19 @@
       body { background: #fff; color: #000; font-size: 11pt; }
       .wrap, .sens-wrap, .bonus-wrap { padding: 12pt 0; }
       .calc-grid, .bonus-grid { grid-template-columns: 1fr; }
-      .results-panel { position: static; }
+      .results-panel { position: static; background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; }
       .panel, .stat-card, .value-range-card { background: #fff !important; border: 1px solid #ccc !important; }
       .stat-val, .stat-card.gold-border .stat-val, .value-range-val, .bonus-big { color: #000 !important; }
-      .stat-lbl, .value-range-lbl, .data-row span, .bonus-row span, .muted { color: #333 !important; }
+      .stat-lbl, .value-range-lbl, .data-row span, .bonus-row span { color: #333 !important; }
       .formula-box, .bonus-verdict { background: #f9f9f9 !important; border: 1pt solid #ccc !important; border-left: 2pt solid #999 !important; }
       .formula-box b, .bonus-verdict b { color: #000 !important; }
       .bar-fill { color: #000 !important; }
       .tbl-scroll { overflow: visible; }
-      td, th { border: 1px solid #ccc !important; font-size: 8pt; padding: 5px 8px !important; }
-      .c-lo,.c-mlo,.c-mid,.c-mhi,.c-hi { background: #fff !important; color: #000 !important; }
+      td, th { border: 1px solid #ccc !important; font-size: 8pt; padding: 5px 8px !important; background: #fff !important; color: #000 !important; }
       .c-cur { outline: 2px solid #555 !important; }
       .divider { background: #ccc; margin: 0; }
       .section-label { color: #555 !important; }
+      .section-label::after { background: #ccc !important; }
     }
 
     /* ===== RESPONSIVE ===== */
@@ -363,8 +388,8 @@
       .nav-links.open {
         display: flex; flex-direction: column;
         position: fixed; top: 60px; left: 0; right: 0;
-        background: rgba(10,15,30,0.97); padding: 18px 20px; gap: 14px;
-        border-bottom: 1px solid var(--border);
+        background: var(--nav-bg); padding: 18px 20px; gap: 14px;
+        border-bottom: 1px solid var(--nav-border);
       }
       .wrap, .sens-wrap, .meth-wrap, .bonus-wrap { padding: 48px 20px; }
       .divider { margin: 0 20px; }
@@ -398,7 +423,6 @@
 
 <!-- ===== HERO ===== -->
 <section class="hero" id="about">
-  <canvas id="particle-canvas"></canvas>
   <div class="hero-content">
     <div class="hero-badge">Built for Oklahoma O&amp;G — works anywhere</div>
     <h1>Estimate Your Mineral <span class="gold">Royalty Income</span></h1>
@@ -407,7 +431,7 @@
   </div>
 </section>
 
-<!-- Print-only header (invisible on screen) -->
+<!-- Print-only header -->
 <div class="print-header" id="printHeader">
   <h2>MineralCalc — Royalty Income Estimate</h2>
   <p>Generated <span id="printDate"></span> · mineralcalc · For estimation purposes only. Not financial or legal advice.</p>
@@ -423,7 +447,6 @@
     <!-- LEFT: INPUTS -->
     <div class="panel">
 
-      <!-- Mineral Interest -->
       <div class="input-section">Mineral Interest</div>
 
       <div class="input-group">
@@ -490,7 +513,6 @@
         <input type="number" id="workingInterest" value="0" min="0" max="100" step="0.1">
       </div>
 
-      <!-- Production -->
       <div class="input-section">Production</div>
 
       <div class="input-group">
@@ -543,7 +565,6 @@
         </div>
       </div>
 
-      <!-- Price & Taxes -->
       <div class="input-section">Price &amp; Taxes</div>
 
       <div class="input-group">
@@ -669,7 +690,7 @@
   <h2 style="margin-bottom:32px">Sensitivity Tables</h2>
 
   <div class="tbl-title">Price vs. Royalty Rate — Annual Net Royalty Income</div>
-  <div class="tbl-sub">Rows: price ± your entered base | Columns: royalty fractions | <span style="color:var(--gold)">Gold border</span> = your current inputs</div>
+  <div class="tbl-sub">Rows: price ± your entered base | Columns: royalty fractions | <span style="color:var(--amber)">Amber border</span> = your current inputs</div>
   <div class="tbl-scroll">
     <table><thead id="sensHead"></thead><tbody id="sensBody"></tbody></table>
   </div>
@@ -732,14 +753,14 @@
 
     <div class="panel">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <span style="font-size:0.88rem; color:var(--muted); font-weight:500;">Bonus vs. Hold Analysis</span>
+        <span style="font-size:0.88rem; color:var(--muted); font-weight:500; font-family:'Inter',sans-serif;">Bonus vs. Hold Analysis</span>
         <span class="live-badge"><span class="live-dot"></span>LIVE</span>
       </div>
 
       <div class="bonus-primary">
-        <div class="stat-lbl">Total Bonus Check</div>
+        <div class="stat-lbl" style="color:var(--muted)">Total Bonus Check</div>
         <div class="bonus-big" id="b-totalBonus">—</div>
-        <div class="stat-sub" id="b-bonusCalc" style="margin-top:4px">—</div>
+        <div style="font-size:0.72rem; color:var(--dim); margin-top:4px; font-family:'Inter',sans-serif;" id="b-bonusCalc">—</div>
       </div>
 
       <div class="bonus-rows">
@@ -874,7 +895,7 @@ const DEFAULTS = {
   declineRate: 25, yearsModel: 10, commodityPrice: 72.00,
   priceScenario: '0', severanceTax: 7.0, adValoremTax: 0.5,
 };
-let S = { ...DEFAULTS }; // live state
+let S = { ...DEFAULTS };
 
 /* ===== FORMAT HELPERS ===== */
 const $ = id => document.getElementById(id);
@@ -885,7 +906,6 @@ const fmtP = (n, p=2) => isNaN(n) ? '—' : n.toFixed(p) + '%';
 
 /* ===== CORE CALCULATION ===== */
 function runCalc() {
-  // Effective price
   let ep = S.commodityPrice;
   if (S.priceScenario === 'custom') {
     ep = S.priceCustom > 0 ? S.priceCustom : S.commodityPrice;
@@ -893,14 +913,12 @@ function runCalc() {
     ep = S.commodityPrice * (1 + parseFloat(S.priceScenario || 0));
   }
 
-  // Royalty decimal: (NMA / Gross Acres) × Royalty Rate
   const rd  = (S.nma / S.grossAcres) * S.royaltyRate;
-  const nri = rd; // For pure RI, NRI = royalty decimal
+  const nri = rd;
 
   const taxRate    = (S.severanceTax + S.adValoremTax) / 100;
   const netFactor  = 1 - taxRate;
 
-  // Annual basis (365 days/year), monthly derived from annual ÷ 12 — matches decline table and sensitivity table
   const annualGrossRev      = S.production * S.numWells * 365 * ep;
   const annualGrossRoyalty  = annualGrossRev * rd;
   const annualNetYear1      = annualGrossRoyalty * netFactor;
@@ -908,7 +926,6 @@ function runCalc() {
   const monthlyGrossRoyalty = annualGrossRoyalty / 12;
   const monthlyNetRoyalty   = annualNetYear1 / 12;
 
-  // Decline schedule
   let cumulative = 0;
   const schedule = [];
   for (let y = 1; y <= S.yearsModel; y++) {
@@ -930,7 +947,6 @@ function update() {
   const unit = S.commodity === 'oil' ? 'BBL' : 'MCF';
   const pu   = '/' + unit;
 
-  // Stat cards
   set('r-monthly',    fmt(r.monthlyNetRoyalty));
   set('r-annual',     fmt(r.annualNetYear1));
   set('r-cumLbl',     S.yearsModel + '-Year Cumulative');
@@ -938,7 +954,6 @@ function update() {
   set('r-netAfterTax',fmt(r.monthlyNetRoyalty));
   set('r-taxNote',    'After ' + fmtP(S.severanceTax) + ' severance + ' + fmtP(S.adValoremTax) + ' ad valorem');
 
-  // Secondary rows
   set('r-royaltyDecimal', fmtD(r.rd));
   set('r-nri',            fmtD(r.nri));
   set('r-effPrice',       '$' + r.ep.toFixed(2) + pu);
@@ -946,7 +961,6 @@ function update() {
   set('r-grossRoyalty',   fmt(r.monthlyGrossRoyalty));
   set('r-effTax',         fmtP((S.severanceTax + S.adValoremTax)));
 
-  // Formula display
   const du = S.commodity === 'oil' ? 'BOE' : 'MCF';
   $('formulaBox').innerHTML =
     `Annual = (<b>${S.production} ${du}/day × ${S.numWells} well${S.numWells > 1 ? 's' : ''} × 365 days</b>) ×` +
@@ -955,7 +969,6 @@ function update() {
     ` = <b>$${Math.round(r.annualNetYear1).toLocaleString()}/yr</b>` +
     ` (÷ 12 = <b>$${Math.round(r.monthlyNetRoyalty).toLocaleString()}/mo</b>)`;
 
-  // Mineral value estimate (3×–5× annual income multiple)
   const valLow  = r.annualNetYear1 * 3;
   const valHigh = r.annualNetYear1 * 5;
   set('r-valueRange', fmt(valLow) + ' – ' + fmt(valHigh));
@@ -981,7 +994,6 @@ function renderSensitivity(r) {
   const basePrice  = r.ep;
   const taxFactor  = 1 - (S.severanceTax + S.adValoremTax) / 100;
 
-  // Build all values for color normalization
   const allVals = [];
   const grid = ROW_MULTS.map(m => {
     const p = basePrice * (1 + m);
@@ -996,10 +1008,8 @@ function renderSensitivity(r) {
   const minV = Math.min(...allVals), maxV = Math.max(...allVals);
   const norm = v => maxV === minV ? 0.5 : (v - minV) / (maxV - minV);
 
-  // Header
   $('sensHead').innerHTML = '<tr><th>Price</th>' + COLS.map(c => `<th>${c.label} (${(c.val*100).toFixed(4).replace(/\.?0+$/,'')}%)</th>`).join('') + '</tr>';
 
-  // Rows
   const tbody = $('sensBody');
   tbody.innerHTML = '';
   ROW_MULTS.forEach((m, ri) => {
@@ -1013,8 +1023,7 @@ function renderSensitivity(r) {
       td.textContent = fmt(val);
       const n   = norm(val);
       td.className  = n < 0.2 ? 'c-lo' : n < 0.4 ? 'c-mlo' : n < 0.6 ? 'c-mid' : n < 0.8 ? 'c-mhi' : 'c-hi';
-      // Highlight current cell
-      const isBaseRow     = ri === 4; // 0% multiplier
+      const isBaseRow     = ri === 4;
       const isCurrentRate = Math.abs(COLS[ci].val - S.royaltyRate) < 0.0001;
       if (isBaseRow && isCurrentRate) td.classList.add('c-cur');
       tr.appendChild(td);
@@ -1047,14 +1056,12 @@ function renderDecline(schedule, baseAnnual) {
 
 /* ===== LEASE BONUS CALCULATOR ===== */
 function updateBonus(r) {
-  // r is pre-computed from update(); if called standalone, recompute
   if (!r) { if (!validate()) return; r = runCalc(); }
 
   const bonusPerNMA = parseFloat($('bonusPerNMA').value) || 0;
   const leaseTerm   = parseInt($('bonusLeaseTerm').value) || 3;
   const totalBonus  = bonusPerNMA * S.nma;
 
-  // Keep note labels in sync with main calc state
   set('bonusNMALabel', S.nma + ' NMA');
   set('bonusRateLabel', (S.royaltyRate * 100).toFixed(4).replace(/\.?0+$/, '') + '% royalty');
 
@@ -1067,7 +1074,6 @@ function updateBonus(r) {
     const pct       = r.cumulativeTotal > 0 ? (totalBonus / r.cumulativeTotal) * 100 : 0;
     const perNMA    = r.annualNetYear1 / S.nma;
 
-    // Royalty income the owner would receive during the primary term (if wells drill in Yr 1)
     const termIncome = r.schedule
       .filter(row => row.year <= leaseTerm)
       .reduce((sum, row) => sum + row.netRoy, 0);
@@ -1079,9 +1085,7 @@ function updateBonus(r) {
     set('b-perNMA',    fmt(perNMA) + '/NMA/yr');
     set('b-termIncome',fmt(termIncome) + ' (' + leaseTerm + '-yr primary term)');
 
-    // Context-aware verdict
     let verdict;
-    const bonusVsTermIncome = termIncome > 0 ? (totalBonus / termIncome) * 100 : 0;
     if (years < 0.75) {
       verdict = `This bonus equals <b>${months.toFixed(0)} months</b> of royalty income — a <b>low offer</b> if near-term drilling is likely. Operators offering minimal bonuses often have high confidence in the play. Consider countering for a higher rate or royalty.`;
     } else if (years < 2) {
@@ -1128,13 +1132,11 @@ function validate() {
 
 /* ===== BIND INPUTS ===== */
 function bindInputs() {
-  // Simple number inputs
   const numFields = { grossAcres:1, nma:1, numWells:1, workingInterest:1, production:1, commodityPrice:1, severanceTax:1, adValoremTax:1 };
   Object.keys(numFields).forEach(id => {
     $(id).addEventListener('input', e => { S[id] = parseFloat(e.target.value) || 0; update(); });
   });
 
-  // Royalty select
   $('royaltySelect').addEventListener('change', e => {
     const v = e.target.value;
     S.royaltySelect = v;
@@ -1152,7 +1154,6 @@ function bindInputs() {
     update();
   });
 
-  // Price scenario
   $('priceScenario').addEventListener('change', e => {
     S.priceScenario = e.target.value;
     if (e.target.value === 'custom') {
@@ -1167,12 +1168,10 @@ function bindInputs() {
     S.priceCustom = parseFloat(e.target.value) || 0; update();
   });
 
-  // Bonus calculator inputs
   ['bonusPerNMA', 'bonusLeaseTerm'].forEach(id => {
     $(id).addEventListener('input', () => updateBonus(null));
   });
 
-  // Sliders
   $('declineRate').addEventListener('input', e => {
     S.declineRate = parseInt(e.target.value);
     $('declineRateLabel').textContent = S.declineRate + '%';
@@ -1299,7 +1298,6 @@ function loadFromURL() {
   S.severanceTax     = n('sev',      DEFAULTS.severanceTax);
   S.adValoremTax     = n('adv',      DEFAULTS.adValoremTax);
 
-  // Populate DOM
   $('grossAcres').value      = S.grossAcres;
   $('nma').value             = S.nma;
   $('numWells').value        = S.numWells;
@@ -1315,8 +1313,7 @@ function loadFromURL() {
   $('priceScenario').value   = S.priceScenario;
   if (S.priceScenario === 'custom') $('priceCustomWrap').classList.add('show');
 
-  // Royalty select — match or fall back to custom
-  const knownRates = ['0.125','0.1875','0.25','0.375','0.5'];
+  const knownRates = ['0.125','0.16667','0.1875','0.2','0.25'];
   const rStr = S.royaltyRate.toString();
   if (knownRates.includes(rStr)) {
     $('royaltySelect').value = rStr;
@@ -1352,10 +1349,8 @@ function showView(tab) {
   const isEdu = tab === 'education';
   $('main-view').style.display      = isEdu ? 'none' : '';
   $('education-view').style.display = isEdu ? 'block' : 'none';
-  // active nav state
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-active'));
   if (isEdu) $('nav-edu').classList.add('nav-active');
-  // close mobile nav
   $('navLinks').classList.remove('open');
   if (isEdu) window.scrollTo(0, 0);
 }
@@ -1363,83 +1358,10 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => $('navLinks').classList.remove('open'));
 });
 
-/* ===== PARTICLE CANVAS ===== */
-function initParticles() {
-  const canvas = $('particle-canvas');
-  const ctx    = canvas.getContext('2d');
-  let pts = [], raf;
-
-  function resize() {
-    canvas.width  = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    spawn();
-  }
-
-  function spawn() {
-    pts = [];
-    const n = Math.max(30, Math.floor((canvas.width * canvas.height) / 14000));
-    for (let i = 0; i < n; i++) {
-      pts.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.4 + 0.4,
-        vx: (Math.random() - 0.5) * 0.28,
-        vy: (Math.random() - 0.5) * 0.28,
-        a: Math.random() * 0.45 + 0.08,
-      });
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    pts.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width)  p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200,168,75,${p.a})`;
-      ctx.fill();
-    });
-
-    // Connections between nearby particles
-    for (let i = 0; i < pts.length; i++) {
-      for (let j = i + 1; j < pts.length; j++) {
-        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-        const d  = Math.sqrt(dx*dx + dy*dy);
-        if (d < 90) {
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.strokeStyle = `rgba(200,168,75,${0.07 * (1 - d/90)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-    }
-
-    raf = requestAnimationFrame(draw);
-  }
-
-  resize();
-  draw();
-
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
-  });
-}
-
 /* ===== INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
   loadFromURL();
   bindInputs();
-  initParticles();
   update();
 });
 </script>
