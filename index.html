@@ -353,6 +353,29 @@
     }
     .bonus-verdict b { color: var(--pos-green); }
 
+    /* ===== ABOUT SECTION ===== */
+    .about-wrap { background: var(--card); border-bottom: 1px solid var(--border-dark); }
+    .about-inner { max-width: 1380px; margin: 0 auto; padding: 72px 48px; }
+    .about-grid { display: grid; grid-template-columns: 1fr 288px; gap: 52px; margin-top: 32px; align-items: start; }
+    .about-text h2 { font-size: clamp(1.4rem, 2vw, 1.85rem); margin-bottom: 20px; line-height: 1.25; color: var(--text); }
+    .about-text p { color: var(--muted); font-size: 0.9rem; line-height: 1.85; margin-bottom: 14px; }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-card { background: var(--nav-bg); border: 1px solid var(--nav-border); padding: 24px; }
+    .about-card + .about-card { margin-top: 14px; }
+    .about-card-label {
+      font-family: 'Inter', sans-serif; font-size: 0.63rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px;
+    }
+    .about-card-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: #F7F3EC; margin-bottom: 5px; }
+    .about-card-detail { font-family: 'Inter', sans-serif; font-size: 0.82rem; color: #A8C0B0; line-height: 1.65; margin-bottom: 16px; }
+    .about-card-links { display: flex; flex-direction: column; gap: 8px; }
+    .about-card-links a { font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--amber); text-decoration: none; transition: color 0.15s; }
+    .about-card-links a:hover { color: var(--amber-light); }
+    .about-scope { list-style: none; margin-top: 8px; }
+    .about-scope li { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: #A8C0B0; line-height: 1.6; padding: 5px 0; border-bottom: 1px solid var(--nav-border); display: flex; gap: 8px; }
+    .about-scope li:last-child { border-bottom: none; }
+    .about-scope li::before { content: '—'; color: var(--amber); flex-shrink: 0; }
+
     /* ===== PRINT HEADER ===== */
     .print-header { display: none; }
 
@@ -391,7 +414,8 @@
         background: var(--nav-bg); padding: 18px 20px; gap: 14px;
         border-bottom: 1px solid var(--nav-border);
       }
-      .wrap, .sens-wrap, .meth-wrap, .bonus-wrap { padding: 48px 20px; }
+      .wrap, .sens-wrap, .meth-wrap, .bonus-wrap, .about-inner { padding: 48px 20px; }
+      .about-grid { grid-template-columns: 1fr; gap: 28px; }
       .divider { margin: 0 20px; }
       .calc-grid, .bonus-grid { grid-template-columns: 1fr; }
       .results-panel { position: static; }
@@ -422,12 +446,55 @@
 <div id="main-view">
 
 <!-- ===== HERO ===== -->
-<section class="hero" id="about">
+<section class="hero">
   <div class="hero-content">
     <div class="hero-badge">Built for Oklahoma O&amp;G — works anywhere</div>
     <h1>Estimate Your Mineral <span class="gold">Royalty Income</span></h1>
     <p class="hero-sub">A free tool for mineral owners, landmen, and investors to model oil and gas royalty income under real market conditions.</p>
     <a href="#calculator" class="btn-cta">Open Calculator ↓</a>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="about-wrap" id="about">
+  <div class="about-inner">
+    <div class="section-label">About</div>
+    <div class="about-grid">
+
+      <div class="about-text">
+        <h2>Royalty income math<br>shouldn't be a black box</h2>
+        <p>When a landman calls with a lease offer, most mineral owners have no quick way to evaluate it. The bonus sounds like a real number — but is it good? What would the royalty actually be worth over the life of a well? Most people sign without knowing, because the math has always lived inside an operator's spreadsheet.</p>
+        <p>MineralCalc makes that math visible. Enter your acreage, royalty rate, and production assumptions, and you get a full income model: projected monthly and annual net royalty, a year-by-year decline schedule, a sensitivity table across price and royalty scenarios, and a direct comparison between the bonus offer and long-term royalty income.</p>
+        <p>It's built for Oklahoma mineral owners and landmen, but the underlying math applies anywhere. All estimates are transparent — you can see exactly what formula is being run and adjust every assumption yourself.</p>
+        <p>This isn't financial advice, and it's not a substitute for a landman, petroleum engineer, or O&amp;G attorney. It's a foundation to start from and a way to ask better questions.</p>
+      </div>
+
+      <div>
+        <div class="about-card">
+          <div class="about-card-label">Builder</div>
+          <div class="about-card-name">Alex Gerardi</div>
+          <div class="about-card-detail">Energy Management<br>University of Oklahoma</div>
+          <div class="about-card-links">
+            <a href="https://aogerardi.github.io/aogerardi/" target="_blank" rel="noopener">Portfolio ↗</a>
+            <a href="https://linkedin.com/in/alexogerardi" target="_blank" rel="noopener">LinkedIn ↗</a>
+            <a href="mailto:alexogerardi@gmail.com">alexogerardi@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="about-card">
+          <div class="about-card-label">What this tool covers</div>
+          <ul class="about-scope">
+            <li>Net royalty income with exponential decline curves</li>
+            <li>Severance and ad valorem tax deductions</li>
+            <li>Price scenario sensitivity (bear / base / bull)</li>
+            <li>Royalty rate comparison across 1/8 – 1/4</li>
+            <li>Lease bonus vs. long-term royalty analysis</li>
+            <li>Shareable URLs and print / PDF export</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
