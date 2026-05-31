@@ -629,6 +629,15 @@
       .panel { padding: 20px; }
       .dcalc-tab { font-size: 0.63rem; padding: 5px 8px; }
       .print-option-cards { grid-template-columns: 1fr; }
+      .tbl-scroll { -webkit-overflow-scrolling: touch; overflow-x: auto; }
+      .sens-wrap h2 { font-size: 1.4rem; }
+      .tbl-header-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .hero { min-height: 50vh; padding: 80px 24px 60px; }
+      .hero h1 { font-size: clamp(1.7rem, 7vw, 2.8rem); }
+      .analyzer-hero { padding: 80px 24px 60px; }
+      .tip-box { width: 220px; }
+      .chip-row { gap: 4px; }
+      .acre-chip { padding: 3px 8px; font-size: 0.68rem; }
     }
     @media (max-width: 480px) {
       .stat-grid { grid-template-columns: 1fr; }
@@ -704,7 +713,9 @@
       <div class="about-card-label">What this tool covers</div>
       <ul class="about-scope about-scope-row">
         <li>Net royalty income with exponential decline curves</li>
+        <li>NPV — net present value of your full royalty stream</li>
         <li>Severance and ad valorem tax deductions</li>
+        <li>Post-production deduction modeling</li>
         <li>Price scenario sensitivity (bear / base / bull)</li>
         <li>Royalty rate comparison across 1/8 – 1/4</li>
         <li>Lease bonus vs. long-term royalty analysis</li>
@@ -1068,7 +1079,7 @@
         <div class="stat-card gold-border span2">
           <div class="stat-lbl">Monthly Royalty Income (Net)</div>
           <div class="stat-val" id="r-monthly">—</div>
-          <div class="stat-sub">Year 1 peak rate, after all taxes — declines each year</div>
+          <div class="stat-sub" id="r-taxNote">Year 1 peak rate, after all taxes — declines each year</div>
         </div>
         <div class="stat-card">
           <div class="stat-lbl">Annual Income (Year 1 Peak)</div>
@@ -1089,11 +1100,6 @@
           <div class="stat-val" id="r-npv">—</div>
           <div class="stat-sub">Present value of royalty stream</div>
         </div>
-        <div class="stat-card span2">
-          <div class="stat-lbl">Net After All Taxes</div>
-          <div class="stat-val" id="r-netAfterTax">—</div>
-          <div class="stat-sub" id="r-taxNote">After severance + ad valorem</div>
-        </div>
       </div>
 
       <div class="rows-area">
@@ -1109,7 +1115,7 @@
       <div class="value-range-card">
         <div class="value-range-lbl">Estimated Mineral Value if Sold</div>
         <div class="value-range-val" id="r-valueRange">—</div>
-        <div class="value-range-sub">Based on 3×–5× Year 1 annual income (typical buyer multiple range)</div>
+        <div class="value-range-sub">Market shorthand: 3×–5× Year 1 annual income. For a discount-rate valuation, see NPV above.</div>
       </div>
 
       <div class="formula-box" id="formulaBox">Enter values above to see the live formula.</div>
@@ -1245,7 +1251,7 @@
       </button>
       <div class="acc-body"><div class="acc-inner">
         <p>Royalty income is your share of gross production revenue — paid to you without deduction for drilling or operating costs (unless your lease contains post-production deduction clauses).</p>
-        <p>The core formula: <strong>Monthly Net Royalty = (Production/day × Wells × 30) × Price × Royalty Decimal × (1 − Tax Rate)</strong></p>
+        <p>The core formula: <strong>Monthly Net Royalty = (Production/day × Wells × 365 days) × Price × Royalty Decimal × (1 − Tax Rate) ÷ 12 months</strong></p>
         <p>Your <strong>royalty decimal</strong> is the key number: it represents the exact fraction of all production value you receive. It combines your mineral ownership percentage (NMA ÷ Gross Acres) with your lease royalty rate. A royalty decimal of 0.03125 means you receive 3.125¢ of every dollar of gross well revenue.</p>
         <p>Severance and ad valorem taxes are then deducted to arrive at your net royalty — the amount you actually receive on your royalty check.</p>
       </div></div>
@@ -1290,6 +1296,23 @@
 
     <div class="accordion-item">
       <button class="acc-btn" onclick="toggleAcc(this)">
+        How to Read Your Royalty Check Stub <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-inner">
+        <p>Your monthly royalty check comes with a <strong>detail stub</strong> (sometimes called a revenue statement). Understanding it lets you verify you're being paid correctly.</p>
+        <p><strong>Key line items to find:</strong></p>
+        <p>• <strong>Well name / API number</strong> — identifies which well the payment is for. Cross-reference with OCC records at wellrecords.occ.ok.gov to verify it's actually producing.<br>
+        • <strong>Decimal interest</strong> — your precise ownership fraction. Should match your division order. Calculate independently: (NMA ÷ Gross Acres) × Royalty Rate. Any discrepancy means you may be underpaid.<br>
+        • <strong>Gross production / Gross value</strong> — total production from the well and its price. Divide your payment by this to back-calculate your implied decimal and compare.<br>
+        • <strong>Deductions</strong> — any post-production costs deducted before your royalty is calculated. Check against your lease language. "At the wellhead" leases should have none.<br>
+        • <strong>Severance tax</strong> — should match the applicable state rate (Oklahoma: 7%, or reduced rate for new horizontals). Operators sometimes apply the wrong rate.<br>
+        • <strong>Interest code / Product code</strong> — identifies oil (01), gas (04), or NGLs (05). Separate payment lines for each product stream.</p>
+        <p>If your calculated decimal doesn't match what's on the stub, contact the operator's revenue accounting department in writing and request a corrected division order. You may be entitled to back-pay.</p>
+      </div></div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="acc-btn" onclick="toggleAcc(this)">
         Limitations of This Tool <span class="acc-icon">+</span>
       </button>
       <div class="acc-body"><div class="acc-inner">
@@ -1321,6 +1344,13 @@
           <div class="gloss-item"><div class="gloss-term">Severance Tax</div><div class="gloss-def">State tax on oil and gas production at the wellhead (Oklahoma: 7%). Deducted from royalty before payment is issued.</div></div>
           <div class="gloss-item"><div class="gloss-term">Ad Valorem Tax</div><div class="gloss-def">County property tax assessed on production value, separate from severance tax. Varies significantly by county and state.</div></div>
           <div class="gloss-item"><div class="gloss-term">Lease Bonus</div><div class="gloss-def">One-time upfront payment per NMA paid when you sign an O&amp;G lease. Separate from and in addition to ongoing royalty income.</div></div>
+          <div class="gloss-item"><div class="gloss-term">IP Rate — Initial Production</div><div class="gloss-def">A well's production rate when it first comes online. Reported in BOE/day or MCF/day. The highest rate the well will produce — all production declines from this peak.</div></div>
+          <div class="gloss-item"><div class="gloss-term">Division Order</div><div class="gloss-def">A document from the operator confirming your ownership decimal and authorizing them to distribute royalties. Review carefully — errors in the decimal interest directly affect your check.</div></div>
+          <div class="gloss-item"><div class="gloss-term">ORRI — Overriding Royalty Interest</div><div class="gloss-def">A royalty interest carved out of the working interest, not the mineral estate. Expires when the lease expires. Common in landman and broker deals.</div></div>
+          <div class="gloss-item"><div class="gloss-term">Pugh Clause</div><div class="gloss-def">Lease provision that releases depths or acreage not held by production when the primary term expires. Protects mineral owners from perpetually locking up acreage on a single shallow well.</div></div>
+          <div class="gloss-item"><div class="gloss-term">NPV — Net Present Value</div><div class="gloss-def">The present-day value of a future stream of royalty payments, discounted at an assumed rate of return. Mineral buyers typically use 10–15% discount rates. Higher discount rate = lower NPV.</div></div>
+          <div class="gloss-item"><div class="gloss-term">API Number</div><div class="gloss-def">Unique 14-digit identifier assigned to every oil and gas well in the US by the American Petroleum Institute. Used to look up production records, completion reports, and permit history at the OCC.</div></div>
+          <div class="gloss-item"><div class="gloss-term">Spacing Unit</div><div class="gloss-def">The acreage tract designated by regulators for a single well or group of wells. Oklahoma horizontal units are typically 640 acres for SCOOP/STACK horizontals. Your NMA is measured against this unit.</div></div>
         </div>
       </div></div>
     </div>
@@ -1487,7 +1517,7 @@ const DEFAULTS = {
   grossAcres: 640, nma: 80, royaltyRate: 0.1875, royaltySelect: '0.1875',
   numWells: 1, workingInterest: 0, commodity: 'oil', production: 500,
   declineRate: 25, yearsModel: 10, commodityPrice: 72.00,
-  priceScenario: '0', severanceTax: 7.0, adValoremTax: 0.5,
+  priceScenario: '0', priceCustom: 72.00, severanceTax: 7.0, adValoremTax: 0.5,
   postProdEnabled: false, postProdRate: 15, discountRate: 10,
 };
 let S = { ...DEFAULTS };
@@ -1559,9 +1589,8 @@ function update() {
   set('r-npv',           fmt(r.npv));
   const npvNote = document.querySelector('#r-npvLbl .npv-disc-note');
   if (npvNote) npvNote.textContent = `(${S.discountRate}% discount)`;
-  set('r-netAfterTax',fmt(r.monthlyNetRoyalty));
-  const taxNote = 'After ' + fmtP(S.severanceTax) + ' severance + ' + fmtP(S.adValoremTax) + ' ad valorem'
-    + (S.postProdEnabled ? ` + ${S.postProdRate}% post-prod deductions` : '');
+  const taxNote = 'Year 1 peak · After ' + fmtP(S.severanceTax) + ' severance + ' + fmtP(S.adValoremTax) + ' ad valorem'
+    + (S.postProdEnabled ? ` + ${S.postProdRate}% post-prod deductions` : '') + ' — declines each year';
   set('r-taxNote', taxNote);
 
   set('r-royaltyDecimal', fmtD(r.rd));
@@ -1579,12 +1608,12 @@ function update() {
   const du = S.commodity === 'oil' ? 'BOE' : 'MCF';
   const ppdTerm = S.postProdEnabled ? ` × <b>(1 − ${S.postProdRate}% deductions)</b>` : '';
   $('formulaBox').innerHTML =
-    `Annual = (<b>${S.production} ${du}/day × ${S.numWells} well${S.numWells > 1 ? 's' : ''} × 365 days</b>) ×` +
+    `(<b>${S.production} ${du}/day × ${S.numWells} well${S.numWells > 1 ? 's' : ''} × 365 days</b>) ×` +
     ` <b>$${r.ep.toFixed(2)}${pu}</b> × <b>${fmtD(r.rd, 6)} royalty decimal</b>` +
     ppdTerm +
     ` × <b>(1 − ${fmtP(S.severanceTax + S.adValoremTax, 3)} taxes)</b>` +
-    ` = <b>$${Math.round(r.annualNetYear1).toLocaleString()}/yr</b>` +
-    ` (÷ 12 = <b>$${Math.round(r.monthlyNetRoyalty).toLocaleString()}/mo</b>)`;
+    ` ÷ 12 = <b>$${Math.round(r.monthlyNetRoyalty).toLocaleString()}/mo</b>` +
+    ` (× 12 = <b>$${Math.round(r.annualNetYear1).toLocaleString()}/yr</b>)`;
 
   const valLow  = r.annualNetYear1 * 3;
   const valHigh = r.annualNetYear1 * 5;
@@ -1649,6 +1678,10 @@ function renderSensitivity(r) {
     });
     tbody.appendChild(tr);
   });
+  // Re-apply expanded state after DOM regeneration
+  if (sensExpanded) {
+    document.querySelectorAll('.sens-outer-row').forEach(r => r.style.display = 'table-row');
+  }
 }
 
 /* ===== DECLINE TABLE ===== */
@@ -1674,6 +1707,11 @@ function renderDecline(schedule, baseAnnual, rd = 0) {
   });
 
   renderDeclineChart(schedule);
+  // Keep section body max-height in sync so collapse/expand works after content changes
+  if (declineTableVisible) {
+    const dsb = $('declineSectionBody');
+    if (dsb) dsb.style.maxHeight = dsb.scrollHeight + 'px';
+  }
 }
 
 function renderDeclineChart(schedule) {
@@ -2373,6 +2411,7 @@ function copyResults() {
     `Monthly Net Royalty:  ${fmt(r.monthlyNetRoyalty)}`,
     `Annual Net (Year 1):  ${fmt(r.annualNetYear1)}`,
     `${S.yearsModel}-Year Cumulative:  ${fmt(r.cumulativeTotal)}`,
+    `NPV (${S.discountRate}% discount): ${fmt(r.npv)}`,
     `Effective Tax Rate:   ${fmtP(S.severanceTax + S.adValoremTax)}`,
     `Est. Value if Sold:   ${fmt(r.annualNetYear1 * 3)} – ${fmt(r.annualNetYear1 * 5)} (3×–5× annual)`,
     '',
@@ -2401,6 +2440,9 @@ function shareResults() {
     decline: S.declineRate, years: S.yearsModel,
     price: S.commodityPrice, scenario: S.priceScenario,
     sev: S.severanceTax, adv: S.adValoremTax,
+    disc: S.discountRate,
+    ...(S.postProdEnabled ? { ppd: 1, ppdrate: S.postProdRate } : {}),
+    ...(S.priceScenario === 'custom' && S.priceCustom ? { custprice: S.priceCustom } : {}),
   });
   const url = window.location.origin + window.location.pathname + '?' + p.toString();
   navigator.clipboard.writeText(url).then(() => {
@@ -2429,8 +2471,12 @@ function loadFromURL() {
   S.yearsModel       = n('years',    DEFAULTS.yearsModel);
   S.commodityPrice   = n('price',    DEFAULTS.commodityPrice);
   S.priceScenario    = s('scenario', '0');
+  S.priceCustom      = n('custprice', DEFAULTS.priceCustom);
   S.severanceTax     = n('sev',      DEFAULTS.severanceTax);
   S.adValoremTax     = n('adv',      DEFAULTS.adValoremTax);
+  S.discountRate     = n('disc',     DEFAULTS.discountRate);
+  S.postProdEnabled  = p.get('ppd') === '1';
+  S.postProdRate     = n('ppdrate',  DEFAULTS.postProdRate);
 
   $('grossAcres').value      = S.grossAcres;
   syncAcreChips(S.grossAcres);
@@ -2446,7 +2492,19 @@ function loadFromURL() {
   $('yearsModel').value      = S.yearsModel;
   $('yearsModelLabel').textContent  = S.yearsModel + ' yrs';
   $('priceScenario').value   = S.priceScenario;
-  if (S.priceScenario === 'custom') $('priceCustomWrap').classList.add('show');
+  if (S.priceScenario === 'custom') {
+    $('priceCustomWrap').classList.add('show');
+    $('priceCustom').value = S.priceCustom;
+  }
+  $('discountRate').value = S.discountRate;
+  $('discountRateLabel').textContent = S.discountRate + '%';
+  if (S.postProdEnabled) {
+    $('ppdToggleBtn').textContent = 'ON';
+    $('ppdToggleBtn').classList.add('on');
+    $('ppdWrap').classList.add('show');
+    $('ppdRate').value = S.postProdRate;
+    $('ppdRateLabel').textContent = S.postProdRate + '%';
+  }
 
   const knownRates = ['0.125','0.16667','0.1875','0.2','0.25'];
   const rStr = S.royaltyRate.toString();
