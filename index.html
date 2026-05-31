@@ -76,7 +76,33 @@
     }
     .nav-links a:hover { color: #F7F3EC; }
     .nav-links a.nav-active { color: #F7F3EC; border-bottom: 2px solid var(--amber); padding-bottom: 2px; }
+    .nav-badge { display: inline-block; background: var(--amber); color: #fff; font-size: 0.52rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 1px 5px; margin-left: 5px; vertical-align: middle; line-height: 1.6; }
     .nav-toggle { display: none; background: none; border: 1px solid rgba(255,255,255,0.2); color: #F7F3EC; padding: 5px 10px; cursor: pointer; font-size: 1rem; }
+    /* ===== ANALYZER TAB ===== */
+    .analyzer-hero { background: var(--nav-bg); padding: 100px 24px 72px; text-align: center; border-bottom: 1px solid var(--nav-border); display: flex; align-items: center; justify-content: center; }
+    .analyzer-hero .hero-content { max-width: 700px; width: 100%; }
+    .analyzer-hero .hero-badge { margin-bottom: 24px; }
+    .analyzer-hero h1 { font-size: clamp(2rem, 4.5vw, 3.2rem); color: #F7F3EC; margin-bottom: 18px; }
+    .analyzer-hero p { font-size: 1rem; color: #A8C0B0; max-width: 520px; margin: 0 auto 36px; line-height: 1.75; font-weight: 300; }
+    .analyzer-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 56px; }
+    .analyzer-feature { background: var(--card); border: 1px solid var(--border-dark); border-top: 3px solid var(--amber); padding: 24px; }
+    .analyzer-feature-icon { font-size: 1.5rem; margin-bottom: 12px; }
+    .analyzer-feature h3 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text); margin-bottom: 8px; }
+    .analyzer-feature p { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+    .waitlist-box { background: var(--nav-bg); border: 1px solid var(--nav-border); padding: 40px; text-align: center; max-width: 540px; margin: 0 auto 56px; }
+    .waitlist-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #F7F3EC; margin-bottom: 10px; }
+    .waitlist-box p { font-size: 0.85rem; color: #A8C0B0; margin-bottom: 24px; line-height: 1.65; }
+    .waitlist-input-row { display: flex; gap: 8px; }
+    .waitlist-input-row input { flex: 1; padding: 11px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #F7F3EC; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+    .waitlist-input-row input::placeholder { color: rgba(168,192,176,0.6); }
+    .waitlist-input-row input:focus { outline: none; border-color: var(--amber); }
+    .waitlist-input-row button { background: var(--amber); color: #fff; border: none; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; padding: 11px 22px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .waitlist-input-row button:hover { background: var(--amber-light); }
+    .waitlist-confirm { display: none; align-items: center; justify-content: center; gap: 10px; color: #A8C0B0; font-size: 0.85rem; font-family: 'Inter', sans-serif; padding: 14px; }
+    .waitlist-confirm .check { color: var(--amber); font-size: 1.2rem; }
+    .analyzer-note { background: var(--card2); border: 1px solid var(--border); border-left: 3px solid var(--amber); padding: 14px 18px; font-size: 0.8rem; color: var(--muted); line-height: 1.65; margin-bottom: 48px; }
+    @media (max-width: 920px) { .analyzer-features { grid-template-columns: 1fr; } .waitlist-box { padding: 28px 20px; } }
+    @media (max-width: 480px) { .waitlist-input-row { flex-direction: column; } }
 
     /* ===== HERO ===== */
     .hero {
@@ -158,7 +184,7 @@
       font-size: 9px; color: var(--muted); cursor: help; flex-shrink: 0;
     }
     .tip-box {
-      position: absolute; left: 18px; top: -6px; width: 210px; z-index: 200;
+      position: absolute; left: 18px; top: -6px; width: 260px; z-index: 200;
       background: var(--card); border: 1px solid var(--border-dark);
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
       color: var(--text); font-size: 0.73rem; font-weight: 400;
@@ -222,6 +248,24 @@
     input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; background: var(--amber); border: none; border-radius: 0; cursor: pointer; }
     .slide-val { font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; font-weight: 500; color: var(--amber); min-width: 52px; text-align: right; }
     .slide-grayed { opacity: 0.45; }
+    /* ===== NPV / TABLE TOGGLES / CHART ===== */
+    .npv-disc-note { font-size: 0.67rem; color: #A8C0B0; margin-top: 3px; font-family: 'Inter', sans-serif; }
+    .tbl-header-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+    .tbl-header-row .tbl-title { margin-bottom: 2px; }
+    .tbl-header-row .tbl-sub  { margin-bottom: 0; }
+    .btn-tbl-toggle { background: none; border: 1px solid var(--border-dark); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.71rem; font-weight: 500; padding: 4px 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+    .btn-tbl-toggle:hover { border-color: var(--nav-bg); color: var(--nav-bg); }
+    .sens-outer-row { display: none; }
+    .decline-section { margin-bottom: 48px; }
+    .decline-section .tbl-scroll { margin-bottom: 0; }
+    .decline-section-body { overflow: hidden; transition: max-height 0.3s ease; }
+    .decline-chart-wrap { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .decline-chart-title { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; font-family: 'Inter', sans-serif; }
+    .chart-bars { display: flex; align-items: flex-end; gap: 5px; padding-bottom: 8px; border-bottom: 1px solid var(--border-dark); overflow-x: auto; }
+    .chart-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 28px; max-width: 60px; }
+    .chart-bar { width: 100%; background: var(--amber); border-radius: 1px 1px 0 0; min-height: 2px; }
+    .chart-bar-yr { font-size: 0.58rem; color: var(--dim); margin-top: 5px; font-family: 'Inter', sans-serif; text-align: center; }
+    .chart-bar-val { font-size: 0.54rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 3px; white-space: nowrap; text-align: center; }
     /* ===== DECLINE CALC TABS ===== */
     .dcalc-tabs { display: flex; margin: 8px 0 0; border-bottom: 1px solid var(--border); }
     .dcalc-tab {
@@ -452,7 +496,7 @@
     .waitlist-form button:hover { background: #2E5A3E; }
     .waitlist-form .waitlist-ok { display: none; font-size: 0.78rem; color: var(--pos-green); font-family: 'Inter', sans-serif; align-items: center; }
     .scope-coming { color: var(--amber) !important; font-style: italic; }
-    .scope-coming-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: var(--amber); color: #fff; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
+    .scope-coming-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: var(--amber); color: #fff; padding: 1px 6px; margin-right: 6px; vertical-align: middle; }
     @media (max-width: 920px) { .waitlist-bar { padding: 16px 20px; } .waitlist-form input[type="email"] { width: 160px; } }
     @media (max-width: 480px) { .waitlist-inner { flex-direction: column; align-items: flex-start; } .waitlist-form { width: 100%; } .waitlist-form input[type="email"] { flex: 1; width: auto; } }
 
@@ -605,10 +649,11 @@
 <nav class="navbar" id="navbar">
   <a href="#" class="nav-logo"><img src="mineralcalc_favicon.png" alt="MineralCalc" style="height:28px; width:28px; vertical-align:middle; margin-right:8px; display:inline-block;">Mineral<span class="accent">Calc</span></a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="https://aogerardi.github.io/aogerardi/" target="_blank" rel="noopener">Creator Portfolio ↗</a></li>
     <li><a href="#about" onclick="showView('main')">About</a></li>
     <li><a href="#calculator" onclick="showView('main')">Calculator</a></li>
+    <li><a href="#" id="nav-analyzer" onclick="showView('analyzer'); return false;">Lease Analyzer <span class="nav-badge">Soon</span></a></li>
     <li><a href="#" id="nav-edu" onclick="showView('education'); return false;">Glossary &amp; Methodology</a></li>
+    <li><a href="https://aogerardi.github.io/aogerardi/" target="_blank" rel="noopener">Creator Portfolio ↗</a></li>
   </ul>
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
 </nav>
@@ -634,9 +679,9 @@
       <div class="about-text">
         <h2>Royalty income math<br>shouldn't be a black box</h2>
         <p>When a landman calls with a lease offer, most mineral owners have no quick way to evaluate it. The bonus sounds like a real number — but is it good? What would the royalty actually be worth over the life of a well? Most people sign without knowing, because the math has always lived inside an operator's spreadsheet.</p>
-        <p>MineralCalc makes that math visible. Enter your acreage and lease terms, and MineralCalc builds a full income model: projected monthly and annual net royalty, a year-by-year decline schedule, a sensitivity table across price and royalty scenarios, and a direct comparison between the bonus offer and long-term royalty income.</p>
-        <p>It's built for Oklahoma mineral owners and landmen, the math works the same anywhere. All estimates are transparent — you can see exactly what formula is being run and adjust every assumption yourself.</p>
-        <p>This isn't financial advice, and it's not a substitute for a landman, petroleum engineer, or O&amp;G attorney. It's a foundation to start from and a way to ask better questions.</p>
+        <p>MineralCalc puts that math in your hands. Enter your acreage and lease terms, and the tool builds a full income model: projected monthly royalty income, a year-by-year decline schedule, a sensitivity table across price and royalty scenarios, and a direct comparison between the bonus offer and long-term production value.</p>
+        <p>Built for Oklahoma mineral owners, landmen, and O&amp;G professionals — the math works the same anywhere in the US. Every formula is visible, every assumption is adjustable, and every calculation is yours to share.</p>
+        <p>Not a substitute for a licensed landman, petroleum engineer, or O&amp;G attorney — but a solid foundation for better conversations and better decisions.</p>
       </div>
 
       <div>
@@ -644,7 +689,7 @@
           <div class="about-card-label">Creator</div>
           <div class="about-card-name">Alex Gerardi</div>
           <div class="about-card-detail">Energy Management — University of Oklahoma</div>
-          <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:#A8C0B0; line-height:1.7; margin-bottom:16px;">I study energy markets and land management at OU. I built MineralCalc because the people who actually own minerals — families with inherited acreage, small investors, landmen working deals — often don't have the tools the operators do. This is my attempt to close that gap with something free, transparent, and useful.</p>
+          <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:#A8C0B0; line-height:1.7; margin-bottom:16px;">MineralCalc started from a gap I saw working around Oklahoma O&amp;G leasing — mineral owners didn't have access to the same modeling tools the operators do. My background in energy management at OU gave me the foundation to build it right: accurate decline math, real market context, and a clean interface that anyone can use. It's free because information asymmetry in mineral rights already favors the operator enough.</p>
           <div class="about-card-links">
             <a href="https://aogerardi.github.io/aogerardi/" target="_blank" rel="noopener">Creator Portfolio ↗</a>
             <a href="https://www.linkedin.com/in/alex-gerardi/" target="_blank" rel="noopener">LinkedIn ↗</a>
@@ -663,7 +708,8 @@
         <li>Price scenario sensitivity (bear / base / bull)</li>
         <li>Royalty rate comparison across 1/8 – 1/4</li>
         <li>Lease bonus vs. long-term royalty analysis</li>
-        <li>Shareable URLs and print / PDF export</li>
+        <li>Shareable URLs and professional PDF export</li>
+        <li class="scope-coming"><a href="#" onclick="showView('analyzer'); return false;" style="color:inherit;text-decoration:none;"><span class="scope-coming-badge">Coming Soon</span> Lease PDF Analyzer — upload your lease for instant plain-English term analysis →</a></li>
       </ul>
     </div>
 
@@ -680,6 +726,9 @@
 <section class="wrap" id="calculator">
   <div class="section-label">Royalty Estimator</div>
   <h2>Income Calculator</h2>
+  <div style="margin-bottom:20px;">
+    <a href="#" onclick="showView('analyzer'); return false;" style="display:inline-flex;align-items:center;gap:6px;font-size:0.76rem;color:var(--amber);font-family:'Inter',sans-serif;font-weight:500;text-decoration:none;border:1px solid var(--amber-border);padding:5px 12px;transition:all 0.15s;" onmouseover="this.style.background='rgba(160,132,92,0.1)'" onmouseout="this.style.background='none'">📄 Have a lease? Upload it and skip the manual entry <span style="font-size:0.68rem;opacity:0.7;margin-left:2px;">— Coming Soon</span></a>
+  </div>
   <div style="margin-bottom:24px;max-width:560px;">
     <label style="display:block;font-size:0.72rem;font-weight:500;color:var(--muted);margin-bottom:5px;font-family:'Inter',sans-serif;letter-spacing:0.02em;">Report Name / Tract Description <span style="font-weight:400;color:var(--dim);">(optional — appears in PDF header)</span></label>
     <input type="text" id="reportName" placeholder="e.g. Smith Minerals — Section 14, Kingfisher Co." style="width:100%;padding:9px 12px;border:1px solid var(--border-dark);background:var(--card);font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--text);">
@@ -761,7 +810,7 @@
         <div class="label-row">
           Number of Producing Wells
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Total wells producing from your mineral acreage. Multiple horizontal wells in one unit (co-development) can multiply royalty income proportionally.</div>
+            <div class="tip-box"><strong>The number of active wells currently producing from your mineral acreage.</strong><br><br>To find this:<br>• Check your royalty check stub — it typically lists each well by name and API number<br>• Search OCC well records at wellrecords.occ.ok.gov using your section, township, and range<br>• Your lease operator is required to provide this information upon request<br>• If you've received a division order, each well will be listed separately<br><br>If you don't know yet — enter 1. Most Oklahoma horizontal units start with a single well. Additional wells drilled later (co-development) will multiply your royalty income proportionally.</div>
           </div>
         </div>
         <input type="number" id="numWells" value="1" min="1" max="20" step="1">
@@ -772,7 +821,7 @@
         <div class="label-row">
           Working Interest % (Optional)
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">If you own a Working Interest (WI), you bear proportionate drilling and operating costs. Enter 0 if you hold a pure Royalty Interest (RI) with no cost obligations. WI ≠ RI.</div>
+            <div class="tip-box">If you own a Working Interest (WI), you bear proportionate drilling and operating costs. Enter 0 if you hold a pure Royalty Interest (RI) with no cost obligations. WI ≠ RI. <strong>Note: WI income calculations require operating cost inputs not yet supported — this field is collected for future use and does not currently affect results.</strong></div>
           </div>
         </div>
         <input type="number" id="workingInterest" value="0" min="0" max="100" step="0.1">
@@ -797,7 +846,7 @@
         <div class="label-row">
           Estimated Production per Well
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Initial daily production per well in BOE/day (oil) or MCF/day (gas). Oklahoma SCOOP/STACK horizontals often start 500–1,500 BOE/day IP. This is the starting rate before decline.</div>
+            <div class="tip-box">Initial daily production (IP rate) per well in BOE/day (oil) or MCF/day (gas). This is your starting rate before decline — not an average.<br><br>How to find it:<br>• <strong>Check your royalty check stub</strong> — operators often list the well name and you can look it up<br>• <strong>OCC production data</strong> at wellrecords.occ.ok.gov — search by section/township/range or API number to see actual reported monthly production<br>• <strong>FracFocus.org</strong> — find completion data (lateral length, proppant) which correlates to expected IP<br>• <strong>Operator investor presentations</strong> — Devon, Continental, Ovintiv publish average IP rates by area<br><br>Typical Oklahoma SCOOP/STACK horizontals: 500–1,500 BOE/day. If unknown, 500 is a reasonable conservative starting point for modeling.</div>
           </div>
         </div>
         <input type="number" id="production" value="500" min="1" step="1">
@@ -878,6 +927,20 @@
           <input type="range" id="yearsModel" min="1" max="30" value="10" step="1">
           <span class="slide-val" id="yearsModelLabel">10 yrs</span>
         </div>
+      </div>
+
+      <div class="input-group">
+        <div class="label-row">
+          Discount Rate (for NPV)
+          <div class="tip-wrap"><span class="tip-icon">?</span>
+            <div class="tip-box">The rate used to calculate Net Present Value — what future royalty income is worth in today's dollars. Mineral buyers typically use 10–15%. A higher rate means future income is worth less today. 10% is standard for Oklahoma mineral valuations.</div>
+          </div>
+        </div>
+        <div class="slide-row">
+          <input type="range" id="discountRate" min="5" max="25" value="10" step="1">
+          <span class="slide-val" id="discountRateLabel">10%</span>
+        </div>
+        <div class="field-note">NPV discounts your full royalty stream to present value — how mineral buyers price acquisitions.</div>
       </div>
 
       <div class="input-section">Price &amp; Taxes</div>
@@ -993,7 +1056,7 @@
     <div class="panel results-panel">
       <div class="disc-banner">
         <span class="disc-icon">⚠</span>
-        <span>Estimates only. Actual production varies significantly. Not financial or legal advice — consult a licensed professional.</span>
+        <span>Estimates only — production, pricing, and lease terms vary significantly. This tool does not constitute financial, legal, or tax advice. Consult a licensed petroleum engineer, landman, or O&amp;G attorney before making mineral rights decisions.</span>
       </div>
       <h3>
         Live Results
@@ -1016,10 +1079,15 @@
           <div class="stat-lbl" id="r-cumLbl">10-Year Cumulative</div>
           <div class="stat-val" id="r-cumulative">—</div>
         </div>
-        <div class="stat-card span2">
+        <div class="stat-card">
           <div class="stat-lbl">Avg Annual Income (w/ Decline)</div>
           <div class="stat-val" id="r-avgAnnual">—</div>
-          <div class="stat-sub" id="r-avgAnnualSub">Decline-adjusted average over modeled period</div>
+          <div class="stat-sub" id="r-avgAnnualSub">Decline-adjusted average</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl" id="r-npvLbl">NPV <span class="npv-disc-note">(10% discount)</span></div>
+          <div class="stat-val" id="r-npv">—</div>
+          <div class="stat-sub">Present value of royalty stream</div>
         </div>
         <div class="stat-card span2">
           <div class="stat-lbl">Net After All Taxes</div>
@@ -1057,28 +1125,46 @@
   <div class="section-label tbl-hdr">Scenario Analysis</div>
   <h2 style="margin-bottom:32px">Sensitivity Tables</h2>
 
-  <div class="tbl-title">Price vs. Royalty Rate — Annual Net Royalty Income</div>
-  <div class="tbl-sub">Rows: price ± your entered base | Columns: royalty fractions | <span style="color:var(--amber)">Amber border</span> = your current inputs</div>
-  <div class="tbl-scroll">
+  <div class="tbl-header-row">
+    <div>
+      <div class="tbl-title">Price vs. Royalty Rate — Annual Net Royalty Income</div>
+      <div class="tbl-sub">Rows: price ± your entered base | Columns: royalty fractions | <span style="color:var(--amber)">Amber border</span> = your current inputs</div>
+    </div>
+    <button class="btn-tbl-toggle" id="sensExpandBtn" onclick="toggleSensRows()">Show ±30–40% rows ▾</button>
+  </div>
+  <div class="tbl-scroll" style="margin-bottom:48px;">
     <table><thead id="sensHead"></thead><tbody id="sensBody"></tbody></table>
   </div>
 
-  <div class="tbl-title">Year-by-Year Production Decline Schedule</div>
-  <div class="tbl-sub">Exponential decline model based on your inputs. All figures in net royalty dollars after taxes.</div>
-  <div class="tbl-scroll">
-    <table>
-      <thead>
-        <tr>
-          <th>Year</th>
-          <th>Daily Production</th>
-          <th>Annual Gross Revenue</th>
-          <th>Annual Net Royalty</th>
-          <th>Cumulative Net</th>
-          <th>Income Bar</th>
-        </tr>
-      </thead>
-      <tbody id="declineBody"></tbody>
-    </table>
+  <div class="decline-section" id="declineSection">
+    <div class="tbl-header-row">
+      <div>
+        <div class="tbl-title">Year-by-Year Production Decline Schedule</div>
+        <div class="tbl-sub">Exponential decline model based on your inputs. All figures in net royalty dollars after taxes.</div>
+      </div>
+      <button class="btn-tbl-toggle" id="declineToggleBtn" onclick="toggleDeclineTable()">Collapse ▴</button>
+    </div>
+    <div class="decline-section-body" id="declineSectionBody">
+      <div class="tbl-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Daily Production</th>
+              <th>Gross Royalty</th>
+              <th>Net Royalty</th>
+              <th>Cumulative Net</th>
+              <th>Income Bar</th>
+            </tr>
+          </thead>
+          <tbody id="declineBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="declineChartWrap" class="decline-chart-wrap">
+      <div class="decline-chart-title">Annual Net Royalty — Year by Year</div>
+      <div class="chart-bars" id="chartBars"></div>
+    </div>
   </div>
 </div>
 
@@ -1321,6 +1407,67 @@
 
 </div>
 
+<!-- ===== LEASE ANALYZER TAB ===== -->
+<div id="analyzer-view" style="display:none; min-height:calc(100vh - 60px)">
+
+  <div class="analyzer-hero">
+    <div class="hero-content">
+      <div class="hero-badge">Coming Soon — Premium Feature</div>
+      <h1>Lease <span class="gold">Analyzer</span></h1>
+      <p>Upload your oil and gas lease PDF. Get an instant plain-English breakdown of your royalty terms, flagged risk clauses, and auto-filled calculator inputs — in seconds.</p>
+      <a href="#analyzer-waitlist" class="btn-cta" onclick="document.getElementById('analyzer-waitlist').scrollIntoView({behavior:'smooth'}); return false;">Join the Waitlist ↓</a>
+    </div>
+  </div>
+
+  <section class="wrap">
+    <div class="section-label">What it does</div>
+    <h2 style="margin-bottom:32px">Your lease, translated</h2>
+
+    <div class="analyzer-features">
+      <div class="analyzer-feature">
+        <div class="analyzer-feature-icon">📄</div>
+        <h3>Instant Term Extraction</h3>
+        <p>Lease Analyzer reads your PDF and pulls the key numbers automatically — royalty rate, gross acres, NMA, severance terms, primary term, and more. Results feed directly into the calculator.</p>
+      </div>
+      <div class="analyzer-feature">
+        <div class="analyzer-feature-icon">⚠️</div>
+        <h3>Clause Risk Flagging</h3>
+        <p>Identifies language that may reduce your royalty check — post-production deduction clauses, "market value" vs "at wellhead" provisions, depth severance, missing Pugh clauses, and other terms that favor the operator.</p>
+      </div>
+      <div class="analyzer-feature">
+        <div class="analyzer-feature-icon">📊</div>
+        <h3>Plain-English Summary</h3>
+        <p>No legalese. A clear, plain-English breakdown of what your lease actually says — what you're getting, what you're giving up, and what to ask your landman or attorney about before signing.</p>
+      </div>
+    </div>
+
+    <div class="analyzer-note">
+      <strong>How it works:</strong> Lease Analyzer uses AI document analysis to read your PDF and extract structured data. Your file is processed securely and never stored permanently. Results are estimates — always verify with a licensed landman or O&amp;G attorney before making leasing decisions.
+    </div>
+
+    <div class="waitlist-box" id="analyzer-waitlist">
+      <h3>Be first to know when it launches</h3>
+      <p>Lease Analyzer is in development. Enter your email and we'll notify you when it's available — including early access pricing.</p>
+      <form id="waitlistForm" onsubmit="submitWaitlist(event)">
+        <div class="waitlist-input-row">
+          <input type="email" id="waitlistEmail" placeholder="your@email.com" required>
+          <button type="submit">Notify Me</button>
+        </div>
+      </form>
+      <!-- TODO: Connect form to Formspree: set form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" -->
+      <div class="waitlist-confirm" id="waitlistConfirm">
+        <span class="check">✓</span>
+        <span>You're on the list. We'll be in touch when Lease Analyzer launches.</span>
+      </div>
+    </div>
+
+    <div style="text-align:center; padding-bottom:40px;">
+      <a href="#" onclick="showView('main'); return false;" style="font-size:0.78rem; color:var(--amber); font-family:'Inter',sans-serif;">← Back to Calculator</a>
+    </div>
+  </section>
+
+</div>
+
 <!-- ===== FOOTER ===== -->
 <footer>
   <img src="mineralcalc_favicon.png" alt="MineralCalc" style="height:48px; width:48px; margin-bottom:14px; opacity:0.9;">
@@ -1330,8 +1477,7 @@
     <a href="https://www.linkedin.com/in/alex-gerardi/" target="_blank" rel="noopener">LinkedIn</a>
     <a href="mailto:alexogerardi@gmail.com">alexogerardi@gmail.com</a>
   </div>
-  <div><span class="footer-badge">⚡ Built with Claude Code</span></div>
-  <div class="footer-disc">This tool is for estimation purposes only. Not financial or legal advice. Results depend on assumptions that may not reflect actual well performance, lease terms, or market conditions. Consult a licensed professional before making mineral rights decisions.</div>
+  <div class="footer-disc">MineralCalc provides income estimates based on user-entered assumptions and does not constitute financial, legal, or tax advice. Results depend on production performance, pricing, lease language, and other variables that may differ materially from actual outcomes. Always consult a licensed petroleum engineer, landman, or oil and gas attorney before making mineral rights decisions.</div>
   <div class="footer-disc" style="margin-top:6px">© 2026 Alex Gerardi</div>
 </footer>
 
@@ -1342,7 +1488,7 @@ const DEFAULTS = {
   numWells: 1, workingInterest: 0, commodity: 'oil', production: 500,
   declineRate: 25, yearsModel: 10, commodityPrice: 72.00,
   priceScenario: '0', severanceTax: 7.0, adValoremTax: 0.5,
-  postProdEnabled: false, postProdRate: 15,
+  postProdEnabled: false, postProdRate: 15, discountRate: 10,
 };
 let S = { ...DEFAULTS };
 let dcalcTab    = 'manual';
@@ -1382,18 +1528,19 @@ function runCalc() {
   const monthlyNoPPD    = (annualGrossRoyalty * (1 - taxRate)) / 12;
   const monthlyPPDLoss  = S.postProdEnabled ? monthlyNoPPD - monthlyNetRoyalty : 0;
 
-  let cumulative = 0;
+  let cumulative = 0, npv = 0;
   const schedule = [];
   for (let y = 1; y <= S.yearsModel; y++) {
-    const factor   = Math.pow(1 - S.declineRate / 100, y - 1);
+    const factor    = Math.pow(1 - S.declineRate / 100, y - 1);
     const dailyProd = S.production * factor;
     const grossRev  = dailyProd * S.numWells * 365 * ep;
     const netRoy    = grossRev * rd * netFactor;
     cumulative     += netRoy;
+    npv            += netRoy / Math.pow(1 + S.discountRate / 100, y);
     schedule.push({ year: y, dailyProd, grossRev, netRoy, cumulative });
   }
 
-  return { ep, rd, nri, taxRate, ppdFactor, monthlyGrossRev, monthlyGrossRoyalty, monthlyNetRoyalty, annualNetYear1, cumulativeTotal: cumulative, schedule, monthlyPPDLoss };
+  return { ep, rd, nri, taxRate, ppdFactor, monthlyGrossRev, monthlyGrossRoyalty, monthlyNetRoyalty, annualNetYear1, cumulativeTotal: cumulative, npv, schedule, monthlyPPDLoss };
 }
 
 /* ===== UPDATE DOM ===== */
@@ -1408,7 +1555,10 @@ function update() {
   set('r-cumLbl',        S.yearsModel + '-Year Cumulative');
   set('r-cumulative',    fmt(r.cumulativeTotal));
   set('r-avgAnnual',     fmt(r.cumulativeTotal / S.yearsModel));
-  set('r-avgAnnualSub',  `${S.declineRate}% annual decline over ${S.yearsModel} yrs — changes with decline rate`);
+  set('r-avgAnnualSub',  `${S.declineRate}% decline · ${S.yearsModel}-yr average`);
+  set('r-npv',           fmt(r.npv));
+  const npvNote = document.querySelector('#r-npvLbl .npv-disc-note');
+  if (npvNote) npvNote.textContent = `(${S.discountRate}% discount)`;
   set('r-netAfterTax',fmt(r.monthlyNetRoyalty));
   const taxNote = 'After ' + fmtP(S.severanceTax) + ' severance + ' + fmtP(S.adValoremTax) + ' ad valorem'
     + (S.postProdEnabled ? ` + ${S.postProdRate}% post-prod deductions` : '');
@@ -1441,7 +1591,7 @@ function update() {
   set('r-valueRange', fmt(valLow) + ' – ' + fmt(valHigh));
 
   renderSensitivity(r);
-  renderDecline(r.schedule, r.monthlyNetRoyalty * 12);
+  renderDecline(r.schedule, r.monthlyNetRoyalty * 12, r.rd);
   updateBonus(r);
 }
 
@@ -1483,6 +1633,8 @@ function renderSensitivity(r) {
     const price = basePrice * (1 + m);
     const sign  = m >= 0 ? '+' : '';
     const tr    = document.createElement('tr');
+    const isOuter = ri === 0 || ri === 1 || ri === 7 || ri === 8;
+    if (isOuter) tr.classList.add('sens-outer-row');
     tr.innerHTML = `<td>$${price.toFixed(2)} (${sign}${(m*100).toFixed(0)}%)</td>`;
 
     grid[ri].forEach((val, ci) => {
@@ -1500,25 +1652,58 @@ function renderSensitivity(r) {
 }
 
 /* ===== DECLINE TABLE ===== */
-function renderDecline(schedule, baseAnnual) {
+function renderDecline(schedule, baseAnnual, rd = 0) {
   const unit  = S.commodity === 'oil' ? 'BOE/d' : 'MCF/d';
   const maxR  = Math.max(...schedule.map(r => r.netRoy));
   const tbody = $('declineBody');
   tbody.innerHTML = '';
 
   schedule.forEach(row => {
-    const barLen = maxR > 0 ? Math.round((row.netRoy / maxR) * 18) : 0;
-    const bar    = '█'.repeat(barLen) + '░'.repeat(18 - barLen);
-    const tr     = document.createElement('tr');
+    const barLen     = maxR > 0 ? Math.round((row.netRoy / maxR) * 18) : 0;
+    const bar        = '█'.repeat(barLen) + '░'.repeat(18 - barLen);
+    const grossRoy   = rd > 0 ? row.grossRev * rd : row.grossRev;
+    const tr         = document.createElement('tr');
     tr.innerHTML = `
       <td>Year ${row.year}</td>
       <td>${Math.round(row.dailyProd * S.numWells).toLocaleString()} ${unit}</td>
-      <td>${fmt(row.grossRev)}</td>
+      <td>${fmt(grossRoy)}</td>
       <td>${fmt(row.netRoy)}</td>
       <td>${fmt(row.cumulative)}</td>
       <td class="bar-cell"><span class="bar-fill">${bar}</span></td>`;
     tbody.appendChild(tr);
   });
+
+  renderDeclineChart(schedule);
+}
+
+function renderDeclineChart(schedule) {
+  const container = $('chartBars');
+  if (!container) return;
+  const maxR = Math.max(...schedule.map(r => r.netRoy));
+  const maxPx = 150;
+  container.innerHTML = schedule.map(row => {
+    const px = maxR > 0 ? Math.max(2, Math.round((row.netRoy / maxR) * maxPx)) : 2;
+    return `<div class="chart-col">
+      <div class="chart-bar-val">${fmtK(row.netRoy)}</div>
+      <div class="chart-bar" style="height:${px}px" title="Year ${row.year}: ${fmt(row.netRoy)}"></div>
+      <div class="chart-bar-yr">Yr ${row.year}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== TABLE / CHART TOGGLES ===== */
+let sensExpanded = false;
+function toggleSensRows() {
+  sensExpanded = !sensExpanded;
+  document.querySelectorAll('.sens-outer-row').forEach(r => r.style.display = sensExpanded ? 'table-row' : 'none');
+  $('sensExpandBtn').textContent = sensExpanded ? 'Hide ±30–40% rows ▴' : 'Show ±30–40% rows ▾';
+}
+let declineTableVisible = true;
+function toggleDeclineTable() {
+  declineTableVisible = !declineTableVisible;
+  const body = $('declineSectionBody');
+  body.style.maxHeight = declineTableVisible ? body.scrollHeight + 'px' : '0';
+  $('declineToggleBtn').textContent = declineTableVisible ? 'Collapse ▴' : 'Expand ▾';
 }
 
 /* ===== LEASE BONUS CALCULATOR ===== */
@@ -1735,10 +1920,11 @@ function buildLayoutB(r) {
   const reportName = ($('reportName') && $('reportName').value.trim()) || '';
   const hdr = (sub) => `<div style="background:#1D3C2B;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:18px;font-weight:700;color:#F7F3EC;letter-spacing:-0.5px;font-family:sans-serif;">Mineral<span style="color:#A0845C;">Calc</span></div><div style="font-size:10px;color:#A8C0B0;margin-top:2px;font-family:sans-serif;">${sub}</div></div><div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>${reportName ? `<span style="display:block;color:#A0845C;font-size:10px;margin-top:1px;">${reportName}</span>` : ''}Generated ${date}</div></div>`;
   const sec = t => `<div style="font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#A0845C;margin-bottom:7px;padding-bottom:4px;border-bottom:0.5px solid #d0c8b8;font-family:sans-serif;">${t}</div>`;
-  const irow = (k,v) => `<tr><td style="padding:2px 0;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;color:#7a6a50;width:56%;">${k}</td><td style="padding:2px 0;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;font-weight:500;text-align:right;">${v}</td></tr>`;
+  const irow = (k,v) => `<tr><td style="padding:2px 4px;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;color:#7a6a50;text-align:center;">${k}</td><td style="padding:2px 4px;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;font-weight:500;text-align:center;">${v}</td></tr>`;
   const th = h => `<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:center;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`;
   const maxDeclineRows = Math.min(S.yearsModel, 8);
   return `
+  <style>@page{size:letter;margin:0.45in;} .pdf-p2{page-break-before:always;}</style>
   <div style="font-family:sans-serif;color:#1D3C2B;">
     <div style="background:#FFFDF8;">
       ${hdr('Royalty Income Estimate — Page 1 of 2')}
@@ -1778,7 +1964,7 @@ function buildLayoutB(r) {
       </div>
       ${pdfFooter('Page 1 of 2')}
     </div>
-    <div style="background:#FFFDF8;break-before:page;page-break-before:always;">
+    <div class="pdf-p2" style="background:#FFFDF8;">
       ${hdr('Scenario Analysis & Decline Schedule — Page 2 of 2')}
       <div style="padding:20px 28px;">
         ${sec('Price vs. royalty rate — annual net royalty income')}
@@ -1907,6 +2093,11 @@ function bindInputs() {
   $('ppdRate').addEventListener('input', e => {
     S.postProdRate = parseInt(e.target.value);
     $('ppdRateLabel').textContent = S.postProdRate + '%';
+    update();
+  });
+  $('discountRate').addEventListener('input', e => {
+    S.discountRate = parseInt(e.target.value);
+    $('discountRateLabel').textContent = S.discountRate + '%';
     update();
   });
 }
@@ -2157,6 +2348,8 @@ function resetDefaults() {
   $('ppdToggleBtn').textContent = 'OFF';
   $('ppdToggleBtn').classList.remove('on');
   $('ppdWrap').classList.remove('show');
+  $('discountRate').value       = DEFAULTS.discountRate;
+  $('discountRateLabel').textContent = DEFAULTS.discountRate + '%';
   setCommodity('oil');
 }
 
@@ -2288,13 +2481,24 @@ function toggleAcc(btn) {
 function toggleNav() { $('navLinks').classList.toggle('open'); }
 
 function showView(tab) {
-  const isEdu = tab === 'education';
-  $('main-view').style.display      = isEdu ? 'none' : '';
-  $('education-view').style.display = isEdu ? 'block' : 'none';
+  $('main-view').style.display      = tab === 'main'      ? '' : 'none';
+  $('education-view').style.display = tab === 'education' ? 'block' : 'none';
+  $('analyzer-view').style.display  = tab === 'analyzer'  ? 'block' : 'none';
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-active'));
-  if (isEdu) $('nav-edu').classList.add('nav-active');
+  if (tab === 'education') $('nav-edu').classList.add('nav-active');
+  if (tab === 'analyzer')  $('nav-analyzer').classList.add('nav-active');
   $('navLinks').classList.remove('open');
-  if (isEdu) window.scrollTo(0, 0);
+  if (tab !== 'main') window.scrollTo(0, 0);
+}
+
+function submitWaitlist(e) {
+  e.preventDefault();
+  const email = $('waitlistEmail').value.trim();
+  if (!email) return;
+  localStorage.setItem('mc_waitlist', '1');
+  $('waitlistForm').style.display = 'none';
+  $('waitlistConfirm').style.display = 'flex';
+  // TODO: Remove preventDefault above and set form action="https://formspree.io/f/YOUR_FORM_ID" to send emails
 }
 document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => $('navLinks').classList.remove('open'));
@@ -2307,6 +2511,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setState('OK', false);
   syncAcreChips(S.grossAcres);
   update();
+  // Set initial max-height for decline section collapse animation
+  const dsb = $('declineSectionBody');
+  if (dsb) setTimeout(() => { dsb.style.maxHeight = dsb.scrollHeight + 'px'; }, 100);
 });
 </script>
 
