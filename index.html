@@ -4,7 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MineralCalc — Royalty Income Calculator</title>
-  <meta name="description" content="Free mineral rights royalty income calculator for oil and gas leases. Model royalty income, run sensitivity analysis, and understand your mineral rights value.">
+  <meta name="description" content="Free oil and gas royalty income calculator for mineral owners. Know what your minerals are worth before you sign a lease. Model income, run sensitivity analysis, compare bonus offers.">
+  <meta property="og:title" content="MineralCalc — Free Oil &amp; Gas Royalty Income Calculator">
+  <meta property="og:description" content="Know what your minerals are worth before you sign anything. Free royalty income calculator for mineral owners, landmen, and investors.">
+  <meta property="og:url" content="https://aogerardi.github.io/mineralcalc">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://aogerardi.github.io/mineralcalc/mineralcalc_favicon.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="MineralCalc — Free Royalty Income Calculator">
+  <meta name="twitter:description" content="Know what your minerals are worth before you sign anything. Free tool for mineral owners, landmen, and investors.">"
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -31,7 +39,7 @@
       --red:          #A03030;
       --pos-green:    #3A6A4A;
     }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -431,6 +439,23 @@
     }
     .footer-disc { font-size: 0.72rem; color: #7A9A86; max-width: 580px; margin: 10px auto 0; line-height: 1.65; font-family: 'Inter', sans-serif; }
 
+    /* ===== WAITLIST BAR ===== */
+    .waitlist-bar { background: var(--card2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 18px 48px; }
+    .waitlist-inner { max-width: 1380px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .waitlist-text { font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .waitlist-text strong { color: var(--text); }
+    .waitlist-text .coming-pill { display: inline-block; background: var(--amber); color: #fff; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; margin-right: 6px; vertical-align: middle; }
+    .waitlist-form { display: flex; gap: 8px; flex-shrink: 0; }
+    .waitlist-form input[type="email"] { padding: 8px 14px; border: 1px solid var(--border-dark); background: var(--card); font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--text); width: 220px; }
+    .waitlist-form input[type="email"]:focus { outline: none; border-color: var(--amber); }
+    .waitlist-form button { background: var(--nav-bg); color: #F7F3EC; border: none; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; padding: 8px 18px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .waitlist-form button:hover { background: #2E5A3E; }
+    .waitlist-form .waitlist-ok { display: none; font-size: 0.78rem; color: var(--pos-green); font-family: 'Inter', sans-serif; align-items: center; }
+    .scope-coming { color: var(--amber) !important; font-style: italic; }
+    .scope-coming-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: var(--amber); color: #fff; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
+    @media (max-width: 920px) { .waitlist-bar { padding: 16px 20px; } .waitlist-form input[type="email"] { width: 160px; } }
+    @media (max-width: 480px) { .waitlist-inner { flex-direction: column; align-items: flex-start; } .waitlist-form { width: 100%; } .waitlist-form input[type="email"] { flex: 1; width: auto; } }
+
     /* ===== DISCLAIMER BANNER ===== */
     .disc-banner {
       display: flex; align-items: flex-start; gap: 8px;
@@ -509,27 +534,31 @@
 
     /* ===== PRINT ===== */
     @media print {
-      .navbar, .hero, .action-row, .meth-wrap, footer, .disc-banner { display: none !important; }
-      .print-header { display: block !important; padding-bottom: 12pt; border-bottom: 1pt solid #ccc; margin-bottom: 16pt; }
-      .print-header h2 { font-size: 15pt; color: #000; margin-bottom: 3pt; }
-      .print-header p { font-size: 9pt; color: #555; }
-      body { background: #fff; color: #000; font-size: 11pt; }
-      .wrap, .sens-wrap, .bonus-wrap { padding: 12pt 0; }
-      .calc-grid, .bonus-grid { grid-template-columns: 1fr; }
-      .results-panel { position: static; background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; }
-      .panel, .stat-card, .value-range-card { background: #fff !important; border: 1px solid #ccc !important; }
-      .stat-val, .stat-card.gold-border .stat-val, .value-range-val, .bonus-big { color: #000 !important; }
-      .stat-lbl, .value-range-lbl, .data-row span, .bonus-row span { color: #333 !important; }
-      .formula-box, .bonus-verdict { background: #f9f9f9 !important; border: 1pt solid #ccc !important; border-left: 2pt solid #999 !important; }
-      .formula-box b, .bonus-verdict b { color: #000 !important; }
-      .bar-fill { color: #000 !important; }
-      .tbl-scroll { overflow: visible; }
-      td, th { border: 1px solid #ccc !important; font-size: 8pt; padding: 5px 8px !important; background: #fff !important; color: #000 !important; }
-      .c-cur { outline: 2px solid #555 !important; }
-      .divider { background: #ccc; margin: 0; }
-      .section-label { color: #555 !important; }
-      .section-label::after { background: #ccc !important; }
+      body > *:not(#print-layout) { display: none !important; }
+      #print-layout { display: block !important; }
+      @page { size: letter; margin: 0.6in; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
+
+    /* ===== PRINT MODAL ===== */
+    .print-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 3000; align-items: center; justify-content: center;
+    }
+    .print-modal-overlay.open { display: flex; }
+    .print-modal { background: var(--card); border: 1px solid var(--border-dark); padding: 32px; max-width: 560px; width: calc(100% - 40px); }
+    .print-modal h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--text); margin-bottom: 5px; }
+    .print-modal-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 22px; }
+    .print-option-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .print-option-card { border: 1px solid var(--border-dark); padding: 18px; cursor: pointer; transition: border-color 0.15s,background 0.15s; display: flex; flex-direction: column; }
+    .print-option-card:hover { border-color: var(--amber); background: var(--amber-dim); }
+    .print-option-icon { font-size: 1.3rem; margin-bottom: 8px; }
+    .print-option-label { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .print-option-sub { font-size: 0.72rem; color: var(--muted); line-height: 1.5; margin-bottom: 6px; flex: 1; }
+    .print-option-best { font-size: 0.68rem; color: var(--dim); font-style: italic; margin-bottom: 12px; }
+    .print-btn { width: 100%; background: var(--nav-bg); color: #F7F3EC; border: none; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; padding: 9px; cursor: pointer; transition: background 0.15s; }
+    .print-btn:hover { background: #2E5A3E; }
+    .print-modal-cancel { display: block; text-align: center; font-size: 0.75rem; color: var(--dim); cursor: pointer; margin-top: 10px; background: none; border: none; font-family: 'Inter', sans-serif; width: 100%; }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 920px) {
@@ -553,11 +582,20 @@
       .calc-grid, .bonus-grid { grid-template-columns: 1fr; }
       .results-panel { position: static; }
       footer { padding: 32px 20px; }
+      .panel { padding: 20px; }
+      .dcalc-tab { font-size: 0.63rem; padding: 5px 8px; }
+      .print-option-cards { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
       .stat-grid { grid-template-columns: 1fr; }
       .stat-card.gold-border .stat-val { font-size: 1.35rem; }
       .bonus-big { font-size: 1.4rem; }
+      .dcalc-fields { grid-template-columns: 1fr; }
+      .dcalc-history-grid { grid-template-columns: 1fr; }
+      .dcalc-hist-header-row { display: none; }
+      .bar-cell { min-width: 60px; }
+      .dcalc-tab { font-size: 0.6rem; padding: 4px 6px; }
+      .tbl-scroll { -webkit-overflow-scrolling: touch; }
     }
   </style>
 </head>
@@ -580,10 +618,10 @@
 <!-- ===== HERO ===== -->
 <section class="hero">
   <div class="hero-content">
-    <div class="hero-badge">Built for Oklahoma O&amp;G — works anywhere</div>
-    <h1>Estimate Your Mineral <span class="gold">Royalty Income</span></h1>
-    <p class="hero-sub">A free tool for mineral owners, landmen, and investors to model oil and gas royalty income under real market conditions.</p>
-    <a href="#calculator" class="btn-cta">Open Calculator ↓</a>
+    <div class="hero-badge">Free · Oklahoma SCOOP/STACK · Works anywhere in the US</div>
+    <h1>Know What Your Minerals Are Worth — <span class="gold">Before You Sign Anything</span></h1>
+    <p class="hero-sub">Model royalty income, evaluate lease offers, and understand your mineral rights value in minutes. Built for Oklahoma mineral owners and the professionals who work with them.</p>
+    <a href="#calculator" class="btn-cta">Run Your Estimate ↓</a>
   </div>
 </section>
 
@@ -1528,9 +1566,219 @@ function updateBonus(r) {
 }
 
 /* ===== PRINT / PDF ===== */
+/* ===== PRINT SYSTEM ===== */
 function printResults() {
-  $('printDate').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  window.print();
+  if (!validate()) return;
+  $('printModalOverlay').classList.add('open');
+}
+function closePrintModal() {
+  $('printModalOverlay').classList.remove('open');
+}
+function printLayout(type) {
+  if (!validate()) return;
+  closePrintModal();
+  const r = runCalc();
+  const container = $('print-layout');
+  container.innerHTML = type === 'a' ? buildLayoutA(r) : buildLayoutB(r);
+  container.style.display = 'block';
+  const state = getStateName().split(' ')[0];
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('en-US',{month:'short',year:'numeric'}).replace(' ','_');
+  const originalTitle = document.title;
+  document.title = `MineralCalc_${S.nma}NMA_${S.grossAcres}ac_${state}_${dateStr}`;
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      document.title = originalTitle;
+      container.innerHTML = '';
+      container.style.display = 'none';
+    }, 1000);
+  }, 200);
+}
+function getRoyaltyLabel() {
+  const map = { '0.125':'1/8 (12.5%)', '0.16667':'1/6 (16.667%)', '0.1875':'3/16 (18.75%)', '0.2':'1/5 (20%)', '0.25':'1/4 (25%)' };
+  return map[S.royaltySelect] || ((S.royaltyRate * 100).toFixed(4).replace(/\.?0+$/,'') + '% (custom)');
+}
+function getStateName() {
+  const sel = $('producingState');
+  if (!sel) return '—';
+  return sel.options[sel.selectedIndex].text.split(' — ')[0];
+}
+function getPriceScenarioLabel() {
+  if (S.priceScenario === '0') return 'Base price';
+  if (S.priceScenario === 'custom') return 'Custom';
+  const pct = parseFloat(S.priceScenario) * 100;
+  return (pct > 0 ? '+' : '') + pct.toFixed(0) + '%';
+}
+function getPrintDeclineRows(schedule, maxYears, compact = false) {
+  const unit = S.commodity === 'oil' ? 'BOE/d' : 'MCF/d';
+  const maxRoy = Math.max(...schedule.map(r => r.netRoy));
+  const pad = compact ? '2px 6px' : '4px 8px';
+  const fs  = compact ? '9.5px' : '11px';
+  return schedule.slice(0, maxYears).map(row => {
+    const barW = maxRoy > 0 ? Math.round((row.netRoy / maxRoy) * 70) : 0;
+    const bg = row.year % 2 === 0 ? 'background:#F7F3EC;' : '';
+    return `<tr style="${bg}">
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">Year ${row.year}</td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${Math.round(row.dailyProd * S.numWells).toLocaleString()} ${unit}</td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(row.grossRev)}</td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(row.netRoy)}</td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(row.cumulative)}</td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;"><span style="display:inline-block;background:#A0845C;height:4px;border-radius:2px;vertical-align:middle;width:${barW}px;"></span></td>
+    </tr>`;
+  }).join('');
+}
+function getPrintSensRows(r) {
+  const COLS = [{label:'1/8',val:0.125},{label:'3/16',val:0.1875},{label:'1/5',val:0.2},{label:'1/4',val:0.25}];
+  const MULTS = [-0.40,-0.30,-0.20,-0.10,0,0.10,0.20,0.30,0.40];
+  const taxF = r.ppdFactor * (1 - (S.severanceTax + S.adValoremTax) / 100);
+  return MULTS.map((m, ri) => {
+    const p = r.ep * (1 + m);
+    const isBase = ri === 4;
+    const upDown = m > 0 ? 'color:#1a5c1a;' : m < 0 ? 'color:#8b1a1a;' : '';
+    const rowStyle = isBase ? 'font-weight:700;' : upDown;
+    const priceLabel = m === 0 ? `$${p.toFixed(2)} (base)` : `$${p.toFixed(2)} (${m>0?'+':''}${(m*100).toFixed(0)}%)`;
+    const baseBorder = isBase ? 'border:1.5px solid #A0845C !important;' : '';
+    let row = `<tr style="${rowStyle}">`;
+    row += `<td style="padding:4px 6px;border-bottom:0.5px solid #e8e0d0;text-align:left;color:#7a6a50;font-family:sans-serif;font-size:10px;${baseBorder}">${priceLabel}</td>`;
+    COLS.forEach(c => {
+      const rd = (S.nma / S.grossAcres) * c.val;
+      const ann = S.production * S.numWells * 365 * p * rd * taxF;
+      row += `<td style="padding:4px 6px;border-bottom:0.5px solid #e8e0d0;text-align:center;font-family:sans-serif;font-size:10px;${baseBorder}">$${Math.round(ann/1000)}K</td>`;
+    });
+    return row + '</tr>';
+  }).join('');
+}
+function getPrintBonusHTML() {
+  const bonusPerNMA = parseFloat($('bonusPerNMA').value) || 0;
+  if (bonusPerNMA <= 0) return `<div style="font-size:11px;color:#7a6a50;font-style:italic;font-family:sans-serif;">No bonus offer entered — open the Lease Bonus section to compare.</div>`;
+  const row = (k,v) => `<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:11px;"><span style="color:#7a6a50;">${k}</span><span style="font-weight:500;">${v}</span></div>`;
+  return row('Offered bonus', `$${bonusPerNMA.toLocaleString()}/NMA × ${S.nma} NMA = $${Math.round(bonusPerNMA * S.nma).toLocaleString()}`)
+    + row('Equivalent royalty months (Yr 1 rate)', $('b-months').textContent)
+    + row(`Bonus as % of ${S.yearsModel}-yr projected income`, $('b-pctTotal').textContent)
+    + row('Royalty income during primary term', $('b-termIncome').textContent)
+    + `<div style="display:flex;justify-content:space-between;padding:8px 0 3px;border-top:0.5px solid #d0c8b8;margin-top:4px;font-family:sans-serif;font-size:11px;"><span style="color:#1D3C2B;font-weight:600;">Assessment</span><span>${$('bonusVerdict').textContent}</span></div>`;
+}
+function pdfFooter(pageLabel) {
+  return `<div style="background:#1D3C2B;padding:7px 28px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:13px;font-weight:700;color:#F7F3EC;font-family:sans-serif;letter-spacing:-0.3px;">Mineral<span style="color:#A0845C;">Calc</span></span>
+      <span style="font-size:8.5px;color:#A8C0B0;font-family:sans-serif;">Free oil &amp; gas royalty income calculator for mineral owners</span>
+    </div>
+    <div style="text-align:right;font-family:sans-serif;">
+      <div style="font-size:8.5px;color:#A0845C;font-weight:600;">Run your own estimate free →</div>
+      <div style="font-size:8px;color:#A8C0B0;">aogerardi.github.io/mineralcalc${pageLabel ? ' · ' + pageLabel : ''}</div>
+    </div>
+  </div>`;
+}
+function buildLayoutA(r) {
+  const unit = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const state = getStateName();
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const formula = $('formulaBox').innerHTML.replace(/<\/?b>/g,'');
+  const th = h => `<th style="background:#1D3C2B;color:#A8C0B0;padding:5px 8px;text-align:left;font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`;
+  const inputRow = (k,v) => `<div style="font-size:11px;font-family:sans-serif;display:flex;justify-content:space-between;border-bottom:0.5px solid #f0e8d8;padding:3px 0;"><span style="color:#7a6a50;">${k}</span><span style="color:#1D3C2B;font-weight:600;">${v}</span></div>`;
+  const sec = t => `<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#A0845C;font-family:sans-serif;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid #d0c8b8;">${t}</div>`;
+  return `<div style="font-family:Georgia,serif;color:#1D3C2B;background:#FFFDF8;">
+    <div style="background:#1D3C2B;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;">
+      <div><div style="font-size:20px;font-weight:700;color:#F7F3EC;letter-spacing:-0.5px;font-family:sans-serif;">Mineral<span style="color:#A0845C;">Calc</span></div><div style="font-size:10px;color:#A8C0B0;font-family:sans-serif;margin-top:2px;">Royalty Income Estimate — Simple Summary</div></div>
+      <div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;margin-bottom:2px;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>Generated ${date} · For estimation purposes only</div>
+    </div>
+    <div style="padding:20px 28px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+        <div style="background:#1D3C2B;padding:12px;text-align:center;"><span style="font-size:22px;font-weight:700;color:#F7F3EC;display:block;font-family:sans-serif;">${fmt(r.monthlyNetRoyalty)}</span><span style="font-size:9px;color:#A8C0B0;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;display:block;">Monthly net royalty</span></div>
+        <div style="background:#F7F3EC;border:0.5px solid #A0845C;padding:12px;text-align:center;"><span style="font-size:22px;font-weight:700;color:#1D3C2B;display:block;font-family:sans-serif;">${fmt(r.annualNetYear1)}</span><span style="font-size:9px;color:#7a6a50;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;display:block;">Annual income (Yr 1)</span></div>
+        <div style="background:#F7F3EC;border:0.5px solid #A0845C;padding:12px;text-align:center;"><span style="font-size:22px;font-weight:700;color:#1D3C2B;display:block;font-family:sans-serif;">${fmt(r.cumulativeTotal)}</span><span style="font-size:9px;color:#7a6a50;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;display:block;">${S.yearsModel}-year cumulative</span></div>
+      </div>
+      ${sec('Inputs')}
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;">
+        ${[['Spacing unit',`${S.grossAcres} ac`],['NMA owned',`${S.nma} ac`],['Royalty rate',getRoyaltyLabel()],['Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)'],['IP rate',`${S.production} ${unit}/day`],['Price',`$${r.ep.toFixed(2)}/${unit}`],['Wells',S.numWells],['Decline rate',`${S.declineRate}%/yr`],['Severance tax',`${S.severanceTax}%`],['Ad valorem',`${S.adValoremTax}%`],['State',state],['Royalty decimal',fmtD(r.rd,6)]].map(([k,v])=>inputRow(k,v)).join('')}
+      </div>
+      ${sec('Formula')}<div style="background:#F7F3EC;border-left:3px solid #A0845C;padding:8px 12px;margin-bottom:16px;font-family:monospace;font-size:10px;color:#1D3C2B;">${formula}</div>
+      ${sec('Year-by-year decline (first 5 years)')}
+      <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:16px;">
+        <thead><tr>${['Year','Daily production','Gross revenue','Net royalty','Cumulative','Income'].map(th).join('')}</tr></thead>
+        <tbody>${getPrintDeclineRows(r.schedule,5)}</tbody>
+      </table>
+      <div style="background:#1D3C2B;color:#F7F3EC;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-family:sans-serif;margin-bottom:0;">
+        <div><div style="font-size:10px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:2px;">Based on 3×–5× Year 1 annual income (typical buyer multiple)</div></div>
+        <div style="font-size:17px;font-weight:700;color:#A0845C;">${fmt(r.annualNetYear1*3)} – ${fmt(r.annualNetYear1*5)}</div>
+      </div>
+    </div>
+    ${pdfFooter('Estimates only — not financial or legal advice')}
+  </div>`;
+}
+function buildLayoutB(r) {
+  const unit = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const state = getStateName();
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const formula = $('formulaBox').innerHTML.replace(/<\/?b>/g,'');
+  const sevDeduct = fmt(r.monthlyGrossRoyalty * S.severanceTax / 100);
+  const avDeduct  = fmt(r.monthlyGrossRoyalty * S.adValoremTax / 100);
+  const hdr = (sub) => `<div style="background:#1D3C2B;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:18px;font-weight:700;color:#F7F3EC;letter-spacing:-0.5px;font-family:sans-serif;">Mineral<span style="color:#A0845C;">Calc</span></div><div style="font-size:10px;color:#A8C0B0;margin-top:2px;font-family:sans-serif;">${sub}</div></div><div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>Generated ${date}</div></div>`;
+  const sec = t => `<div style="font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#A0845C;margin-bottom:7px;padding-bottom:4px;border-bottom:0.5px solid #d0c8b8;font-family:sans-serif;">${t}</div>`;
+  const irow = (k,v) => `<tr><td style="padding:2px 0;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;color:#7a6a50;width:56%;">${k}</td><td style="padding:2px 0;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;font-weight:500;text-align:right;">${v}</td></tr>`;
+  const th = h => `<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:center;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`;
+  const maxDeclineRows = Math.min(S.yearsModel, 8);
+  return `
+  <div style="font-family:sans-serif;color:#1D3C2B;">
+    <div style="background:#FFFDF8;page-break-after:always;break-after:page;">
+      ${hdr('Royalty Income Estimate — Page 1 of 2')}
+      <div style="padding:20px 28px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+          <div style="background:#1D3C2B;padding:10px;"><div style="font-size:22px;font-weight:700;color:#A0845C;">${fmt(r.monthlyNetRoyalty)}</div><div style="font-size:9px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Monthly net royalty</div></div>
+          <div style="background:#F7F3EC;border:0.5px solid #d0c8b8;padding:10px;"><div style="font-size:18px;font-weight:700;color:#1D3C2B;">${fmt(r.annualNetYear1)}</div><div style="font-size:9px;color:#7a6a50;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Annual income (Yr 1)</div></div>
+          <div style="background:#F7F3EC;border:0.5px solid #d0c8b8;padding:10px;"><div style="font-size:18px;font-weight:700;color:#1D3C2B;">${fmt(r.cumulativeTotal)}</div><div style="font-size:9px;color:#7a6a50;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">${S.yearsModel}-year cumulative</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:14px;">
+          <div>
+            ${sec('Inputs')}
+            <table style="width:100%;border-collapse:collapse;">
+              ${irow('Spacing unit size',`${S.grossAcres} acres`)}${irow('Net mineral acres (NMA)',`${S.nma} ac`)}${irow('Royalty rate',getRoyaltyLabel())}${irow('Royalty decimal',fmtD(r.rd,6))}${irow('Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)')}${irow('IP rate (per well)',`${S.production} ${unit}/day`)}${irow('Number of wells',S.numWells)}${irow('Price used',`$${r.ep.toFixed(2)}/${unit}`)}${irow('Price scenario',getPriceScenarioLabel())}${irow('Annual decline rate',`${S.declineRate}%`)}${irow('Years modeled',S.yearsModel)}${irow('State',state)}${irow('Severance tax',`${S.severanceTax}%`)}${irow('Ad valorem tax',`${S.adValoremTax}%`)}${irow('Effective tax rate',fmtP(S.severanceTax+S.adValoremTax))}${irow('Post-prod. deductions',S.postProdEnabled?`On (${S.postProdRate}%)`:'Off')}
+            </table>
+          </div>
+          <div>
+            ${sec('Key Metrics')}
+            <table style="width:100%;border-collapse:collapse;">
+              ${irow('Monthly gross revenue',fmt(r.monthlyGrossRev))}${irow('Monthly gross royalty',fmt(r.monthlyGrossRoyalty))}${irow('Severance deduction',sevDeduct)}${irow('Ad valorem deduction',avDeduct)}${irow('Monthly net royalty',`<strong>${fmt(r.monthlyNetRoyalty)}</strong>`)}${irow('Annual net (Yr 1)',`<strong>${fmt(r.annualNetYear1)}</strong>`)}${irow('Avg annual w/ decline',fmt(r.cumulativeTotal/S.yearsModel))}${irow('Annual income / NMA',fmt(r.annualNetYear1/S.nma)+'/NMA')}${irow('Est. value if sold (3×)',fmt(r.annualNetYear1*3))}${irow('Est. value if sold (5×)',fmt(r.annualNetYear1*5))}
+            </table>
+          </div>
+        </div>
+        ${sec('Formula')}
+        <div style="background:#F7F3EC;border-left:3px solid #A0845C;padding:8px 12px;margin-bottom:14px;font-family:monospace;font-size:9px;color:#1D3C2B;line-height:1.6;">${formula}</div>
+        ${sec('Year-by-year decline (first 5 years)')}
+        <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+          <thead><tr>
+            ${['Year','Daily production','Gross revenue','Net royalty','Cumulative','Relative'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:3px 6px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}
+          </tr></thead>
+          <tbody>${getPrintDeclineRows(r.schedule, 5, true)}</tbody>
+        </table>
+        <div style="background:#1D3C2B;color:#F7F3EC;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:9px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:1px;">Based on 3×–5× Year 1 annual income</div></div>
+          <div style="font-size:16px;font-weight:700;color:#A0845C;">${fmt(r.annualNetYear1*3)} – ${fmt(r.annualNetYear1*5)}</div>
+        </div>
+      </div>
+      ${pdfFooter('Page 1 of 2')}
+    </div>
+    <div style="background:#FFFDF8;">
+      ${hdr('Scenario Analysis & Decline Schedule — Page 2 of 2')}
+      <div style="padding:20px 28px;">
+        ${sec('Price vs. royalty rate — annual net royalty income')}
+        <table style="width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:14px;">
+          <thead><tr><th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">Price</th>${['1/8 (12.5%)','3/16 (18.75%)','1/5 (20%)','1/4 (25%)'].map(th).join('')}</tr></thead>
+          <tbody>${getPrintSensRows(r)}</tbody>
+        </table>
+        ${sec(`Year-by-year production decline schedule (first ${maxDeclineRows} years)`)}
+        <table style="width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:14px;">
+          <thead><tr>${['Year','Daily production','Annual gross rev.','Annual net royalty','Cumulative net','Relative'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}</tr></thead>
+          <tbody>${getPrintDeclineRows(r.schedule, maxDeclineRows)}</tbody>
+        </table>
+        ${sec('Lease bonus comparison')}
+        <div style="background:#F7F3EC;border:0.5px solid #d0c8b8;padding:12px;margin-bottom:0;">${getPrintBonusHTML()}</div>
+      </div>
+      ${pdfFooter('Page 2 of 2 · Estimates only — not financial or legal advice')}
+    </div>
+  </div>`;
 }
 
 /* ===== VALIDATION ===== */
@@ -2043,5 +2291,34 @@ document.addEventListener('DOMContentLoaded', () => {
   update();
 });
 </script>
+
+<!-- ===== PRINT MODAL ===== -->
+<div class="print-modal-overlay" id="printModalOverlay">
+  <div class="print-modal">
+    <h3>Choose your report format</h3>
+    <div class="print-modal-sub">Select a layout to print or save as PDF from your browser's print dialog</div>
+    <div class="print-option-cards">
+      <div class="print-option-card">
+        <div class="print-option-icon">📄</div>
+        <div class="print-option-label">Simple Summary</div>
+        <div class="print-option-sub">1 page · Key numbers, inputs, and 5-year decline</div>
+        <div class="print-option-best">Best for: Sharing with family or a quick reference</div>
+        <button class="print-btn" onclick="printLayout('a')">Print Simple</button>
+      </div>
+      <div class="print-option-card">
+        <div class="print-option-icon">📋</div>
+        <div class="print-option-label">Full Report</div>
+        <div class="print-option-sub">2 pages · Full inputs, sensitivity table, full decline schedule, lease bonus comparison</div>
+        <div class="print-option-best">Best for: Attorneys, landmen, or detailed analysis</div>
+        <button class="print-btn" onclick="printLayout('b')">Print Full Report</button>
+      </div>
+    </div>
+    <button class="print-modal-cancel" onclick="closePrintModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Print layout container (populated by JS before window.print()) -->
+<div id="print-layout" style="display:none"></div>
+
 </body>
 </html>
