@@ -680,6 +680,10 @@
 <section class="wrap" id="calculator">
   <div class="section-label">Royalty Estimator</div>
   <h2>Income Calculator</h2>
+  <div style="margin-bottom:24px;max-width:560px;">
+    <label style="display:block;font-size:0.72rem;font-weight:500;color:var(--muted);margin-bottom:5px;font-family:'Inter',sans-serif;letter-spacing:0.02em;">Report Name / Tract Description <span style="font-weight:400;color:var(--dim);">(optional — appears in PDF header)</span></label>
+    <input type="text" id="reportName" placeholder="e.g. Smith Minerals — Section 14, Kingfisher Co." style="width:100%;padding:9px 12px;border:1px solid var(--border-dark);background:var(--card);font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--text);">
+  </div>
 
   <div class="calc-grid">
 
@@ -1584,8 +1588,10 @@ function printLayout(type) {
   const state = getStateName().split(' ')[0];
   const d = new Date();
   const dateStr = d.toLocaleDateString('en-US',{month:'short',year:'numeric'}).replace(' ','_');
+  const rn = ($('reportName') && $('reportName').value.trim()) || '';
+  const rnPart = rn ? '_' + rn.replace(/[^a-zA-Z0-9]/g,'_').replace(/_+/g,'_').slice(0,30) : '';
   const originalTitle = document.title;
-  document.title = `MineralCalc_${S.nma}NMA_${S.grossAcres}ac_${state}_${dateStr}`;
+  document.title = `MineralCalc_${S.nma}NMA_${S.grossAcres}ac_${state}${rnPart}_${dateStr}`;
   setTimeout(() => {
     window.print();
     setTimeout(() => {
@@ -1610,21 +1616,29 @@ function getPriceScenarioLabel() {
   const pct = parseFloat(S.priceScenario) * 100;
   return (pct > 0 ? '+' : '') + pct.toFixed(0) + '%';
 }
-function getPrintDeclineRows(schedule, maxYears, compact = false) {
+function buildPrintFormula(r) {
+  const du = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const pu = S.commodity === 'oil' ? 'BBL' : 'MCF';
+  const ppdTerm = S.postProdEnabled ? ` × (1 − ${S.postProdRate}% post-prod deductions)` : '';
+  return `(${S.production} ${du}/day × ${S.numWells} well${S.numWells>1?'s':''} × 365 days) × $${r.ep.toFixed(2)}/${pu} × ${fmtD(r.rd,6)} royalty decimal${ppdTerm} × (1 − ${fmtP(S.severanceTax+S.adValoremTax,1)} taxes) = $${Math.round(r.monthlyNetRoyalty).toLocaleString()}/mo (× 12 = $${Math.round(r.annualNetYear1).toLocaleString()}/yr)`;
+}
+function getPrintDeclineRows(schedule, maxYears, compact = false, rd = 0) {
   const unit = S.commodity === 'oil' ? 'BOE/d' : 'MCF/d';
   const maxRoy = Math.max(...schedule.map(r => r.netRoy));
   const pad = compact ? '2px 6px' : '4px 8px';
   const fs  = compact ? '9.5px' : '11px';
   return schedule.slice(0, maxYears).map(row => {
-    const barW = maxRoy > 0 ? Math.round((row.netRoy / maxRoy) * 70) : 0;
+    const blocks = maxRoy > 0 ? Math.round((row.netRoy / maxRoy) * 10) : 0;
+    const bar = '█'.repeat(blocks) + '░'.repeat(10 - blocks);
+    const grossRoyalty = rd > 0 ? row.grossRev * rd : row.grossRev;
     const bg = row.year % 2 === 0 ? 'background:#F7F3EC;' : '';
     return `<tr style="${bg}">
       <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">Year ${row.year}</td>
       <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${Math.round(row.dailyProd * S.numWells).toLocaleString()} ${unit}</td>
-      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(row.grossRev)}</td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(grossRoyalty)}</td>
       <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(row.netRoy)}</td>
       <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:sans-serif;font-size:${fs};">${fmt(row.cumulative)}</td>
-      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;"><span style="display:inline-block;background:#A0845C;height:4px;border-radius:2px;vertical-align:middle;width:${barW}px;"></span></td>
+      <td style="padding:${pad};border-bottom:0.5px solid #e8e0d0;font-family:monospace;font-size:8px;color:#A0845C;letter-spacing:-0.5px;">${bar}</td>
     </tr>`;
   }).join('');
 }
@@ -1672,17 +1686,19 @@ function pdfFooter(pageLabel) {
   </div>`;
 }
 function buildLayoutA(r) {
-  const unit = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const prodUnit   = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const priceUnit  = S.commodity === 'oil' ? 'BBL' : 'MCF';
   const state = getStateName();
   const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const formula = $('formulaBox').innerHTML.replace(/<\/?b>/g,'');
+  const formula = buildPrintFormula(r);
+  const reportName = ($('reportName') && $('reportName').value.trim()) || '';
   const th = h => `<th style="background:#1D3C2B;color:#A8C0B0;padding:5px 8px;text-align:left;font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`;
   const inputRow = (k,v) => `<div style="font-size:11px;font-family:sans-serif;display:flex;justify-content:space-between;border-bottom:0.5px solid #f0e8d8;padding:3px 0;"><span style="color:#7a6a50;">${k}</span><span style="color:#1D3C2B;font-weight:600;">${v}</span></div>`;
   const sec = t => `<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#A0845C;font-family:sans-serif;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid #d0c8b8;">${t}</div>`;
   return `<div style="font-family:Georgia,serif;color:#1D3C2B;background:#FFFDF8;">
     <div style="background:#1D3C2B;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;">
       <div><div style="font-size:20px;font-weight:700;color:#F7F3EC;letter-spacing:-0.5px;font-family:sans-serif;">Mineral<span style="color:#A0845C;">Calc</span></div><div style="font-size:10px;color:#A8C0B0;font-family:sans-serif;margin-top:2px;">Royalty Income Estimate — Simple Summary</div></div>
-      <div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;margin-bottom:2px;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>Generated ${date} · For estimation purposes only</div>
+      <div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;margin-bottom:2px;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>${reportName ? `<span style="display:block;color:#A0845C;font-size:10px;margin-bottom:2px;">${reportName}</span>` : ''}Generated ${date} · For estimation purposes only</div>
     </div>
     <div style="padding:20px 28px;">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
@@ -1692,13 +1708,13 @@ function buildLayoutA(r) {
       </div>
       ${sec('Inputs')}
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;">
-        ${[['Spacing unit',`${S.grossAcres} ac`],['NMA owned',`${S.nma} ac`],['Royalty rate',getRoyaltyLabel()],['Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)'],['IP rate',`${S.production} ${unit}/day`],['Price',`$${r.ep.toFixed(2)}/${unit}`],['Wells',S.numWells],['Decline rate',`${S.declineRate}%/yr`],['Severance tax',`${S.severanceTax}%`],['Ad valorem',`${S.adValoremTax}%`],['State',state],['Royalty decimal',fmtD(r.rd,6)]].map(([k,v])=>inputRow(k,v)).join('')}
+        ${[['Spacing unit',`${S.grossAcres} ac`],['NMA owned',`${S.nma} ac`],['Royalty rate',getRoyaltyLabel()],['Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)'],['IP rate',`${S.production} ${prodUnit}/day`],['Price',`$${r.ep.toFixed(2)}/${priceUnit}`],['Wells',S.numWells],['Decline rate',`${S.declineRate}%/yr`],['Severance tax',`${S.severanceTax}%`],['Ad valorem',`${S.adValoremTax}%`],['State',state],['Royalty decimal',fmtD(r.rd,6)]].map(([k,v])=>inputRow(k,v)).join('')}
       </div>
-      ${sec('Formula')}<div style="background:#F7F3EC;border-left:3px solid #A0845C;padding:8px 12px;margin-bottom:16px;font-family:monospace;font-size:10px;color:#1D3C2B;">${formula}</div>
+      ${sec('Formula')}<div style="background:#F7F3EC;border-left:3px solid #A0845C;padding:8px 12px;margin-bottom:16px;font-family:monospace;font-size:10px;color:#1D3C2B;line-height:1.6;">${formula}</div>
       ${sec('Year-by-year decline (first 5 years)')}
       <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:16px;">
-        <thead><tr>${['Year','Daily production','Gross revenue','Net royalty','Cumulative','Income'].map(th).join('')}</tr></thead>
-        <tbody>${getPrintDeclineRows(r.schedule,5)}</tbody>
+        <thead><tr>${['Year','Daily production','Gross royalty','Net royalty','Cumulative','Income'].map(th).join('')}</tr></thead>
+        <tbody>${getPrintDeclineRows(r.schedule,5,false,r.rd)}</tbody>
       </table>
       <div style="background:#1D3C2B;color:#F7F3EC;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-family:sans-serif;margin-bottom:0;">
         <div><div style="font-size:10px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:2px;">Based on 3×–5× Year 1 annual income (typical buyer multiple)</div></div>
@@ -1709,20 +1725,22 @@ function buildLayoutA(r) {
   </div>`;
 }
 function buildLayoutB(r) {
-  const unit = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const prodUnit  = S.commodity === 'oil' ? 'BOE' : 'MCF';
+  const priceUnit = S.commodity === 'oil' ? 'BBL' : 'MCF';
   const state = getStateName();
   const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const formula = $('formulaBox').innerHTML.replace(/<\/?b>/g,'');
+  const formula = buildPrintFormula(r);
   const sevDeduct = fmt(r.monthlyGrossRoyalty * S.severanceTax / 100);
   const avDeduct  = fmt(r.monthlyGrossRoyalty * S.adValoremTax / 100);
-  const hdr = (sub) => `<div style="background:#1D3C2B;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:18px;font-weight:700;color:#F7F3EC;letter-spacing:-0.5px;font-family:sans-serif;">Mineral<span style="color:#A0845C;">Calc</span></div><div style="font-size:10px;color:#A8C0B0;margin-top:2px;font-family:sans-serif;">${sub}</div></div><div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>Generated ${date}</div></div>`;
+  const reportName = ($('reportName') && $('reportName').value.trim()) || '';
+  const hdr = (sub) => `<div style="background:#1D3C2B;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:18px;font-weight:700;color:#F7F3EC;letter-spacing:-0.5px;font-family:sans-serif;">Mineral<span style="color:#A0845C;">Calc</span></div><div style="font-size:10px;color:#A8C0B0;margin-top:2px;font-family:sans-serif;">${sub}</div></div><div style="text-align:right;font-size:10px;color:#A8C0B0;font-family:sans-serif;"><strong style="display:block;font-size:11px;color:#F7F3EC;">${S.nma} NMA · ${S.grossAcres}-acre unit · ${state}</strong>${reportName ? `<span style="display:block;color:#A0845C;font-size:10px;margin-top:1px;">${reportName}</span>` : ''}Generated ${date}</div></div>`;
   const sec = t => `<div style="font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#A0845C;margin-bottom:7px;padding-bottom:4px;border-bottom:0.5px solid #d0c8b8;font-family:sans-serif;">${t}</div>`;
   const irow = (k,v) => `<tr><td style="padding:2px 0;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;color:#7a6a50;width:56%;">${k}</td><td style="padding:2px 0;border-bottom:0.5px solid #f0e8d8;font-family:sans-serif;font-size:10px;font-weight:500;text-align:right;">${v}</td></tr>`;
   const th = h => `<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:center;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`;
   const maxDeclineRows = Math.min(S.yearsModel, 8);
   return `
   <div style="font-family:sans-serif;color:#1D3C2B;">
-    <div style="background:#FFFDF8;page-break-after:always;break-after:page;">
+    <div style="background:#FFFDF8;">
       ${hdr('Royalty Income Estimate — Page 1 of 2')}
       <div style="padding:20px 28px;">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
@@ -1734,7 +1752,7 @@ function buildLayoutB(r) {
           <div>
             ${sec('Inputs')}
             <table style="width:100%;border-collapse:collapse;">
-              ${irow('Spacing unit size',`${S.grossAcres} acres`)}${irow('Net mineral acres (NMA)',`${S.nma} ac`)}${irow('Royalty rate',getRoyaltyLabel())}${irow('Royalty decimal',fmtD(r.rd,6))}${irow('Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)')}${irow('IP rate (per well)',`${S.production} ${unit}/day`)}${irow('Number of wells',S.numWells)}${irow('Price used',`$${r.ep.toFixed(2)}/${unit}`)}${irow('Price scenario',getPriceScenarioLabel())}${irow('Annual decline rate',`${S.declineRate}%`)}${irow('Years modeled',S.yearsModel)}${irow('State',state)}${irow('Severance tax',`${S.severanceTax}%`)}${irow('Ad valorem tax',`${S.adValoremTax}%`)}${irow('Effective tax rate',fmtP(S.severanceTax+S.adValoremTax))}${irow('Post-prod. deductions',S.postProdEnabled?`On (${S.postProdRate}%)`:'Off')}
+              ${irow('Spacing unit size',`${S.grossAcres} acres`)}${irow('Net mineral acres (NMA)',`${S.nma} ac`)}${irow('Royalty rate',getRoyaltyLabel())}${irow('Royalty decimal',fmtD(r.rd,6))}${irow('Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)')}${irow('IP rate (per well)',`${S.production} ${prodUnit}/day`)}${irow('Number of wells',S.numWells)}${irow('Price used',`$${r.ep.toFixed(2)}/${priceUnit}`)}${irow('Price scenario',getPriceScenarioLabel())}${irow('Annual decline rate',`${S.declineRate}%`)}${irow('Years modeled',S.yearsModel)}${irow('State',state)}${irow('Severance tax',`${S.severanceTax}%`)}${irow('Ad valorem tax',`${S.adValoremTax}%`)}${irow('Effective tax rate',fmtP(S.severanceTax+S.adValoremTax))}${irow('Post-prod. deductions',S.postProdEnabled?`On (${S.postProdRate}%)`:'Off')}
             </table>
           </div>
           <div>
@@ -1749,9 +1767,9 @@ function buildLayoutB(r) {
         ${sec('Year-by-year decline (first 5 years)')}
         <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
           <thead><tr>
-            ${['Year','Daily production','Gross revenue','Net royalty','Cumulative','Relative'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:3px 6px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}
+            ${['Year','Daily production','Gross royalty','Net royalty','Cumulative','Income'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:3px 6px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}
           </tr></thead>
-          <tbody>${getPrintDeclineRows(r.schedule, 5, true)}</tbody>
+          <tbody>${getPrintDeclineRows(r.schedule, 5, true, r.rd)}</tbody>
         </table>
         <div style="background:#1D3C2B;color:#F7F3EC;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;">
           <div><div style="font-size:9px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:1px;">Based on 3×–5× Year 1 annual income</div></div>
@@ -1760,7 +1778,7 @@ function buildLayoutB(r) {
       </div>
       ${pdfFooter('Page 1 of 2')}
     </div>
-    <div style="background:#FFFDF8;">
+    <div style="background:#FFFDF8;break-before:page;page-break-before:always;">
       ${hdr('Scenario Analysis & Decline Schedule — Page 2 of 2')}
       <div style="padding:20px 28px;">
         ${sec('Price vs. royalty rate — annual net royalty income')}
@@ -1770,8 +1788,8 @@ function buildLayoutB(r) {
         </table>
         ${sec(`Year-by-year production decline schedule (first ${maxDeclineRows} years)`)}
         <table style="width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:14px;">
-          <thead><tr>${['Year','Daily production','Annual gross rev.','Annual net royalty','Cumulative net','Relative'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}</tr></thead>
-          <tbody>${getPrintDeclineRows(r.schedule, maxDeclineRows)}</tbody>
+          <thead><tr>${['Year','Daily production','Gross royalty','Net royalty','Cumulative net','Income'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}</tr></thead>
+          <tbody>${getPrintDeclineRows(r.schedule, maxDeclineRows, false, r.rd)}</tbody>
         </table>
         ${sec('Lease bonus comparison')}
         <div style="background:#F7F3EC;border:0.5px solid #d0c8b8;padding:12px;margin-bottom:0;">${getPrintBonusHTML()}</div>
