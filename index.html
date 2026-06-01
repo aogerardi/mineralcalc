@@ -1148,7 +1148,7 @@
         <div class="tbl-title">Year-by-Year Production Decline Schedule</div>
         <div class="tbl-sub">Exponential decline model based on your inputs. All figures in net royalty dollars after taxes.</div>
       </div>
-      <button class="btn-tbl-toggle" id="declineToggleBtn" onclick="toggleDeclineTable()">Collapse ▴</button>
+      <button class="btn-tbl-toggle" id="declineToggleBtn" onclick="toggleDeclineTable()">Expand ▾</button>
     </div>
     <div class="decline-section-body" id="declineSectionBody">
       <div class="tbl-scroll">
@@ -1736,7 +1736,7 @@ function toggleSensRows() {
   document.querySelectorAll('.sens-outer-row').forEach(r => r.style.display = sensExpanded ? 'table-row' : 'none');
   $('sensExpandBtn').textContent = sensExpanded ? 'Hide ±30–40% rows ▴' : 'Show ±30–40% rows ▾';
 }
-let declineTableVisible = true;
+let declineTableVisible = false;
 function toggleDeclineTable() {
   declineTableVisible = !declineTableVisible;
   const body = $('declineSectionBody');
@@ -2569,9 +2569,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setState('OK', false);
   syncAcreChips(S.grossAcres);
   update();
-  // Set initial max-height for decline section collapse animation
+  // Decline table starts collapsed
   const dsb = $('declineSectionBody');
-  if (dsb) setTimeout(() => { dsb.style.maxHeight = dsb.scrollHeight + 'px'; }, 100);
+  if (dsb) dsb.style.maxHeight = '0';
 });
 </script>
 
