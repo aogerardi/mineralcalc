@@ -421,6 +421,32 @@
     }
     .formula-box b { color: var(--amber-light); }
 
+    /* ===== CHECK VERIFIER ===== */
+    .check-verifier { margin-top: 16px; border-top: 1px solid var(--nav-border); padding-top: 14px; }
+    .check-verifier-toggle {
+      background: none; border: none; color: var(--amber); font-family: 'Inter', sans-serif;
+      font-size: 0.76rem; font-weight: 600; cursor: pointer; padding: 0;
+      letter-spacing: 0.02em; display: flex; align-items: center; gap: 6px;
+    }
+    .check-verifier-toggle:hover { color: var(--amber-light); }
+    .check-verifier-body { display: none; margin-top: 12px; }
+    .check-verifier-body.open { display: block; }
+    .cv-intro { font-size: 0.73rem; color: #A8C0B0; margin-bottom: 12px; line-height: 1.6; font-family: 'Inter', sans-serif; }
+    .cv-input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .cv-input-row label { font-size: 0.76rem; color: #A8C0B0; font-family: 'Inter', sans-serif; white-space: nowrap; }
+    .cv-input-row input { width: 130px; background: rgba(255,255,255,0.07); border: 1px solid var(--nav-border); color: #F7F3EC; font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; padding: 7px 10px; outline: none; }
+    .cv-input-row input:focus { border-color: var(--amber); }
+    .cv-result { font-size: 0.76rem; line-height: 1.7; }
+    .cv-result:empty { display: none; }
+    .cv-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 0.5px solid var(--nav-border); font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; }
+    .cv-row:last-child { border-bottom: none; }
+    .cv-row span:first-child { color: #A8C0B0; font-family: 'Inter', sans-serif; font-size: 0.73rem; }
+    .cv-row span:last-child { color: #F7F3EC; }
+    .cv-verdict { margin-top: 10px; padding: 9px 12px; font-size: 0.74rem; line-height: 1.65; font-family: 'Inter', sans-serif; border-left: 3px solid var(--amber); background: rgba(0,0,0,0.15); color: #A8C0B0; }
+    .cv-good { color: #6fcf6f; font-weight: 600; }
+    .cv-warn { color: #e07070; font-weight: 600; }
+    .cv-info { color: var(--amber); font-weight: 600; }
+
     /* ===== SENSITIVITY TABLES ===== */
     .sens-wrap { max-width: 1380px; margin: 0 auto; padding: 0 48px 80px; }
     .tbl-hdr { margin-top: 60px; }
@@ -830,15 +856,6 @@
         <div class="err-msg" id="e-numWells">Enter 1–20 wells.</div>
       </div>
 
-      <div class="input-group">
-        <div class="label-row">
-          Working Interest % (Optional)
-          <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">If you own a Working Interest (WI), you bear proportionate drilling and operating costs. Enter 0 if you hold a pure Royalty Interest (RI) with no cost obligations. WI ≠ RI. <strong>Note: WI income calculations require operating cost inputs not yet supported — this field is collected for future use and does not currently affect results.</strong></div>
-          </div>
-        </div>
-        <input type="number" id="workingInterest" value="0" min="0" max="100" step="0.1">
-      </div>
 
       <div class="input-section">Production</div>
 
@@ -1121,6 +1138,22 @@
       </div>
 
       <div class="formula-box" id="formulaBox">Enter values above to see the live formula.</div>
+
+      <div class="check-verifier">
+        <button class="check-verifier-toggle" onclick="toggleCheckVerifier()">
+          ✓ Verify My Check <span id="cvArrow">▾</span>
+        </button>
+        <div class="check-verifier-body" id="cvBody">
+          <p class="cv-intro">Received a royalty check? Enter the amount to verify your decimal matches your lease terms. Uses all inputs from the calculator above — make sure the price matches your check stub.</p>
+          <div class="cv-input-row">
+            <label>My royalty check was</label>
+            <span style="color:#A8C0B0;font-family:'Inter',sans-serif;font-size:0.82rem;">$</span>
+            <input type="number" id="cvCheckAmt" min="0" step="0.01" placeholder="0.00" oninput="runCheckVerifier()">
+            <span style="color:#A8C0B0;font-size:0.73rem;font-family:'Inter',sans-serif;">this month</span>
+          </div>
+          <div class="cv-result" id="cvResult"></div>
+        </div>
+      </div>
     </div>
 
   </div><!-- /calc-grid -->
@@ -1231,6 +1264,7 @@
         <div class="bonus-row"><span>Bonus as % of <span id="b-nYearLbl">10</span>-yr projected income</span><span id="b-pctTotal">—</span></div>
         <div class="bonus-row"><span>Annual royalty income per NMA</span><span id="b-perNMA">—</span></div>
         <div class="bonus-row"><span>Royalty income during primary term</span><span id="b-termIncome">—</span></div>
+        <div class="bonus-row" style="border-top:1px solid var(--border-dark);margin-top:6px;padding-top:6px;"><span style="font-weight:600;color:var(--text);">Total package — bonus + <span id="b-totalYrLbl">10</span>-yr royalty</span><span id="b-combined" style="font-weight:700;color:var(--amber);">—</span></div>
       </div>
 
       <div class="bonus-verdict" id="bonusVerdict">Enter a bonus offer to see the comparison.</div>
@@ -1552,7 +1586,7 @@
 /* ===== DEFAULTS ===== */
 const DEFAULTS = {
   grossAcres: 640, nma: 80, royaltyRate: 0.1875, royaltySelect: '0.1875',
-  numWells: 1, workingInterest: 0, commodity: 'oil', production: 500,
+  numWells: 1, commodity: 'oil', production: 500,
   declineRate: 25, yearsModel: 10, commodityPrice: 72.00,
   priceScenario: '0', priceCustom: 72.00, severanceTax: 7.0, adValoremTax: 0.5,
   postProdEnabled: false, postProdRate: 15, discountRate: 10,
@@ -1811,6 +1845,8 @@ function updateBonus(r) {
     set('b-pctTotal',  pct.toFixed(1) + '%');
     set('b-perNMA',    fmt(perNMA) + '/NMA/yr');
     set('b-termIncome',fmt(termIncome) + ' (' + leaseTerm + '-yr primary term)');
+    set('b-totalYrLbl', S.yearsModel);
+    set('b-combined',   fmt(totalBonus + r.cumulativeTotal));
 
     let verdict;
     if (years < 0.75) {
@@ -2084,7 +2120,7 @@ function validate() {
 
 /* ===== BIND INPUTS ===== */
 function bindInputs() {
-  const numFields = { grossAcres:1, nma:1, numWells:1, workingInterest:1, production:1, commodityPrice:1, adValoremTax:1 };
+  const numFields = { grossAcres:1, nma:1, numWells:1, production:1, commodityPrice:1, adValoremTax:1 };
   Object.keys(numFields).forEach(id => {
     $(id).addEventListener('input', e => { S[id] = parseFloat(e.target.value) || 0; update(); });
   });
@@ -2400,7 +2436,6 @@ function resetDefaults() {
   $('royaltySelect').value     = DEFAULTS.royaltySelect;
   $('royaltyCustomWrap').classList.remove('show');
   $('numWells').value          = DEFAULTS.numWells;
-  $('workingInterest').value   = DEFAULTS.workingInterest;
   $('production').value        = DEFAULTS.production;
   $('declineRate').value       = DEFAULTS.declineRate;
   $('declineRateLabel').textContent = DEFAULTS.declineRate + '%';
@@ -2472,7 +2507,7 @@ function copyResults() {
 function shareResults() {
   const p = new URLSearchParams({
     acres: S.grossAcres, nma: S.nma, royalty: S.royaltyRate,
-    wells: S.numWells, wi: S.workingInterest,
+    wells: S.numWells,
     commodity: S.commodity, prod: S.production,
     decline: S.declineRate, years: S.yearsModel,
     price: S.commodityPrice, scenario: S.priceScenario,
@@ -2501,7 +2536,6 @@ function loadFromURL() {
   S.nma              = n('nma',      DEFAULTS.nma);
   S.royaltyRate      = n('royalty',  DEFAULTS.royaltyRate);
   S.numWells         = n('wells',    DEFAULTS.numWells);
-  S.workingInterest  = n('wi',       DEFAULTS.workingInterest);
   S.commodity        = s('commodity',DEFAULTS.commodity);
   S.production       = n('prod',     DEFAULTS.production);
   S.declineRate      = n('decline',  DEFAULTS.declineRate);
@@ -2519,7 +2553,6 @@ function loadFromURL() {
   syncAcreChips(S.grossAcres);
   $('nma').value             = S.nma;
   $('numWells').value        = S.numWells;
-  $('workingInterest').value = S.workingInterest;
   $('production').value      = S.production;
   $('commodityPrice').value  = S.commodityPrice;
   $('severanceTax').value    = S.severanceTax;
@@ -2553,6 +2586,48 @@ function loadFromURL() {
     $('royaltyCustomWrap').classList.add('show');
   }
   setCommodity(S.commodity);
+}
+
+/* ===== CHECK VERIFIER ===== */
+function toggleCheckVerifier() {
+  const body = $('cvBody');
+  const open = body.classList.toggle('open');
+  $('cvArrow').textContent = open ? '▴' : '▾';
+  if (open) $('cvCheckAmt').focus();
+}
+
+function runCheckVerifier() {
+  const checkAmt = parseFloat($('cvCheckAmt').value);
+  const result = $('cvResult');
+  if (!checkAmt || checkAmt <= 0) { result.innerHTML = ''; return; }
+  if (!validate()) { result.innerHTML = '<span style="color:#e07070;font-family:\'Inter\',sans-serif;font-size:0.73rem;">Fix calculator errors above first.</span>'; return; }
+
+  const r = runCalc();
+  const monthlyDenominator = S.production * S.numWells * (365 / 12) * r.ep * r.ppdFactor * (1 - r.taxRate);
+  if (monthlyDenominator <= 0) { result.innerHTML = ''; return; }
+
+  const impliedDecimal  = checkAmt / monthlyDenominator;
+  const expectedDecimal = r.rd;
+  const diff            = impliedDecimal - expectedDecimal;
+  const monthlyImpact   = Math.abs(diff) * monthlyDenominator;
+  const pctDiff         = expectedDecimal > 0 ? (diff / expectedDecimal) * 100 : 0;
+
+  let verdictHtml;
+  if (Math.abs(diff) < 0.000002) {
+    verdictHtml = `<span class="cv-good">✓ Your check appears correct.</span> The implied decimal matches your entered lease terms.`;
+  } else if (diff < 0) {
+    verdictHtml = `<span class="cv-warn">⚠ Possible underpayment.</span> Your check implies a decimal ${Math.abs(pctDiff).toFixed(1)}% lower than your lease terms — a difference of ${fmt(monthlyImpact)}/month. Verify your decimal interest on your division order and contact your operator's revenue accounting department in writing if there's a discrepancy.`;
+  } else {
+    verdictHtml = `<span class="cv-info">ℹ Check is higher than expected.</span> Your implied decimal is ${pctDiff.toFixed(1)}% above your entered lease terms. This could indicate back-pay, a corrected division order, or different lease terms than entered above.`;
+  }
+
+  result.innerHTML = `
+    <div class="cv-row"><span>Your check amount</span><span>${fmt(checkAmt)}/mo</span></div>
+    <div class="cv-row"><span>Implied royalty decimal</span><span>${fmtD(impliedDecimal, 6)}</span></div>
+    <div class="cv-row"><span>Expected decimal (from inputs)</span><span>${fmtD(expectedDecimal, 6)}</span></div>
+    <div class="cv-row"><span>Difference</span><span style="color:${diff < -0.000002 ? '#e07070' : diff > 0.000002 ? '#6fcf6f' : '#F7F3EC'}">${diff >= 0 ? '+' : ''}${fmtD(diff, 6)}</span></div>
+    ${Math.abs(diff) > 0.000002 ? `<div class="cv-row"><span>Monthly impact</span><span style="color:${diff < 0 ? '#e07070' : '#6fcf6f'}">${diff < 0 ? '−' : '+'}${fmt(monthlyImpact)}/mo</span></div>` : ''}
+    <div class="cv-verdict">${verdictHtml}</div>`;
 }
 
 /* ===== GLOSSARY DEEP-LINK ===== */
@@ -2590,7 +2665,7 @@ function toggleAcc(btn) {
 /* ===== MOBILE NAV ===== */
 function toggleNav() { $('navLinks').classList.toggle('open'); }
 
-function showView(tab) {
+function showView(tab, pushHistory = true) {
   $('main-view').style.display      = tab === 'main'      ? '' : 'none';
   $('education-view').style.display = tab === 'education' ? 'block' : 'none';
   $('analyzer-view').style.display  = tab === 'analyzer'  ? 'block' : 'none';
@@ -2599,7 +2674,16 @@ function showView(tab) {
   if (tab === 'analyzer')  $('nav-analyzer').classList.add('nav-active');
   $('navLinks').classList.remove('open');
   if (tab !== 'main') window.scrollTo(0, 0);
+  if (pushHistory) {
+    const hash = tab === 'main' ? '' : '#' + tab;
+    window.history.pushState({ view: tab }, '', window.location.pathname + window.location.search + hash);
+  }
 }
+
+window.addEventListener('popstate', e => {
+  const tab = e.state?.view || 'main';
+  showView(tab, false);
+});
 
 function submitWaitlist(e) {
   e.preventDefault();
@@ -2614,6 +2698,32 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => $('navLinks').classList.remove('open'));
 });
 
+/* ===== TOOLTIP HOVER MANAGEMENT ===== */
+// CSS hover alone loses focus when cursor moves from the tiny ? icon to the tooltip box.
+// JS manages hover with a short delay so the cursor can travel between them.
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.tip-wrap').forEach(wrap => {
+    const box = wrap.querySelector('.tip-box');
+    if (!box) return;
+    let hideTimer;
+    const show = () => {
+      clearTimeout(hideTimer);
+      box.style.opacity = '1';
+      box.style.pointerEvents = 'auto';
+    };
+    const scheduleHide = () => {
+      hideTimer = setTimeout(() => {
+        box.style.opacity = '0';
+        box.style.pointerEvents = 'none';
+      }, 180);
+    };
+    wrap.addEventListener('mouseenter', show);
+    wrap.addEventListener('mouseleave', scheduleHide);
+    box.addEventListener('mouseenter', show);
+    box.addEventListener('mouseleave', scheduleHide);
+  });
+});
+
 /* ===== INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
   loadFromURL();
@@ -2624,6 +2734,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Decline table starts collapsed
   const dsb = $('declineSectionBody');
   if (dsb) dsb.style.maxHeight = '0';
+  // Restore view from hash on direct load (e.g. shared link or reload)
+  const hash = window.location.hash.slice(1);
+  if (hash === 'education' || hash === 'analyzer') showView(hash, false);
 });
 </script>
 
