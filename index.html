@@ -192,7 +192,9 @@
       pointer-events: none; opacity: 0; transition: opacity 0.15s;
       text-transform: none; letter-spacing: 0; font-family: 'Inter', sans-serif;
     }
-    .tip-wrap:hover .tip-box { opacity: 1; }
+    .tip-wrap:hover .tip-box { opacity: 1; pointer-events: auto; }
+    .tip-link { display: block; margin-top: 7px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 0.71rem; color: var(--amber); text-decoration: none; font-weight: 500; }
+    .tip-link:hover { color: var(--amber-light); }
     input[type="number"], select {
       width: 100%; background: var(--bg); border: 1px solid var(--border-dark);
       color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.92rem;
@@ -756,7 +758,7 @@
         <div class="label-row">
           Gross Acres / Spacing Unit Size
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">The total acreage of the drilling unit your minerals fall within. For modern Oklahoma horizontal wells this is typically the spacing unit established by the operator — commonly 160, 320, or 640 acres. For older vertical wells or if you're unsure, use the total acreage of your tract or lease. This number is the denominator in your royalty decimal calculation.</div>
+            <div class="tip-box">Total acreage of the drilling unit your minerals fall within. Most Oklahoma horizontal wells use 640-acre units. This is the denominator in your royalty decimal.<a class="tip-link" href="#" onclick="return goToGlossary('acc-spacing')">How do I find this? →</a></div>
           </div>
         </div>
         <input type="number" id="grossAcres" value="640" min="1" step="1">
@@ -775,7 +777,7 @@
         <div class="label-row">
           Net Mineral Acres (NMA)
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Your actual owned mineral acres after accounting for fractional title interests. Must be ≤ gross acres. Example: you own 1/2 of 80 acres = 40 NMA.</div>
+            <div class="tip-box">Your actual owned mineral acres after accounting for fractional interests in the chain of title. Must be ≤ gross acres. Example: you own 1/2 of an 80-acre tract = 40 NMA.<a class="tip-link" href="#" onclick="return goToGlossary('acc-nma')">What is NMA? →</a></div>
           </div>
         </div>
         <input type="number" id="nma" value="80" min="0.001" step="0.01">
@@ -821,7 +823,7 @@
         <div class="label-row">
           Number of Producing Wells
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box"><strong>The number of active wells currently producing from your mineral acreage.</strong><br><br>To find this:<br>• Check your royalty check stub — it typically lists each well by name and API number<br>• Search OCC well records at wellrecords.occ.ok.gov using your section, township, and range<br>• Your lease operator is required to provide this information upon request<br>• If you've received a division order, each well will be listed separately<br><br>If you don't know yet — enter 1. Most Oklahoma horizontal units start with a single well. Additional wells drilled later (co-development) will multiply your royalty income proportionally.</div>
+            <div class="tip-box">Active wells producing from your mineral acreage. Enter 1 if unknown — most Oklahoma horizontal units start with a single well. Each additional well multiplies your income proportionally.<a class="tip-link" href="#" onclick="return goToGlossary('acc-checkstub')">How do I find this? →</a></div>
           </div>
         </div>
         <input type="number" id="numWells" value="1" min="1" max="20" step="1">
@@ -857,7 +859,7 @@
         <div class="label-row">
           Estimated Production per Well
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Initial daily production (IP rate) per well in BOE/day (oil) or MCF/day (gas). This is your starting rate before decline — not an average.<br><br>How to find it:<br>• <strong>Check your royalty check stub</strong> — operators often list the well name and you can look it up<br>• <strong>OCC production data</strong> at wellrecords.occ.ok.gov — search by section/township/range or API number to see actual reported monthly production<br>• <strong>FracFocus.org</strong> — find completion data (lateral length, proppant) which correlates to expected IP<br>• <strong>Operator investor presentations</strong> — Devon, Continental, Ovintiv publish average IP rates by area<br><br>Typical Oklahoma SCOOP/STACK horizontals: 500–1,500 BOE/day. If unknown, 500 is a reasonable conservative starting point for modeling.</div>
+            <div class="tip-box">Initial daily production rate (IP) when the well first comes online. Oklahoma SCOOP/STACK horizontals typically start 500–1,500 BOE/day. This is your starting rate — all production declines from here.<a class="tip-link" href="#" onclick="return goToGlossary('acc-production')">How do I find this? →</a></div>
           </div>
         </div>
         <input type="number" id="production" value="500" min="1" step="1">
@@ -868,7 +870,7 @@
         <div class="label-row">
           Production Decline Rate (Annual)
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Annual exponential decline rate. Shale wells often decline 40–70% Year 1, then flatten. Use the calculator tabs below to derive a rate from well data, or enter manually.</div>
+            <div class="tip-box">Annual rate at which production decreases. Shale wells decline 40–70% in Year 1, then flatten to 10–25%/yr. Use the calculator tabs below or enter manually.<a class="tip-link" href="#" onclick="return goToGlossary('acc-decline')">How does decline work? →</a></div>
           </div>
         </div>
         <div class="dcalc-tabs">
@@ -944,7 +946,7 @@
         <div class="label-row">
           Discount Rate (for NPV)
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">The rate used to calculate Net Present Value — what future royalty income is worth in today's dollars. Mineral buyers typically use 10–15%. A higher rate means future income is worth less today. 10% is standard for Oklahoma mineral valuations.</div>
+            <div class="tip-box">Rate used to discount future royalty income to present-day value. Mineral buyers typically use 10–15%. Higher rate = lower NPV.<a class="tip-link" href="#" onclick="return goToGlossary('acc-glossary')">What is NPV? →</a></div>
           </div>
         </div>
         <div class="slide-row">
@@ -1020,7 +1022,7 @@
         <div class="label-row">
           Severance Tax Rate (%) <span class="auto-fill-tag" id="sevTagLabel">auto-filled</span>
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">State production tax at the wellhead. TX: 4.6% oil / 7.5% gas — enter the correct rate for your commodity. ND: ~10% combined (5% gross production + 5% extraction). PA: $0 severance — operators pay an impact fee instead. Applied before ad valorem; operator deducts before your check.</div>
+            <div class="tip-box">State tax on production at the wellhead. Deducted by the operator before your check is issued. Exemptions for new horizontal wells may reduce your effective rate.<a class="tip-link" href="#" onclick="return goToGlossary('acc-severance')">Rates by state &amp; exemptions →</a></div>
           </div>
         </div>
         <input type="number" id="severanceTax" value="7.0" min="0" max="25" step="0.01">
@@ -1041,7 +1043,7 @@
         <div class="label-row">
           Post-Production Deductions <span style="font-size:0.7rem;color:var(--dim);font-weight:400">(gathering, compression, processing)</span>
           <div class="tip-wrap"><span class="tip-icon">?</span>
-            <div class="tip-box">Many leases allow operators to deduct costs for gathering, compressing, and processing gas before calculating your royalty. These deductions can reduce your actual royalty check by 5–25%. Whether deductions apply depends entirely on your lease language. An "at the wellhead" lease protects against deductions; a "market value" or "proceeds" lease may allow them.</div>
+            <div class="tip-box">Some leases allow operators to deduct gathering, compression, and processing costs before calculating your royalty — reducing your check by 5–25%. Depends entirely on your lease language.<a class="tip-link" href="#" onclick="return goToGlossary('acc-limitations')">What to look for in your lease →</a></div>
           </div>
           <button class="ppd-toggle-btn" id="ppdToggleBtn" onclick="togglePPD()">OFF</button>
         </div>
@@ -1245,7 +1247,7 @@
 
   <div class="accordion">
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-calc">
       <button class="acc-btn" onclick="toggleAcc(this)">
         How Royalty Income is Calculated <span class="acc-icon">+</span>
       </button>
@@ -1257,7 +1259,7 @@
       </div></div>
     </div>
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-nma">
       <button class="acc-btn" onclick="toggleAcc(this)">
         What is Net Mineral Acres (NMA)? <span class="acc-icon">+</span>
       </button>
@@ -1269,7 +1271,7 @@
       </div></div>
     </div>
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-severance">
       <button class="acc-btn" onclick="toggleAcc(this)">
         Oklahoma Severance Tax <span class="acc-icon">+</span>
       </button>
@@ -1282,7 +1284,7 @@
       </div></div>
     </div>
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-decline">
       <button class="acc-btn" onclick="toggleAcc(this)">
         Production Decline Curves <span class="acc-icon">+</span>
       </button>
@@ -1294,7 +1296,7 @@
       </div></div>
     </div>
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-checkstub">
       <button class="acc-btn" onclick="toggleAcc(this)">
         How to Read Your Royalty Check Stub <span class="acc-icon">+</span>
       </button>
@@ -1311,7 +1313,42 @@
       </div></div>
     </div>
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-production">
+      <button class="acc-btn" onclick="toggleAcc(this)">
+        How to Find Well Production Data <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-inner">
+        <p>You don't need to guess at production numbers — real well data is publicly available.</p>
+        <p><strong>OCC Well Records (primary source)</strong><br>
+        Go to <strong>wellrecords.occ.ok.gov</strong>. Search by section, township, and range (found on your deed or lease) or by API number if you have it. You'll find monthly production reports showing actual BOE/day output going back to the well's first production date.</p>
+        <p><strong>From your royalty check stub</strong><br>
+        Your check stub lists the well name and volume of production attributed to your interest. Divide your gross royalty by your royalty decimal to back-calculate the well's gross production for that month.</p>
+        <p><strong>FracFocus.org</strong><br>
+        Shows completion data (lateral length, proppant volume, fluid volume) for horizontally completed wells. Longer laterals and more proppant generally correlate with higher IP rates.</p>
+        <p><strong>Operator investor presentations</strong><br>
+        Devon, Continental, Ovintiv, and other public operators publish quarterly earnings presentations with average IP rates by area. These are useful for setting expectations on new wells before production is reported.</p>
+        <p>If a well is new and has no production history, Oklahoma SCOOP/STACK horizontals typically start at 500–1,500 BOE/day. 500 is a reasonable conservative starting point.</p>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" id="acc-spacing">
+      <button class="acc-btn" onclick="toggleAcc(this)">
+        How to Find Your Spacing Unit &amp; Gross Acres <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body"><div class="acc-inner">
+        <p>Your spacing unit is the acreage block designated by the OCC for a specific well or group of wells. Your gross acres field should reflect this unit — not the total surface area of your tract.</p>
+        <p><strong>From your division order</strong><br>
+        The division order sent by the operator before your first royalty check will state the well name, the spacing unit description (e.g. "Section 14, T12N, R5W"), and the total unit acreage.</p>
+        <p><strong>From OCC spacing orders</strong><br>
+        At <strong>occ.ok.gov</strong>, search the OCC docket records for spacing orders in your section. The spacing order establishes the legal drilling unit and its acreage. Most Oklahoma SCOOP/STACK horizontal units are 640 acres (one full section).</p>
+        <p><strong>From your lease</strong><br>
+        Your lease will describe the lands covered using section/township/range legal descriptions. If multiple sections are pooled into one unit, add the acreages together for gross acres.</p>
+        <p><strong>Rule of thumb</strong><br>
+        Modern Oklahoma horizontal wells: 640-acre units are most common. Some operators use 1,280-acre (two-section) units for longer laterals. Older vertical wells may have 40–160 acre units.</p>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" id="acc-limitations">
       <button class="acc-btn" onclick="toggleAcc(this)">
         Limitations of This Tool <span class="acc-icon">+</span>
       </button>
@@ -1328,7 +1365,7 @@
       </div></div>
     </div>
 
-    <div class="accordion-item">
+    <div class="accordion-item" id="acc-glossary">
       <button class="acc-btn" onclick="toggleAcc(this)">
         Glossary of Key Terms <span class="acc-icon">+</span>
       </button>
@@ -2516,6 +2553,21 @@ function loadFromURL() {
     $('royaltyCustomWrap').classList.add('show');
   }
   setCommodity(S.commodity);
+}
+
+/* ===== GLOSSARY DEEP-LINK ===== */
+function goToGlossary(id) {
+  showView('education');
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el.classList.contains('open')) {
+      const btn = el.querySelector('.acc-btn');
+      if (btn) btn.click();
+    }
+  }, 220);
+  return false;
 }
 
 /* ===== ACCORDION ===== */
