@@ -18,6 +18,64 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="64x64" href="mineralcalc_favicon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="mineralcalc_favicon_32.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "MineralCalc",
+        "url": "https://aogerardi.github.io/mineralcalc",
+        "description": "Free oil and gas royalty income calculator for mineral owners. Model royalty income, verify royalty checks, evaluate lease bonus offers, and estimate mineral value with NPV analysis.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "creator": {
+          "@type": "Person",
+          "name": "Alex Gerardi",
+          "url": "https://aogerardi.github.io/",
+          "affiliation": "University of Oklahoma — Robert M. Zinke Energy Management Program"
+        },
+        "keywords": "royalty calculator, mineral rights, oil and gas royalties, Oklahoma SCOOP STACK, net mineral acres, lease bonus, severance tax, royalty decimal"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is oil and gas royalty income calculated?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Royalty income = (daily production × wells × 365 days) × price per unit × your royalty decimal × (1 − tax rate). Your royalty decimal is (net mineral acres ÷ spacing unit acres) × your lease royalty rate. Severance and ad valorem taxes are deducted by the operator before your check is issued." }
+          },
+          {
+            "@type": "Question",
+            "name": "What are net mineral acres (NMA)?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Net mineral acres reflect your actual ownership in the mineral estate after accounting for fractional interests. If you inherit half of an 80-acre tract's minerals, you own 40 NMA. NMA is the standard unit for valuing and trading mineral interests — active Oklahoma plays commonly trade between $1,000 and $15,000+ per NMA." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a royalty decimal?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Your royalty decimal is your precise fractional share of a well's production value: (net mineral acres ÷ gross acres in the spacing unit) × your lease royalty rate. It appears on your division order. For example, 80 NMA in a 640-acre unit with a 3/16 royalty = 0.0234375." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the Oklahoma severance tax rate on oil and gas?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Oklahoma's gross production tax is 5% for a well's first 36 months of production, then 7% thereafter (HB 1010xx, 2018). The operator deducts this from royalty payments before issuing your check. Stripper wells and certain enhanced recovery projects may qualify for reduced rates." }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a fair royalty rate in Oklahoma?",
+            "acceptedAnswer": { "@type": "Answer", "text": "In active Oklahoma plays (2024–2025): 1/8 (12.5%) is the statutory minimum and generally below market; 3/16 (18.75%) is common but increasingly below market in the SCOOP/STACK; 1/5 (20%) is the emerging standard in competitive areas; 1/4 (25%) is a strong rate achievable where multiple operators compete for acreage." }
+          },
+          {
+            "@type": "Question",
+            "name": "Should I take a lease bonus or wait for royalties?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A lease bonus is a one-time payment per net mineral acre; royalties pay for the life of production. Compare the bonus to projected royalty income over the lease's primary term — if a well is drilled, royalty income from a single horizontal well usually exceeds a typical bonus within the first year or two. If no well is ever drilled, the bonus is all you receive." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   <style>
     /* ===== RESET & VARIABLES ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -226,6 +284,22 @@
     .sev-back-link { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; color: var(--amber); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
     .sev-back-link:hover { color: var(--amber-light); }
     .state-driven-field { border-left: 2px solid var(--amber-border); padding-left: 10px; margin-left: 2px; }
+    .ok-newwell-row { margin-top: 8px; padding: 8px 10px; background: var(--amber-dim); border: 1px solid var(--amber-border); }
+    .ok-newwell-label { display: flex; align-items: flex-start; gap: 7px; font-size: 0.74rem; color: var(--text); font-family: 'Inter', sans-serif; cursor: pointer; line-height: 1.5; }
+    .ok-newwell-label input { margin-top: 2px; accent-color: var(--amber); cursor: pointer; }
+    .ok-newwell-cite { color: var(--dim); font-size: 0.68rem; }
+    .ok-newwell-row .field-note { margin-top: 4px; margin-left: 20px; }
+    /* ===== DEMO PRESETS ===== */
+    .preset-row-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .preset-label { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .preset-row { display: flex; gap: 7px; flex-wrap: wrap; }
+    .preset-chip {
+      background: var(--card); border: 1px solid var(--border-dark); color: var(--muted);
+      font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500;
+      padding: 6px 13px; cursor: pointer; transition: all 0.15s;
+    }
+    .preset-chip:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-dim); }
+    .preset-chip.active { background: var(--nav-bg); color: #F7F3EC; border-color: var(--nav-bg); }
     .auto-fill-tag { font-family: 'Inter', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber-border); padding: 1px 6px; margin-left: 6px; font-style: normal; }
     input[readonly].field-locked { background: var(--card2); color: var(--muted); cursor: not-allowed; border-color: var(--border); }
     .err-msg.show { display: block; }
@@ -773,6 +847,16 @@
     <input type="text" id="reportName" placeholder="e.g. Smith Minerals — Section 14, Kingfisher Co." style="width:100%;padding:9px 12px;border:1px solid var(--border-dark);background:var(--card);font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--text);">
   </div>
 
+  <div class="preset-row-wrap">
+    <span class="preset-label">Try an example:</span>
+    <div class="preset-row" id="presetRow">
+      <button class="preset-chip" onclick="applyPreset('inherited', this)">Inherited STACK minerals</button>
+      <button class="preset-chip" onclick="applyPreset('scoop', this)">SCOOP co-development — 3 wells</button>
+      <button class="preset-chip" onclick="applyPreset('gas', this)">Anadarko gas unit</button>
+      <button class="preset-chip" onclick="applyPreset('legacy', this)">Legacy vertical well</button>
+    </div>
+  </div>
+
   <div class="calc-grid">
 
     <!-- LEFT: INPUTS -->
@@ -1018,7 +1102,7 @@
           <a href="#" class="view-sources-link" onclick="showView('education'); setTimeout(()=>document.getElementById('sev-sources').scrollIntoView({behavior:'smooth'}),120); return false;">View sources ↗</a>
         </div>
         <select id="producingState" onchange="setState(this.value)">
-          <option value="OK">Oklahoma — 7.0%</option>
+          <option value="OK">Oklahoma — 5% / 7% tiered</option>
           <option value="TX">Texas — 4.6% oil / 7.5% gas</option>
           <option value="ND">North Dakota — ~10% combined</option>
           <option value="WY">Wyoming — 6.0%</option>
@@ -1042,8 +1126,15 @@
             <div class="tip-box">State tax on production at the wellhead. Deducted by the operator before your check is issued. Exemptions for new horizontal wells may reduce your effective rate.<a class="tip-link" href="#" onclick="return goToGlossary('acc-severance')">Rates by state &amp; exemptions →</a></div>
           </div>
         </div>
-        <input type="number" id="severanceTax" value="7.0" min="0" max="25" step="0.01">
-        <div class="field-note">Exemptions for new horizontal wells, stripper wells, and enhanced recovery may reduce your effective rate significantly.</div>
+        <input type="number" id="severanceTax" value="5.0" min="0" max="25" step="0.01">
+        <div class="ok-newwell-row" id="okNewWellWrap">
+          <label class="ok-newwell-label">
+            <input type="checkbox" id="okNewWell" checked onchange="toggleOkNewWell()">
+            New well — <strong>5%</strong> for first 36 months, then <strong>7%</strong> <span class="ok-newwell-cite">(HB 1010xx, 2018)</span>
+          </label>
+          <div class="field-note" id="okNewWellNote">Years 1–3 of the projection are taxed at 5%; years 4+ at 7%. Uncheck for wells already past 36 months of production.</div>
+        </div>
+        <div class="field-note">Exemptions for stripper wells and enhanced recovery may further reduce your effective rate.</div>
       </div>
 
       <div class="input-group">
@@ -1181,7 +1272,7 @@
     <div class="tbl-header-row">
       <div>
         <div class="tbl-title">Year-by-Year Production Decline Schedule</div>
-        <div class="tbl-sub">Exponential decline model based on your inputs. All figures in net royalty dollars after taxes.</div>
+        <div class="tbl-sub">Exponential decline model based on your inputs. All figures in net royalty dollars after taxes.<span id="declineTaxNote" style="color:var(--amber)"></span></div>
       </div>
       <button class="btn-tbl-toggle" id="declineToggleBtn" onclick="toggleDeclineTable()">Expand ▾</button>
     </div>
@@ -1310,11 +1401,12 @@
         Oklahoma Severance Tax <span class="acc-icon">+</span>
       </button>
       <div class="acc-body"><div class="acc-inner">
-        <p>Oklahoma levies a <strong>Gross Production Tax (GPT)</strong> on oil and gas at the wellhead, administered by the Oklahoma Tax Commission (OTC):</p>
-        <p>• <strong>Oil:</strong> 7% of gross value (reduced to 0.5% for first 36 months on new horizontal wells under certain conditions)<br>
-        • <strong>Gas:</strong> 7% of gross value (first year exempt for new horizontal wells)</p>
-        <p>The operator deducts this from your royalty payment before issuing your check. Different states have different rates: Texas 4.6% oil / 7.5% gas; Wyoming 6% flat; North Dakota 5%; Colorado 2–5%.</p>
-        <p>This calculator applies your entered severance rate uniformly across all projection years for simplicity.</p>
+        <p>Oklahoma levies a <strong>Gross Production Tax (GPT)</strong> on oil and gas at the wellhead, administered by the Oklahoma Tax Commission (OTC). The current structure was set by <strong>HB 1010xx (2018)</strong>:</p>
+        <p>• <strong>New wells:</strong> 5% of gross value for the first 36 months of production<br>
+        • <strong>After 36 months:</strong> 7% of gross value for the remaining life of the well</p>
+        <p>Before 2018, the incentive rate for new wells was 2% (and 1% before 2015) — the legislature raised it to 5% to fund teacher pay raises. Stripper wells and certain enhanced recovery projects may qualify for lower rates.</p>
+        <p>The operator deducts this from your royalty payment before issuing your check. Different states have different rates: Texas 4.6% oil / 7.5% gas; Wyoming 6% flat; North Dakota ~10% combined; Colorado 2–5%.</p>
+        <p>When Oklahoma is selected with the "new well" option checked, this calculator applies the tiered structure automatically: years 1–3 of the projection at 5%, years 4+ at 7%. For other states, your entered rate is applied uniformly across all years.</p>
       </div></div>
     </div>
 
@@ -1341,7 +1433,7 @@
         • <strong>Decimal interest</strong> — your precise ownership fraction. Should match your division order. Calculate independently: (NMA ÷ Gross Acres) × Royalty Rate. Any discrepancy means you may be underpaid.<br>
         • <strong>Gross production / Gross value</strong> — total production from the well and its price. Divide your payment by this to back-calculate your implied decimal and compare.<br>
         • <strong>Deductions</strong> — any post-production costs deducted before your royalty is calculated. Check against your lease language. "At the wellhead" leases should have none.<br>
-        • <strong>Severance tax</strong> — should match the applicable state rate (Oklahoma: 7%, or reduced rate for new horizontals). Operators sometimes apply the wrong rate.<br>
+        • <strong>Severance tax</strong> — should match the applicable state rate (Oklahoma: 5% for the well's first 36 months, 7% after). Operators sometimes apply the wrong rate.<br>
         • <strong>Interest code / Product code</strong> — identifies oil (01), gas (04), or NGLs (05). Separate payment lines for each product stream.</p>
         <p>If your calculated decimal doesn't match what's on the stub, contact the operator's revenue accounting department in writing and request a corrected division order. You may be entitled to back-pay.</p>
       </div></div>
@@ -1442,7 +1534,7 @@
       <tbody>
         <tr>
           <td>Oklahoma</td>
-          <td>7.0% (5% new horizontal wells, first 36 mo)</td>
+          <td>5% first 36 months of production, 7% thereafter (HB 1010xx, 2018) — modeled automatically by this calculator</td>
           <td><a href="https://okpolicy.org/gross-production-tax/" target="_blank" rel="noopener">okpolicy.org ↗</a></td>
         </tr>
         <tr>
@@ -1588,9 +1680,11 @@ const DEFAULTS = {
   grossAcres: 640, nma: 80, royaltyRate: 0.1875, royaltySelect: '0.1875',
   numWells: 1, commodity: 'oil', production: 500,
   declineRate: 25, yearsModel: 10, commodityPrice: 72.00,
-  priceScenario: '0', priceCustom: 72.00, severanceTax: 7.0, adValoremTax: 0.5,
+  priceScenario: '0', priceCustom: 72.00, severanceTax: 5.0, adValoremTax: 0.5,
   postProdEnabled: false, postProdRate: 15, discountRate: 10,
+  stateCode: 'OK', okNewWell: true,
 };
+const OK_LATE_RATE = 7.0; // OK gross production tax after first 36 months (HB 1010xx, 2018)
 let S = { ...DEFAULTS };
 let dcalcTab    = 'manual';
 let dcalcMethod = 'annual';
@@ -1629,19 +1723,24 @@ function runCalc() {
   const monthlyNoPPD    = (annualGrossRoyalty * (1 - taxRate)) / 12;
   const monthlyPPDLoss  = S.postProdEnabled ? monthlyNoPPD - monthlyNetRoyalty : 0;
 
+  // OK new-well tiered rate: 5% gross production tax for first 36 months, 7% thereafter (HB 1010xx)
+  const tiered = okTieredActive();
+  const sevForYear = y => (tiered && y >= 4) ? OK_LATE_RATE : S.severanceTax;
+
   let cumulative = 0, npv = 0;
   const schedule = [];
   for (let y = 1; y <= S.yearsModel; y++) {
     const factor    = Math.pow(1 - S.declineRate / 100, y - 1);
     const dailyProd = S.production * factor;
     const grossRev  = dailyProd * S.numWells * 365 * ep;
-    const netRoy    = grossRev * rd * netFactor;
+    const yearNetFactor = (1 - (sevForYear(y) + S.adValoremTax) / 100) * ppdFactor;
+    const netRoy    = grossRev * rd * yearNetFactor;
     cumulative     += netRoy;
     npv            += netRoy / Math.pow(1 + S.discountRate / 100, y);
-    schedule.push({ year: y, dailyProd, grossRev, netRoy, cumulative });
+    schedule.push({ year: y, dailyProd, grossRev, netRoy, cumulative, sevRate: sevForYear(y) });
   }
 
-  return { ep, rd, nri, taxRate, ppdFactor, monthlyGrossRev, monthlyGrossRoyalty, monthlyNetRoyalty, annualNetYear1, cumulativeTotal: cumulative, npv, schedule, monthlyPPDLoss };
+  return { ep, rd, nri, taxRate, ppdFactor, tiered, monthlyGrossRev, monthlyGrossRoyalty, monthlyNetRoyalty, annualNetYear1, cumulativeTotal: cumulative, npv, schedule, monthlyPPDLoss };
 }
 
 /* ===== UPDATE DOM ===== */
@@ -1660,16 +1759,17 @@ function update() {
   set('r-npv',           fmt(r.npv));
   const npvNote = document.querySelector('#r-npvLbl .npv-disc-note');
   if (npvNote) npvNote.textContent = `(${S.discountRate}% discount)`;
-  const taxNote = 'Year 1 peak · After ' + fmtP(S.severanceTax) + ' severance + ' + fmtP(S.adValoremTax) + ' ad valorem'
+  const taxNote = 'Year 1 peak · After ' + getSevDisplay() + ' severance + ' + fmtP(S.adValoremTax) + ' ad valorem'
     + (S.postProdEnabled ? ` + ${S.postProdRate}% post-prod deductions` : '') + ' — declines each year';
   set('r-taxNote', taxNote);
+  set('declineTaxNote', r.tiered ? ' Years 1–3 taxed at 5% severance (OK new-well rate); 7% from year 4.' : '');
 
   set('r-royaltyDecimal', fmtD(r.rd));
   set('r-nri',            fmtD(r.nri));
   set('r-effPrice',       '$' + r.ep.toFixed(2) + pu);
   set('r-grossRev',       fmt(r.monthlyGrossRev));
   set('r-grossRoyalty',   fmt(r.monthlyGrossRoyalty));
-  set('r-effTax',         fmtP(S.severanceTax + S.adValoremTax) + (S.postProdEnabled ? ` + ${S.postProdRate}% PPD` : ''));
+  set('r-effTax',         (okTieredActive() ? `${(5 + S.adValoremTax).toFixed(2)}% yrs 1–3 → ${(7 + S.adValoremTax).toFixed(2)}%` : fmtP(S.severanceTax + S.adValoremTax)) + (S.postProdEnabled ? ` + ${S.postProdRate}% PPD` : ''));
 
   $('ppdWarning').classList.toggle('show', S.postProdEnabled);
   const ppdRow = $('r-ppdRow');
@@ -2004,7 +2104,7 @@ function buildLayoutA(r) {
       </div>
       ${sec('Inputs')}
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;">
-        ${[['Spacing unit',`${S.grossAcres} ac`],['NMA owned',`${S.nma} ac`],['Royalty rate',getRoyaltyLabel()],['Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)'],['IP rate',`${S.production} ${prodUnit}/day`],['Price',`$${r.ep.toFixed(2)}/${priceUnit}`],['Wells',S.numWells],['Decline rate',`${S.declineRate}%/yr`],['Severance tax',`${S.severanceTax}%`],['Ad valorem',`${S.adValoremTax}%`],['State',state],['Royalty decimal',fmtD(r.rd,6)]].map(([k,v])=>inputRow(k,v)).join('')}
+        ${[['Spacing unit',`${S.grossAcres} ac`],['NMA owned',`${S.nma} ac`],['Royalty rate',getRoyaltyLabel()],['Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)'],['IP rate',`${S.production} ${prodUnit}/day`],['Price',`$${r.ep.toFixed(2)}/${priceUnit}`],['Wells',S.numWells],['Decline rate',`${S.declineRate}%/yr`],['Years modeled',S.yearsModel],['Severance tax',getSevDisplay()],['Ad valorem',`${S.adValoremTax}%`],['State',state],['Royalty decimal',fmtD(r.rd,6)],['Discount rate',`${S.discountRate}%`],['Post-prod deductions',S.postProdEnabled?`${S.postProdRate}%`:'None']].map(([k,v])=>inputRow(k,v)).join('')}
       </div>
       ${sec('Formula')}<div style="background:#F7F3EC;border-left:3px solid #A0845C;padding:8px 12px;margin-bottom:16px;font-family:monospace;font-size:10px;color:#1D3C2B;line-height:1.6;">${formula}</div>
       ${sec('Year-by-year decline (first 5 years)')}
@@ -2013,9 +2113,10 @@ function buildLayoutA(r) {
         <tbody>${getPrintDeclineRows(r.schedule,5,false,r.rd)}</tbody>
       </table>
       <div style="background:#1D3C2B;color:#F7F3EC;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-family:sans-serif;margin-bottom:0;">
-        <div><div style="font-size:10px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:2px;">Based on 3×–5× Year 1 annual income (typical buyer multiple)</div></div>
-        <div style="font-size:17px;font-weight:700;color:#A0845C;">${fmt(r.annualNetYear1*3)} – ${fmt(r.annualNetYear1*5)}</div>
+        <div><div style="font-size:10px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:2px;">3×–5× Year 1 income (buyer multiple) · NPV discounts the full ${S.yearsModel}-yr stream</div></div>
+        <div style="text-align:right;"><div style="font-size:17px;font-weight:700;color:#A0845C;">${fmt(r.annualNetYear1*3)} – ${fmt(r.annualNetYear1*5)}</div><div style="font-size:9.5px;color:#A8C0B0;margin-top:1px;">NPV @ ${S.discountRate}%: <span style="color:#A0845C;font-weight:600;">${fmt(r.npv)}</span></div></div>
       </div>
+      ${r.tiered ? `<div style="font-size:8.5px;color:#7a6a50;font-style:italic;font-family:sans-serif;margin-top:6px;">Severance: 5% applied to projection years 1–3 (OK new-well rate, HB 1010xx); 7% from year 4.</div>` : ''}
     </div>
     ${pdfFooter('Estimates only — not financial or legal advice')}
   </div>`;
@@ -2049,13 +2150,13 @@ function buildLayoutB(r) {
           <div>
             ${sec('Inputs')}
             <table style="width:100%;border-collapse:collapse;">
-              ${irow('Spacing unit size',`${S.grossAcres} acres`)}${irow('Net mineral acres (NMA)',`${S.nma} ac`)}${irow('Royalty rate',getRoyaltyLabel())}${irow('Royalty decimal',fmtD(r.rd,6))}${irow('Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)')}${irow('IP rate (per well)',`${S.production} ${prodUnit}/day`)}${irow('Number of wells',S.numWells)}${irow('Price used',`$${r.ep.toFixed(2)}/${priceUnit}`)}${irow('Price scenario',getPriceScenarioLabel())}${irow('Annual decline rate',`${S.declineRate}%`)}${irow('Years modeled',S.yearsModel)}${irow('State',state)}${irow('Severance tax',`${S.severanceTax}%`)}${irow('Ad valorem tax',`${S.adValoremTax}%`)}${irow('Effective tax rate',fmtP(S.severanceTax+S.adValoremTax))}${irow('Post-prod. deductions',S.postProdEnabled?`On (${S.postProdRate}%)`:'Off')}
+              ${irow('Spacing unit size',`${S.grossAcres} acres`)}${irow('Net mineral acres (NMA)',`${S.nma} ac`)}${irow('Royalty rate',getRoyaltyLabel())}${irow('Royalty decimal',fmtD(r.rd,6))}${irow('Commodity',S.commodity==='oil'?'Oil (BBL)':'Gas (MCF)')}${irow('IP rate (per well)',`${S.production} ${prodUnit}/day`)}${irow('Number of wells',S.numWells)}${irow('Price used',`$${r.ep.toFixed(2)}/${priceUnit}`)}${irow('Price scenario',getPriceScenarioLabel())}${irow('Annual decline rate',`${S.declineRate}%`)}${irow('Years modeled',S.yearsModel)}${irow('State',state)}${irow('Severance tax',getSevDisplay())}${irow('Ad valorem tax',`${S.adValoremTax}%`)}${irow('Discount rate (NPV)',`${S.discountRate}%`)}${irow('Post-prod. deductions',S.postProdEnabled?`On (${S.postProdRate}%)`:'Off')}
             </table>
           </div>
           <div>
             ${sec('Key Metrics')}
             <table style="width:100%;border-collapse:collapse;">
-              ${irow('Monthly gross revenue',fmt(r.monthlyGrossRev))}${irow('Monthly gross royalty',fmt(r.monthlyGrossRoyalty))}${irow('Severance deduction',sevDeduct)}${irow('Ad valorem deduction',avDeduct)}${irow('Monthly net royalty',`<strong>${fmt(r.monthlyNetRoyalty)}</strong>`)}${irow('Annual net (Yr 1)',`<strong>${fmt(r.annualNetYear1)}</strong>`)}${irow('Avg annual w/ decline',fmt(r.cumulativeTotal/S.yearsModel))}${irow('Annual income / NMA',fmt(r.annualNetYear1/S.nma)+'/NMA')}${irow('Est. value if sold (3×)',fmt(r.annualNetYear1*3))}${irow('Est. value if sold (5×)',fmt(r.annualNetYear1*5))}
+              ${irow('Monthly gross revenue',fmt(r.monthlyGrossRev))}${irow('Monthly gross royalty',fmt(r.monthlyGrossRoyalty))}${irow('Severance deduction',sevDeduct)}${irow('Ad valorem deduction',avDeduct)}${irow('Monthly net royalty',`<strong>${fmt(r.monthlyNetRoyalty)}</strong>`)}${irow('Annual net (Yr 1)',`<strong>${fmt(r.annualNetYear1)}</strong>`)}${irow('Avg annual w/ decline',fmt(r.cumulativeTotal/S.yearsModel))}${irow(`NPV (${S.discountRate}% discount)`,`<strong>${fmt(r.npv)}</strong>`)}${irow('Annual income / NMA',fmt(r.annualNetYear1/S.nma)+'/NMA')}${irow('Est. value if sold (3×)',fmt(r.annualNetYear1*3))}${irow('Est. value if sold (5×)',fmt(r.annualNetYear1*5))}
             </table>
           </div>
         </div>
@@ -2069,9 +2170,10 @@ function buildLayoutB(r) {
           <tbody>${getPrintDeclineRows(r.schedule, 5, true, r.rd)}</tbody>
         </table>
         <div style="background:#1D3C2B;color:#F7F3EC;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;">
-          <div><div style="font-size:9px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:1px;">Based on 3×–5× Year 1 annual income</div></div>
-          <div style="font-size:16px;font-weight:700;color:#A0845C;">${fmt(r.annualNetYear1*3)} – ${fmt(r.annualNetYear1*5)}</div>
+          <div><div style="font-size:9px;color:#A8C0B0;text-transform:uppercase;letter-spacing:0.5px;">Estimated mineral value if sold</div><div style="font-size:9px;color:#A8C0B0;margin-top:1px;">3×–5× Year 1 income · NPV discounts the full ${S.yearsModel}-yr stream</div></div>
+          <div style="text-align:right;"><div style="font-size:16px;font-weight:700;color:#A0845C;">${fmt(r.annualNetYear1*3)} – ${fmt(r.annualNetYear1*5)}</div><div style="font-size:9px;color:#A8C0B0;">NPV @ ${S.discountRate}%: <span style="color:#A0845C;font-weight:600;">${fmt(r.npv)}</span></div></div>
         </div>
+        ${r.tiered ? `<div style="font-size:8px;color:#7a6a50;font-style:italic;font-family:sans-serif;margin-top:5px;">Severance: 5% applied to projection years 1–3 (OK new-well rate, HB 1010xx); 7% from year 4.</div>` : ''}
       </div>
       ${pdfFooter('Page 1 of 2')}
     </div>
@@ -2228,9 +2330,18 @@ const STATE_RATES = {
   PA: 0.0,
   MT: 9.0,
 };
+function okTieredActive() {
+  return S.stateCode === 'OK' && S.okNewWell;
+}
+function getSevDisplay() {
+  return okTieredActive() ? '5% → 7% (after 36 mo)' : fmtP(S.severanceTax, 2);
+}
 function setState(code, flash = true) {
   const el = $('severanceTax');
   const tag = $('sevTagLabel');
+  S.stateCode = code;
+  const okWrap = $('okNewWellWrap');
+  if (okWrap) okWrap.style.display = code === 'OK' ? '' : 'none';
   if (code === 'custom') {
     el.removeAttribute('readonly');
     el.classList.remove('field-locked', 'sev-highlight');
@@ -2238,8 +2349,9 @@ function setState(code, flash = true) {
     el.focus();
     return;
   }
-  const rate = STATE_RATES[code];
+  let rate = STATE_RATES[code];
   if (rate === undefined) return;
+  if (code === 'OK') rate = S.okNewWell ? 5.0 : OK_LATE_RATE;
   S.severanceTax = rate;
   el.value = rate.toFixed(1);
   el.setAttribute('readonly', '');
@@ -2251,6 +2363,77 @@ function setState(code, flash = true) {
     el.classList.add('sev-highlight');
   }
   update();
+}
+function toggleOkNewWell() {
+  S.okNewWell = $('okNewWell').checked;
+  setState('OK');
+}
+
+/* ===== DEMO PRESETS ===== */
+const PRESETS = {
+  inherited: {
+    reportName: 'Example — Inherited 40 NMA, Kingfisher Co. (STACK)',
+    grossAcres: 640, nma: 40, royaltySelect: '0.1875', royaltyRate: 0.1875,
+    numWells: 1, commodity: 'oil', production: 600, declineRate: 35,
+    yearsModel: 10, commodityPrice: 72.00, okNewWell: true,
+  },
+  scoop: {
+    reportName: 'Example — 80 NMA SCOOP co-development, Grady Co.',
+    grossAcres: 640, nma: 80, royaltySelect: '0.25', royaltyRate: 0.25,
+    numWells: 3, commodity: 'oil', production: 900, declineRate: 45,
+    yearsModel: 10, commodityPrice: 72.00, okNewWell: true,
+  },
+  gas: {
+    reportName: 'Example — 60 NMA Anadarko Basin gas unit',
+    grossAcres: 640, nma: 60, royaltySelect: '0.2', royaltyRate: 0.2,
+    numWells: 2, commodity: 'gas', production: 4000, declineRate: 40,
+    yearsModel: 10, commodityPrice: 3.25, okNewWell: true,
+  },
+  legacy: {
+    reportName: 'Example — Legacy vertical well, 20 NMA',
+    grossAcres: 160, nma: 20, royaltySelect: '0.125', royaltyRate: 0.125,
+    numWells: 1, commodity: 'oil', production: 25, declineRate: 8,
+    yearsModel: 20, commodityPrice: 72.00, okNewWell: false,
+  },
+};
+function applyPreset(key, btn) {
+  const ps = PRESETS[key];
+  if (!ps) return;
+  S.grossAcres    = ps.grossAcres;
+  S.nma           = ps.nma;
+  S.royaltyRate   = ps.royaltyRate;
+  S.royaltySelect = ps.royaltySelect;
+  S.numWells      = ps.numWells;
+  S.production    = ps.production;
+  S.declineRate   = ps.declineRate;
+  S.yearsModel    = ps.yearsModel;
+  S.commodityPrice = ps.commodityPrice;
+  S.priceScenario = '0';
+  S.okNewWell     = ps.okNewWell;
+
+  $('reportName').value     = ps.reportName;
+  $('grossAcres').value     = ps.grossAcres;
+  syncAcreChips(ps.grossAcres);
+  $('nma').value            = ps.nma;
+  $('royaltySelect').value  = ps.royaltySelect;
+  $('royaltyCustomWrap').classList.remove('show');
+  $('numWells').value       = ps.numWells;
+  $('production').value     = ps.production;
+  $('declineRate').value    = ps.declineRate;
+  $('declineRateLabel').textContent = ps.declineRate + '%';
+  setDcalcTab('manual');
+  $('yearsModel').value     = ps.yearsModel;
+  $('yearsModelLabel').textContent = ps.yearsModel + ' yrs';
+  $('commodityPrice').value = ps.commodityPrice.toFixed(2);
+  $('priceScenario').value  = '0';
+  $('priceCustomWrap').classList.remove('show');
+  $('okNewWell').checked    = ps.okNewWell;
+  $('producingState').value = 'OK';
+  setState('OK', false);
+  setCommodity(ps.commodity);
+
+  document.querySelectorAll('#presetRow .preset-chip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
 }
 
 function syncAcreChips(val) {
@@ -2451,6 +2634,8 @@ function resetDefaults() {
   $('commodityPrice').value    = DEFAULTS.commodityPrice;
   $('priceScenario').value     = '0';
   $('priceCustomWrap').classList.remove('show');
+  $('okNewWell').checked = DEFAULTS.okNewWell;
+  $('producingState').value = 'OK';
   setState('OK', false);
   $('adValoremTax').value      = DEFAULTS.adValoremTax;
   $('ppdRate').value           = DEFAULTS.postProdRate;
@@ -2484,7 +2669,7 @@ function copyResults() {
     `Annual Net (Year 1):  ${fmt(r.annualNetYear1)}`,
     `${S.yearsModel}-Year Cumulative:  ${fmt(r.cumulativeTotal)}`,
     `NPV (${S.discountRate}% discount): ${fmt(r.npv)}`,
-    `Effective Tax Rate:   ${fmtP(S.severanceTax + S.adValoremTax)}`,
+    `Severance Tax:        ${getSevDisplay()} + ${fmtP(S.adValoremTax)} ad valorem`,
     `Est. Value if Sold:   ${fmt(r.annualNetYear1 * 3)} – ${fmt(r.annualNetYear1 * 5)} (3×–5× annual)`,
     '',
     `Lease Bonus Comparison:`,
@@ -2512,6 +2697,7 @@ function shareResults() {
     decline: S.declineRate, years: S.yearsModel,
     price: S.commodityPrice, scenario: S.priceScenario,
     sev: S.severanceTax, adv: S.adValoremTax,
+    state: S.stateCode, oknew: S.okNewWell ? 1 : 0,
     disc: S.discountRate,
     ...(S.postProdEnabled ? { ppd: 1, ppdrate: S.postProdRate } : {}),
     ...(S.priceScenario === 'custom' && S.priceCustom ? { custprice: S.priceCustom } : {}),
@@ -2527,7 +2713,7 @@ function shareResults() {
 /* ===== LOAD FROM URL ===== */
 function loadFromURL() {
   const p = new URLSearchParams(window.location.search);
-  if (!p.has('acres')) return;
+  if (!p.has('acres')) return false;
 
   const n = (k, d) => { const v = p.get(k); return v !== null ? parseFloat(v) : d; };
   const s = (k, d) => p.get(k) || d;
@@ -2548,6 +2734,8 @@ function loadFromURL() {
   S.discountRate     = n('disc',     DEFAULTS.discountRate);
   S.postProdEnabled  = p.get('ppd') === '1';
   S.postProdRate     = n('ppdrate',  DEFAULTS.postProdRate);
+  S.stateCode        = s('state',    DEFAULTS.stateCode);
+  S.okNewWell        = p.has('oknew') ? p.get('oknew') === '1' : DEFAULTS.okNewWell;
 
   $('grossAcres').value      = S.grossAcres;
   syncAcreChips(S.grossAcres);
@@ -2585,7 +2773,20 @@ function loadFromURL() {
     $('royaltyCustom').value = (S.royaltyRate * 100).toFixed(4);
     $('royaltyCustomWrap').classList.add('show');
   }
+
+  // Restore state selector + OK new-well checkbox, then re-lock the severance
+  // field to the shared value (the URL's sev wins over the state default)
+  const sharedSev = S.severanceTax;
+  $('producingState').value = S.stateCode;
+  $('okNewWell').checked = S.okNewWell;
+  setState(S.stateCode, false);
+  if (S.stateCode === 'custom') {
+    S.severanceTax = sharedSev;
+    $('severanceTax').value = sharedSev;
+  }
+
   setCommodity(S.commodity);
+  return true;
 }
 
 /* ===== CHECK VERIFIER ===== */
@@ -2726,9 +2927,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ===== INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  loadFromURL();
+  const fromURL = loadFromURL();
   bindInputs();
-  setState('OK', false);
+  if (!fromURL) setState('OK', false);
   syncAcreChips(S.grossAcres);
   update();
   // Decline table starts collapsed
