@@ -1643,7 +1643,7 @@
       <p>Lease Analyzer is in development. Enter your email and we'll notify you when it's available — including early access pricing.</p>
       <form id="waitlistForm" onsubmit="submitWaitlist(event)">
         <div class="waitlist-input-row">
-          <input type="email" id="waitlistEmail" placeholder="your@email.com" required>
+          <input type="email" id="waitlistEmail" name="email" placeholder="your@email.com" required>
           <button type="submit">Notify Me</button>
         </div>
       </form>
@@ -2886,14 +2886,28 @@ window.addEventListener('popstate', e => {
   showView(tab, false);
 });
 
-function submitWaitlist(e) {
+async function submitWaitlist(e) {
   e.preventDefault();
   const email = $('waitlistEmail').value.trim();
   if (!email) return;
-  localStorage.setItem('mc_waitlist', '1');
-  $('waitlistForm').style.display = 'none';
-  $('waitlistConfirm').style.display = 'flex';
-  // TODO: Remove preventDefault above and set form action="https://formspree.io/f/YOUR_FORM_ID" to send emails
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  try {
+    const res = await fetch('https://formspree.io/f/mkoavboe', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    if (res.ok) {
+      localStorage.setItem('mc_waitlist', '1');
+      $('waitlistForm').style.display = 'none';
+      $('waitlistConfirm').style.display = 'flex';
+    } else {
+      btn.textContent = 'Try again'; btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'Try again'; btn.disabled = false;
+  }
 }
 document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => $('navLinks').classList.remove('open'));
