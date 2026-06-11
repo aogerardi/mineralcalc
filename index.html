@@ -3,16 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MineralCalc — Royalty Income Calculator</title>
-  <meta name="description" content="Free oil and gas royalty income calculator for mineral owners. Know what your minerals are worth before you sign a lease. Model income, run sensitivity analysis, compare bonus offers.">
+  <title>MineralCalc — Free Oil &amp; Gas Royalty Income Calculator for Mineral Owners</title>
+  <meta name="description" content="Free oil and gas royalty income calculator for mineral owners. Know what your minerals are worth before you sign a lease. Model royalty income, verify royalty checks, compare lease bonus offers, and estimate mineral value — built for Oklahoma SCOOP/STACK, works anywhere in the US.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Alex Gerardi">
+  <link rel="canonical" href="https://aogerardi.github.io/mineralcalc/">
   <meta property="og:title" content="MineralCalc — Free Oil &amp; Gas Royalty Income Calculator">
   <meta property="og:description" content="Know what your minerals are worth before you sign anything. Free royalty income calculator for mineral owners, landmen, and investors.">
-  <meta property="og:url" content="https://aogerardi.github.io/mineralcalc">
+  <meta property="og:url" content="https://aogerardi.github.io/mineralcalc/">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://aogerardi.github.io/mineralcalc/mineralcalc_favicon.png">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:site_name" content="MineralCalc">
+  <meta property="og:locale" content="en_US">
+  <meta name="theme-color" content="#1D3C2B">
+  <meta property="og:image" content="https://aogerardi.github.io/mineralcalc/og_card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="MineralCalc — Free Oil &amp; Gas Royalty Income Calculator">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="MineralCalc — Free Royalty Income Calculator">
-  <meta name="twitter:description" content="Know what your minerals are worth before you sign anything. Free tool for mineral owners, landmen, and investors.">"
+  <meta name="twitter:description" content="Know what your minerals are worth before you sign anything. Free tool for mineral owners, landmen, and investors.">
+  <meta name="twitter:image" content="https://aogerardi.github.io/mineralcalc/og_card.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -25,7 +35,7 @@
       {
         "@type": "WebApplication",
         "name": "MineralCalc",
-        "url": "https://aogerardi.github.io/mineralcalc",
+        "url": "https://aogerardi.github.io/mineralcalc/",
         "description": "Free oil and gas royalty income calculator for mineral owners. Model royalty income, verify royalty checks, evaluate lease bonus offers, and estimate mineral value with NPV analysis.",
         "applicationCategory": "FinanceApplication",
         "operatingSystem": "Any",
@@ -257,7 +267,7 @@
       width: 100%; background: var(--bg); border: 1px solid var(--border-dark);
       color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.92rem;
       padding: 9px 12px; outline: none; transition: border-color 0.15s;
-      border-radius: 0; -moz-appearance: textfield;
+      border-radius: 0; -moz-appearance: textfield; appearance: textfield;
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
@@ -318,7 +328,7 @@
     }
     .slide-row { display: flex; align-items: center; gap: 10px; }
     input[type="range"] {
-      flex: 1; -webkit-appearance: none; height: 3px; background: var(--border-dark); outline: none; cursor: pointer;
+      flex: 1; -webkit-appearance: none; appearance: none; height: 3px; background: var(--border-dark); outline: none; cursor: pointer;
     }
     input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--amber); border-radius: 0; cursor: pointer; }
     input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; background: var(--amber); border: none; border-radius: 0; cursor: pointer; }
@@ -455,7 +465,9 @@
       flex: 1; min-width: 90px; background: none; border: 1px solid var(--border-dark);
       color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.75rem;
       font-weight: 500; padding: 8px 10px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     }
+    .btn-sm svg { width: 13px; height: 13px; flex-shrink: 0; }
     .btn-sm:hover { border-color: var(--nav-bg); color: var(--nav-bg); }
     .btn-sm.ok { border-color: var(--pos-green); color: var(--pos-green); }
 
@@ -758,7 +770,7 @@
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar">
-  <a href="#" class="nav-logo"><img src="mineralcalc_favicon.png" alt="MineralCalc" style="height:28px; width:28px; vertical-align:middle; margin-right:8px; display:inline-block;">Mineral<span class="accent">Calc</span></a>
+  <a href="#" class="nav-logo" onclick="showView('main'); window.scrollTo({top:0,behavior:'smooth'}); return false;"><img src="mineralcalc_favicon.png" alt="MineralCalc" style="height:28px; width:28px; vertical-align:middle; margin-right:8px; display:inline-block;">Mineral<span class="accent">Calc</span></a>
   <ul class="nav-links" id="navLinks">
     <li><a href="#about" onclick="showView('main')">About</a></li>
     <li><a href="#calculator" onclick="showView('main')">Calculator</a></li>
@@ -799,8 +811,8 @@
         <div class="about-card">
           <div class="about-card-label">Creator</div>
           <div class="about-card-name">Alex Gerardi</div>
-          <div class="about-card-detail">Energy Management — University of Oklahoma</div>
-          <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:#A8C0B0; line-height:1.7; margin-bottom:16px;">MineralCalc started from a gap I saw working around Oklahoma O&amp;G leasing — mineral owners didn't have access to the same modeling tools the operators do. My background in energy management at OU gave me the foundation to build it right: accurate decline math, real market context, and a clean interface that anyone can use. It's free because information asymmetry in mineral rights already favors the operator enough.</p>
+          <div class="about-card-detail">Energy Management — University of Oklahoma<br>Land &amp; Mineral Acquisitions</div>
+          <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:#A8C0B0; line-height:1.7; margin-bottom:16px;">MineralCalc started from a gap I saw working in Oklahoma land and mineral acquisition — mineral owners don't have access to the same modeling tools that operators and buyers use every day. My energy management background at OU and hands-on experience on the acquisition side of the business shaped how it's built: accurate decline math, real market context, and a clean interface anyone can use. It's free because information asymmetry in mineral rights already favors the operator enough.</p>
           <div class="about-card-links">
             <a href="https://aogerardi.github.io/" target="_blank" rel="noopener">Creator Portfolio ↗</a>
             <a href="https://www.linkedin.com/in/alex-gerardi/" target="_blank" rel="noopener">LinkedIn ↗</a>
@@ -860,7 +872,7 @@
   <div class="calc-grid">
 
     <!-- LEFT: INPUTS -->
-    <div class="panel">
+    <div class="panel" id="inputsPanel">
 
       <div class="input-section">Mineral Interest</div>
 
@@ -951,8 +963,8 @@
           </div>
         </div>
         <div class="toggle-row">
-          <button id="btnOil" class="active" onclick="setCommodity('oil')">Oil (BBL)</button>
-          <button id="btnGas" onclick="setCommodity('gas')">Gas (MCF)</button>
+          <button id="btnOil" class="active" onclick="setCommodity('oil', true)">Oil (BBL)</button>
+          <button id="btnGas" onclick="setCommodity('gas', true)">Gas (MCF)</button>
         </div>
       </div>
 
@@ -1166,10 +1178,10 @@
       </div>
 
       <div class="action-row">
-        <button class="btn-sm" onclick="resetDefaults()">↺ Reset Defaults</button>
-        <button class="btn-sm" id="copyBtn" onclick="copyResults()">⎘ Copy Results</button>
-        <button class="btn-sm" id="shareBtn" onclick="shareResults()">⤴ Share URL</button>
-        <button class="btn-sm" onclick="printResults()">⎙ Print / PDF</button>
+        <button class="btn-sm" onclick="resetDefaults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reset Defaults</button>
+        <button class="btn-sm" id="copyBtn" onclick="copyResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Results</button>
+        <button class="btn-sm" id="shareBtn" onclick="shareResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share Link</button>
+        <button class="btn-sm" onclick="printResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print / PDF</button>
       </div>
     </div><!-- /inputs panel -->
 
@@ -1504,7 +1516,7 @@
           <div class="gloss-item"><div class="gloss-term">BOE — Barrels of Oil Equivalent</div><div class="gloss-def">Unit equating 1 barrel of oil = 6 MCF of natural gas by energy content. Used to normalize mixed production streams.</div></div>
           <div class="gloss-item"><div class="gloss-term">MCF — Thousand Cubic Feet</div><div class="gloss-def">Standard unit of natural gas volume. 1 MMCF = 1,000 MCF. Gas wells measured in MCF/day or MMCF/day.</div></div>
           <div class="gloss-item"><div class="gloss-term">Royalty Decimal</div><div class="gloss-def">Your precise fractional share of production value. Formula: (NMA ÷ Gross Acres) × Royalty Rate. Appears on your division order.</div></div>
-          <div class="gloss-item"><div class="gloss-term">Severance Tax</div><div class="gloss-def">State tax on oil and gas production at the wellhead (Oklahoma: 7%). Deducted from royalty before payment is issued.</div></div>
+          <div class="gloss-item"><div class="gloss-term">Severance Tax</div><div class="gloss-def">State tax on oil and gas production at the wellhead (Oklahoma: 5% for a well's first 36 months, then 7%). Deducted from royalty before payment is issued.</div></div>
           <div class="gloss-item"><div class="gloss-term">Ad Valorem Tax</div><div class="gloss-def">County property tax assessed on production value, separate from severance tax. Varies significantly by county and state.</div></div>
           <div class="gloss-item"><div class="gloss-term">Lease Bonus</div><div class="gloss-def">One-time upfront payment per NMA paid when you sign an O&amp;G lease. Separate from and in addition to ongoing royalty income.</div></div>
           <div class="gloss-item"><div class="gloss-term">IP Rate — Initial Production</div><div class="gloss-def">A well's production rate when it first comes online. Reported in BOE/day or MCF/day. The highest rate the well will produce — all production declines from this peak.</div></div>
@@ -1647,7 +1659,6 @@
           <button type="submit">Notify Me</button>
         </div>
       </form>
-      <!-- TODO: Connect form to Formspree: set form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" -->
       <div class="waitlist-confirm" id="waitlistConfirm">
         <span class="check">✓</span>
         <span>You're on the list. We'll be in touch when Lease Analyzer launches.</span>
@@ -2185,6 +2196,7 @@ function buildLayoutB(r) {
           <thead><tr><th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">Price</th>${['1/8 (12.5%)','3/16 (18.75%)','1/5 (20%)','1/4 (25%)'].map(th).join('')}</tr></thead>
           <tbody>${getPrintSensRows(r)}</tbody>
         </table>
+        ${r.tiered ? `<div style="font-size:8px;color:#7a6a50;font-style:italic;font-family:sans-serif;margin:-8px 0 12px;">Sensitivity figures use the year-1 severance rate (5%, OK new-well). Production after 36 months is taxed at 7% — see the decline schedule below.</div>` : ''}
         ${sec(`Year-by-year production decline schedule (first ${maxDeclineRows} years)`)}
         <table style="width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:14px;">
           <thead><tr>${['Year','Daily production','Gross royalty','Net royalty','Cumulative net','Income'].map(h=>`<th style="background:#1D3C2B;color:#A8C0B0;padding:4px 5px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:0.5px;font-family:sans-serif;">${h}</th>`).join('')}</tr></thead>
@@ -2217,6 +2229,9 @@ function validate() {
   chk('numWells',   'e-numWells',   S.numWells >= 1 && S.numWells <= 20, 'Enter 1–20 wells.');
   chk('production', 'e-production', S.production > 0, 'Must be a positive number.');
   chk('commodityPrice','e-commodityPrice', S.commodityPrice > 0, 'Must be a positive number.');
+  if (S.royaltySelect === 'custom') {
+    chk('royaltyCustom', 'e-royaltyCustom', S.royaltyRate > 0 && S.royaltyRate < 1, 'Enter a value between 0.01 and 99.99.');
+  }
   return ok;
 }
 
@@ -2313,6 +2328,14 @@ function bindInputs() {
     $('discountRateLabel').textContent = S.discountRate + '%';
     update();
   });
+
+  // Any manual edit in the inputs panel invalidates the active demo preset
+  // highlight (programmatic preset fills don't fire input/change events)
+  const ip = $('inputsPanel');
+  if (ip) {
+    ip.addEventListener('input', clearPresetActive);
+    ip.addEventListener('change', clearPresetActive);
+  }
 }
 
 /* ===== STATE SELECTOR ===== */
@@ -2346,7 +2369,7 @@ function setState(code, flash = true) {
     el.removeAttribute('readonly');
     el.classList.remove('field-locked', 'sev-highlight');
     tag.textContent = 'custom';
-    el.focus();
+    if (flash) el.focus();
     return;
   }
   let rate = STATE_RATES[code];
@@ -2430,10 +2453,20 @@ function applyPreset(key, btn) {
   $('okNewWell').checked    = ps.okNewWell;
   $('producingState').value = 'OK';
   setState('OK', false);
+  // Presets are named, reproducible scenarios — clear post-prod deductions so
+  // the displayed numbers always match the scenario title
+  S.postProdEnabled = false;
+  $('ppdToggleBtn').textContent = 'OFF';
+  $('ppdToggleBtn').classList.remove('on');
+  $('ppdWrap').classList.remove('show');
   setCommodity(ps.commodity);
 
   document.querySelectorAll('#presetRow .preset-chip').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+}
+
+function clearPresetActive() {
+  document.querySelectorAll('#presetRow .preset-chip.active').forEach(b => b.classList.remove('active'));
 }
 
 function syncAcreChips(val) {
@@ -2446,12 +2479,14 @@ function setGrossAcres(val) {
   S.grossAcres = val;
   $('grossAcres').value = val;
   syncAcreChips(val);
+  clearPresetActive();
   update();
 }
 
 /* ===== POST-PROD DEDUCTIONS ===== */
 function togglePPD() {
   S.postProdEnabled = !S.postProdEnabled;
+  clearPresetActive();
   const btn = $('ppdToggleBtn');
   btn.textContent = S.postProdEnabled ? 'ON' : 'OFF';
   btn.classList.toggle('on', S.postProdEnabled);
@@ -2600,11 +2635,28 @@ const PRICE_URLS = {
   oil: 'https://markets.businessinsider.com/commodities/oil-price',
   gas: 'https://markets.businessinsider.com/commodities/natural-gas-price',
 };
-function setCommodity(type) {
+const COMMODITY_DEFAULT_PRICE = { oil: 72.00, gas: 3.25 };
+function setCommodity(type, userClick = false) {
+  const prev = S.commodity;
   S.commodity = type;
   $('btnOil').classList.toggle('active', type === 'oil');
   $('btnGas').classList.toggle('active', type === 'gas');
   $('livePriceBtn').href = PRICE_URLS[type];
+  // Oil ($/BBL, ~$60-90) and gas ($/MCF, ~$2-5) prices differ ~20×. When the
+  // user switches commodity and the price clearly belongs to the other one,
+  // swap in the right scale so results aren't silently wrong by 95%.
+  if (userClick && type !== prev) {
+    const looksLikeOil = S.commodityPrice > 25;
+    if ((type === 'gas' && looksLikeOil) || (type === 'oil' && !looksLikeOil)) {
+      S.commodityPrice = COMMODITY_DEFAULT_PRICE[type];
+      const el = $('commodityPrice');
+      el.value = S.commodityPrice.toFixed(2);
+      el.classList.remove('sev-highlight');
+      void el.offsetWidth;
+      el.classList.add('sev-highlight');
+    }
+    clearPresetActive();
+  }
   if (dcalcTab === 'calc')    updateDcalcLabels();
   if (dcalcTab === 'history') updateDcalcHistLabels();
   update();
@@ -2645,6 +2697,13 @@ function resetDefaults() {
   $('ppdWrap').classList.remove('show');
   $('discountRate').value       = DEFAULTS.discountRate;
   $('discountRateLabel').textContent = DEFAULTS.discountRate + '%';
+  $('reportName').value = '';
+  $('priceCustom').value = DEFAULTS.priceCustom.toFixed(2);
+  $('bonusPerNMA').value = 500;
+  $('bonusLeaseTerm').value = 3;
+  $('cvCheckAmt').value = '';
+  $('cvResult').innerHTML = '';
+  clearPresetActive();
   setCommodity('oil');
 }
 
@@ -2683,8 +2742,9 @@ function copyResults() {
 
   navigator.clipboard.writeText(text).then(() => {
     const btn = $('copyBtn');
-    btn.textContent = '✓ Copied!'; btn.classList.add('ok');
-    setTimeout(() => { btn.textContent = '⎘ Copy Results'; btn.classList.remove('ok'); }, 2200);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Copied!'; btn.classList.add('ok');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('ok'); }, 2200);
   }).catch(() => alert('Copy failed — check browser permissions.'));
 }
 
@@ -2701,12 +2761,19 @@ function shareResults() {
     disc: S.discountRate,
     ...(S.postProdEnabled ? { ppd: 1, ppdrate: S.postProdRate } : {}),
     ...(S.priceScenario === 'custom' && S.priceCustom ? { custprice: S.priceCustom } : {}),
+    ...($('reportName').value.trim() ? { name: $('reportName').value.trim() } : {}),
   });
   const url = window.location.origin + window.location.pathname + '?' + p.toString();
+  // Native share sheet on mobile (text/email/airdrop); clipboard on desktop
+  if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    navigator.share({ title: 'MineralCalc — Royalty Income Estimate', url }).catch(() => {});
+    return;
+  }
   navigator.clipboard.writeText(url).then(() => {
     const btn = $('shareBtn');
-    btn.textContent = '✓ URL Copied!'; btn.classList.add('ok');
-    setTimeout(() => { btn.textContent = '⤴ Share URL'; btn.classList.remove('ok'); }, 2200);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Link Copied!'; btn.classList.add('ok');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('ok'); }, 2200);
   }).catch(() => prompt('Copy this URL:', url));
 }
 
@@ -2767,12 +2834,17 @@ function loadFromURL() {
   const knownRates = ['0.125','0.16667','0.1875','0.2','0.25'];
   const rStr = S.royaltyRate.toString();
   if (knownRates.includes(rStr)) {
+    S.royaltySelect = rStr;
     $('royaltySelect').value = rStr;
   } else {
+    S.royaltySelect = 'custom';
     $('royaltySelect').value = 'custom';
     $('royaltyCustom').value = (S.royaltyRate * 100).toFixed(4);
     $('royaltyCustomWrap').classList.add('show');
   }
+
+  const sharedName = p.get('name');
+  if (sharedName) $('reportName').value = sharedName;
 
   // Restore state selector + OK new-well checkbox, then re-lock the severance
   // field to the shared value (the URL's sev wins over the state default)
@@ -2952,6 +3024,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Restore view from hash on direct load (e.g. shared link or reload)
   const hash = window.location.hash.slice(1);
   if (hash === 'education' || hash === 'analyzer') showView(hash, false);
+  // Returning waitlist signups see the confirmation instead of the form again
+  if (localStorage.getItem('mc_waitlist') === '1') {
+    const wf = $('waitlistForm'), wc = $('waitlistConfirm');
+    if (wf && wc) { wf.style.display = 'none'; wc.style.display = 'flex'; }
+  }
+  // Print modal: click outside or Escape closes
+  const pmo = $('printModalOverlay');
+  if (pmo) pmo.addEventListener('click', e => { if (e.target === pmo) closePrintModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrintModal(); });
 });
 </script>
 
