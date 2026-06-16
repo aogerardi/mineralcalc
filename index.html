@@ -103,7 +103,7 @@
       --amber-border: rgba(160,132,92,0.38);
       --text:         #1C1C1C;
       --muted:        #6B5A42;
-      --dim:          #9A8870;
+      --dim:          #7E6B49;
       --border:       #D8CFC0;
       --border-dark:  #C4B89A;
       --red:          #A03030;
@@ -490,7 +490,7 @@
     .stat-lbl { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #A8C0B0; margin-bottom: 5px; }
     .stat-val { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #F7F3EC; }
     .stat-card.gold-border .stat-val { color: var(--amber-light); font-size: 1.65rem; }
-    .stat-sub { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: #7A9A86; margin-top: 3px; }
+    .stat-sub { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: #8FB39E; margin-top: 3px; }
 
     .rows-area { border-top: 1px solid var(--nav-border); padding-top: 14px; }
     .data-row {
@@ -597,7 +597,7 @@
       font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600;
       letter-spacing: 0.05em; padding: 4px 12px; margin: 10px 0;
     }
-    .footer-disc { font-size: 0.72rem; color: #7A9A86; max-width: 580px; margin: 10px auto 0; line-height: 1.65; font-family: 'Inter', sans-serif; }
+    .footer-disc { font-size: 0.72rem; color: #8FB39E; max-width: 580px; margin: 10px auto 0; line-height: 1.65; font-family: 'Inter', sans-serif; }
 
     /* ===== WAITLIST BAR ===== */
     .waitlist-bar { background: var(--card2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 18px 48px; }
@@ -632,7 +632,7 @@
     }
     .value-range-lbl { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6BA87E; margin-bottom: 5px; }
     .value-range-val { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: #F7F3EC; letter-spacing: -0.01em; }
-    .value-range-sub { font-size: 0.7rem; color: #7A9A86; margin-top: 3px; font-family: 'Inter', sans-serif; }
+    .value-range-sub { font-size: 0.7rem; color: #8FB39E; margin-top: 3px; font-family: 'Inter', sans-serif; }
 
     /* ===== LEASE BONUS SECTION ===== */
     .bonus-wrap { max-width: 1380px; margin: 0 auto; padding: 0 48px 80px; }
@@ -766,9 +766,34 @@
       .dcalc-tab { font-size: 0.6rem; padding: 4px 6px; }
       .tbl-scroll { -webkit-overflow-scrolling: touch; }
     }
+
+    /* ===== ACCESSIBILITY ===== */
+    .skip-link {
+      position: absolute; left: -9999px; top: 0; z-index: 5000;
+      background: var(--amber); color: #FFFDF8; font-family: 'Inter', sans-serif;
+      font-size: 0.82rem; font-weight: 600; padding: 10px 18px; text-decoration: none;
+    }
+    .skip-link:focus { left: 8px; top: 8px; }
+    /* Keyboard focus rings only — mouse clicks are unaffected, so desktop look is unchanged */
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--amber); outline-offset: 2px;
+    }
+    /* Enlarge the "?" help-icon tap target to ~36px without changing its visible size */
+    .tip-icon { position: relative; }
+    .tip-icon::after { content: ''; position: absolute; inset: -11px; }
+    /* Keep tooltips from overflowing the edge of small screens */
+    .tip-box { max-width: calc(100vw - 32px); }
+    /* Prevent iOS Safari auto-zoom on focus (fires when an input's font-size is < 16px) */
+    @media (max-width: 920px) {
+      input[type="number"], input[type="text"], input[type="email"], select,
+      .dcalc-input, .cv-input-row input { font-size: 16px !important; }
+    }
   </style>
 </head>
 <body>
+
+<a href="#calculator" class="skip-link">Skip to calculator</a>
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar">
@@ -783,7 +808,7 @@
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
 </nav>
 
-<div id="main-view">
+<div id="main-view" role="main">
 
 <!-- ===== HERO ===== -->
 <section class="hero">
@@ -1180,22 +1205,22 @@
       </div>
 
       <div class="action-row">
-        <button class="btn-sm" onclick="resetDefaults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reset Defaults</button>
-        <button class="btn-sm" id="copyBtn" onclick="copyResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Results</button>
-        <button class="btn-sm" id="shareBtn" onclick="shareResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share Link</button>
-        <button class="btn-sm" onclick="printResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print / PDF</button>
+        <button class="btn-sm" onclick="resetDefaults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reset Defaults</button>
+        <button class="btn-sm" id="copyBtn" onclick="copyResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Results</button>
+        <button class="btn-sm" id="shareBtn" onclick="shareResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share Link</button>
+        <button class="btn-sm" onclick="printResults()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print / PDF</button>
       </div>
     </div><!-- /inputs panel -->
 
     <!-- RIGHT: RESULTS -->
     <div class="panel results-panel">
       <div class="disc-banner">
-        <span class="disc-icon">⚠</span>
+        <span class="disc-icon" aria-hidden="true">⚠</span>
         <span>Estimates only — production, pricing, and lease terms vary significantly. This tool does not constitute financial, legal, or tax advice. Consult a licensed petroleum engineer, landman, or O&amp;G attorney before making mineral rights decisions.</span>
       </div>
       <h3>
         Live Results
-        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+        <span class="live-badge"><span class="live-dot" aria-hidden="true"></span>LIVE</span>
       </h3>
 
       <div class="ppd-warning" id="ppdWarning">⚠ Post-production deductions applied — check your lease language.</div>
@@ -1354,7 +1379,7 @@
     <div class="panel">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
         <span style="font-size:0.88rem; color:var(--muted); font-weight:500; font-family:'Inter',sans-serif;">Bonus vs. Hold Analysis</span>
-        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+        <span class="live-badge"><span class="live-dot" aria-hidden="true"></span>LIVE</span>
       </div>
 
       <div class="bonus-primary">
@@ -1632,17 +1657,17 @@
 
     <div class="analyzer-features">
       <div class="analyzer-feature">
-        <div class="analyzer-feature-icon">📄</div>
+        <div class="analyzer-feature-icon" aria-hidden="true">📄</div>
         <h3>Instant Term Extraction</h3>
         <p>Lease Analyzer reads your PDF and pulls the key numbers automatically — royalty rate, gross acres, NMA, severance terms, primary term, and more. Results feed directly into the calculator.</p>
       </div>
       <div class="analyzer-feature">
-        <div class="analyzer-feature-icon">⚠️</div>
+        <div class="analyzer-feature-icon" aria-hidden="true">⚠️</div>
         <h3>Clause Risk Flagging</h3>
         <p>Identifies language that may reduce your royalty check — post-production deduction clauses, "market value" vs "at wellhead" provisions, depth severance, missing Pugh clauses, and other terms that favor the operator.</p>
       </div>
       <div class="analyzer-feature">
-        <div class="analyzer-feature-icon">📊</div>
+        <div class="analyzer-feature-icon" aria-hidden="true">📊</div>
         <h3>Plain-English Summary</h3>
         <p>No legalese. A clear, plain-English breakdown of what your lease actually says — what you're getting, what you're giving up, and what to ask your landman or attorney about before signing.</p>
       </div>
@@ -1660,7 +1685,7 @@
           <input type="email" id="waitlistEmail" name="email" placeholder="your@email.com" required>
           <button type="submit">Notify Me</button>
         </div>
-        <div style="font-size:0.72rem;color:#7A9A86;margin-top:12px;line-height:1.5;">We'll only use your email to tell you when Lease Analyzer launches. No spam. See our <a href="legal.html#privacy" style="color:#A8C0B0;text-decoration:underline;">Privacy Policy</a>.</div>
+        <div style="font-size:0.72rem;color:#8FB39E;margin-top:12px;line-height:1.5;">We'll only use your email to tell you when Lease Analyzer launches. No spam. See our <a href="legal.html#privacy" style="color:#A8C0B0;text-decoration:underline;">Privacy Policy</a>.</div>
       </form>
       <div class="waitlist-confirm" id="waitlistConfirm">
         <span class="check">✓</span>
@@ -1760,6 +1785,8 @@ function runCalc() {
 
 /* ===== UPDATE DOM ===== */
 function update() {
+  syncSliderAria();
+  updateTogglesAria();
   if (!validate()) return;
   const r = runCalc();
   const unit = S.commodity === 'oil' ? 'BBL' : 'MCF';
@@ -2989,31 +3016,106 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => $('navLinks').classList.remove('open'));
 });
 
-/* ===== TOOLTIP HOVER MANAGEMENT ===== */
-// CSS hover alone loses focus when cursor moves from the tiny ? icon to the tooltip box.
-// JS manages hover with a short delay so the cursor can travel between them.
+/* ===== TOOLTIP MANAGEMENT (hover + tap + keyboard) ===== */
+// CSS hover alone loses focus when the cursor travels from the tiny ? icon to the
+// tooltip box — and hover doesn't exist on touch screens at all. This adds a hover
+// delay plus tap/keyboard toggling so the tooltips work on phones and via keyboard.
+const tooltipCtl = [];
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.tip-wrap').forEach(wrap => {
-    const box = wrap.querySelector('.tip-box');
-    if (!box) return;
-    let hideTimer;
+    const box  = wrap.querySelector('.tip-box');
+    const icon = wrap.querySelector('.tip-icon');
+    if (!box || !icon) return;
+    icon.setAttribute('tabindex', '0');
+    icon.setAttribute('role', 'button');
+    icon.setAttribute('aria-label', 'More information');
+    icon.setAttribute('aria-expanded', 'false');
+    let hideTimer, pinned = false;
     const show = () => {
       clearTimeout(hideTimer);
       box.style.opacity = '1';
       box.style.pointerEvents = 'auto';
+      icon.setAttribute('aria-expanded', 'true');
     };
-    const scheduleHide = () => {
-      hideTimer = setTimeout(() => {
-        box.style.opacity = '0';
-        box.style.pointerEvents = 'none';
-      }, 180);
+    const hide = () => {
+      pinned = false;
+      box.style.opacity = '0';
+      box.style.pointerEvents = 'none';
+      icon.setAttribute('aria-expanded', 'false');
+    };
+    const scheduleHide = () => { hideTimer = setTimeout(() => { if (!pinned) hide(); }, 180); };
+    const toggle = () => {
+      const willOpen = !pinned;
+      tooltipCtl.forEach(c => { if (c.wrap !== wrap) c.hide(); }); // close any other open tip
+      pinned = willOpen;
+      if (willOpen) show(); else hide();
     };
     wrap.addEventListener('mouseenter', show);
     wrap.addEventListener('mouseleave', scheduleHide);
     box.addEventListener('mouseenter', show);
     box.addEventListener('mouseleave', scheduleHide);
+    icon.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); toggle(); });
+    icon.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      else if (e.key === 'Escape') { hide(); icon.blur(); }
+    });
+    tooltipCtl.push({ wrap, hide });
+  });
+  // A tap/click anywhere outside an open tooltip closes it
+  document.addEventListener('click', e => {
+    tooltipCtl.forEach(c => { if (!c.wrap.contains(e.target)) c.hide(); });
   });
 });
+
+/* ===== ARIA LABELS & STATE ===== */
+// Field labels are styled <div>s, not <label>s, so screen readers announce nothing
+// when an input is focused. These give every control a spoken name.
+const ARIA_LABELS = {
+  reportName: 'Report name or tract description',
+  grossAcres: 'Gross acres or spacing unit size',
+  nma: 'Net mineral acres',
+  royaltySelect: 'Royalty rate',
+  royaltyCustom: 'Custom royalty percent',
+  numWells: 'Number of producing wells',
+  production: 'Estimated production per well',
+  declineRate: 'Production decline rate, annual percent',
+  yearsModel: 'Years to model',
+  discountRate: 'Discount rate for NPV, percent',
+  commodityPrice: 'Current commodity price',
+  priceScenario: 'Price scenario',
+  priceCustom: 'Custom effective price',
+  producingState: 'Producing state',
+  severanceTax: 'Severance tax rate, percent',
+  adValoremTax: 'Ad valorem tax rate, percent',
+  ppdRate: 'Post-production deduction rate, percent',
+  dcalcIP: 'Initial production rate',
+  dcalcEndProd: 'Production at end of period',
+  bonusPerNMA: 'Offered bonus, dollars per net mineral acre',
+  bonusLeaseTerm: 'Lease primary term, years',
+  cvCheckAmt: 'Your royalty check amount',
+  waitlistEmail: 'Email address',
+};
+function initA11y() {
+  Object.entries(ARIA_LABELS).forEach(([id, label]) => {
+    const el = $(id); if (el) el.setAttribute('aria-label', label);
+  });
+  ['dcalcH1','dcalcH2','dcalcH3','dcalcH4','dcalcH5','dcalcH6'].forEach((id, i) => {
+    const el = $(id); if (el) el.setAttribute('aria-label', 'Month ' + (i + 1) + ' production');
+  });
+  syncSliderAria();
+  updateTogglesAria();
+}
+function syncSliderAria() {
+  const sl = [['declineRate', S.declineRate + '%'], ['yearsModel', S.yearsModel + ' years'],
+              ['discountRate', S.discountRate + '%'], ['ppdRate', S.postProdRate + '%']];
+  sl.forEach(([id, txt]) => { const el = $(id); if (el) el.setAttribute('aria-valuetext', txt); });
+}
+function updateTogglesAria() {
+  const o = $('btnOil'), g = $('btnGas'), p = $('ppdToggleBtn');
+  if (o) o.setAttribute('aria-pressed', String(S.commodity === 'oil'));
+  if (g) g.setAttribute('aria-pressed', String(S.commodity === 'gas'));
+  if (p) p.setAttribute('aria-pressed', String(S.postProdEnabled));
+}
 
 /* ===== INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
@@ -3021,6 +3123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindInputs();
   if (!fromURL) setState('OK', false);
   syncAcreChips(S.grossAcres);
+  initA11y();
   update();
   // Decline table starts collapsed
   const dsb = $('declineSectionBody');
