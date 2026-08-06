@@ -57,12 +57,17 @@ def fetch(name: str, filename: str) -> pathlib.Path:
     return dest
 
 
+# Placeholder values the OCC files use where a county was never filled in
+NON_COUNTIES = {"", "NONE", "NOT DENOTED", "VARIOUS LOC", "VARIOUS", "N/A", "UNKNOWN"}
+
+
 def norm_county(raw) -> str:
-    """'001-ADAIR' and 'ADAIR' both -> 'ADAIR'."""
+    """'001-ADAIR' and 'ADAIR' both -> 'ADAIR'; placeholders -> ''."""
     s = str(raw or "").strip().upper()
     if "-" in s:
         s = s.split("-", 1)[1]
-    return s.strip()
+    s = s.strip()
+    return "" if s in NON_COUNTIES else s
 
 
 def norm_trs(sec, twp, rng) -> str | None:
@@ -186,11 +191,12 @@ def parse_completions(path: pathlib.Path) -> dict:
         if prev and prev[0] >= rank:
             continue
         if prev:
-            counties[prev[1]][prev[2]] = [
-                w for w in counties[prev[1]][prev[2]] if w.get("api") != api or not api
-            ]
-        seen[key] = (rank, county, trs)
+            # Remove by object identity — matching on api alone kept duplicates
+            # for rows with a blank API, the exact case the name fallback covers
+            bucket = counties[prev[1]][prev[2]]
+            counties[prev[1]][prev[2]] = [w for w in bucket if w is not prev[3]]
         counties.setdefault(county, {}).setdefault(trs, []).append(well)
+        seen[key] = (rank, county, trs, well)
         kept += 1
 
     log(f"    scanned {total:,} rows, kept {kept:,} completions since {MIN_YEAR}")
@@ -274,7 +280,7 @@ def main() -> int:
     total_bytes = 0
 
     for county in counties:
-        if not county or county == "NONE":
+        if county in NON_COUNTIES:
             continue
         sections = {}
         for trs, wells in comps.get(county, {}).items():

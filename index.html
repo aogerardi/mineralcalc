@@ -1879,7 +1879,7 @@ Glossary of Key Terms <span class="acc-icon" aria-hidden="true">+</span>
       <div id="leaseFindings"></div>
 
       <div class="analyzer-note" style="margin-top:32px;">
-        <strong>This is a screening tool, not legal advice.</strong> It matches common lease language patterns and can miss non-standard drafting, handwritten riders, and exhibits. A clause it does not flag may still be present, and a flagged clause may be modified elsewhere in your document. Have a licensed landman or oil and gas attorney review any lease before you sign it.
+        <strong>This is a screening tool, not legal advice.</strong> It matches common lease language patterns and can miss non-standard drafting, handwritten riders, and exhibits. A clause it does not flag may still be present, and a flagged clause may be modified elsewhere in your document. Because a wrong reassurance is worse than a wrong warning, the analyzer is deliberately cautious: it only marks a provision as being in your favor on specific, explicit language, and it flags conflicts rather than picking a winner. Have a licensed landman or oil and gas attorney review any lease before you sign it.
       </div>
 
       <div style="text-align:center;margin:20px 0 40px;">
@@ -1891,7 +1891,7 @@ Glossary of Key Terms <span class="acc-icon" aria-hidden="true">+</span>
       <div class="analyzer-feature">
         <div class="analyzer-feature-icon" aria-hidden="true">🔒</div>
         <h3>Private by construction</h3>
-        <p>The PDF is read by JavaScript running in your browser. There is no upload, no server, and no copy of your lease anywhere but your own device — the same reason the analyzer works offline once the page has loaded.</p>
+        <p>The PDF is read by JavaScript running in your browser. There is no upload, no server, and no copy of your lease anywhere but your own device — we could not read your lease if we wanted to. Nothing about it is transmitted, logged, or retained.</p>
       </div>
       <div class="analyzer-feature">
         <div class="analyzer-feature-icon" aria-hidden="true">⚠️</div>
@@ -3483,14 +3483,16 @@ async function loadWellIndex() {
 // digits and turns T17N into township 7.
 function parseSTR(raw) {
   const s = String(raw || '').toUpperCase().replace(/[.,]/g, ' ');
+  // (?:^|[^\d]) keeps a 3-digit typo like "136-17N-5W" from silently becoming
+  // section 36; township/range are bounded to Oklahoma's actual grid
   const m = s.match(
-    /(?:SEC(?:TION)?\s*)?(\d{1,2})\s*[-\s]+\s*(?:T(?:WP|OWNSHIP)?\s*)?(\d{1,3})\s*(N(?:ORTH)?|S(?:OUTH)?)\b\s*[-\s]*\s*(?:R(?:GE|ANGE)?\s*)?(\d{1,3})\s*(E(?:AST)?|W(?:EST)?)\b/);
+    /(?:^|[^\d])(?:SEC(?:TION)?\s*)?(\d{1,2})\s*[-\s]+\s*(?:T(?:WP|OWNSHIP)?\s*)?(\d{1,2})\s*(N(?:ORTH)?|S(?:OUTH)?)\b\s*[-\s]*\s*(?:R(?:GE|ANGE)?\s*)?(\d{1,2})\s*(E(?:AST)?|W(?:EST)?)\b/);
   if (!m) return null;
   const sec = parseInt(m[1], 10);
   if (sec < 1 || sec > 36) return null;
   const t = parseInt(m[2], 10), r = parseInt(m[4], 10);
   const tD = m[3][0], rD = m[5][0];
-  if (!t || !r) return null;
+  if (!t || !r || t > 40 || r > 40) return null;
   return {
     key: `${String(sec).padStart(2, '0')}-${String(t).padStart(2, '0')}${tD}-${String(r).padStart(2, '0')}${rD}`,
     twpRange: `${String(t).padStart(2, '0')}${tD}-${String(r).padStart(2, '0')}${rD}`,
@@ -3584,13 +3586,16 @@ function renderWellLookup(parsed, wells, permits, nearby, countyName, idx) {
     : `${wells.length} completion${wells.length === 1 ? '' : 's'}${permits.length ? ` and ${permits.length} recent permit${permits.length === 1 ? '' : 's'}` : ''} in ${parsed.pretty}, ${titleCase(countyName)} County.`);
 
   const applyRate = isGassy ? medGas : (medOil || Math.round(medGas / 6));
-  // Suggest only the recently-completed wells. The calculator applies one IP
-  // rate to every well from year 1, so counting a section's whole 15-year
-  // drilling history here would model old wells as if they were brand new.
-  const applyWells = Math.max(1, Math.min(20, modern.length || horiz.length || 1));
-  const olderNote = set.length > applyWells
-    ? `<div class="wl-src" style="margin-top:6px;">${set.length} well${set.length > 1 ? 's' : ''} total on record; ${applyWells} completed in the last 5 years. Older wells are well down their decline curves, so modeling all of them at an initial rate would overstate income — raise the well count yourself if the whole unit really is producing at similar rates.</div>`
-    : '';
+  // Suggest only recently-completed wells. The calculator applies one IP rate to
+  // every well from year 1, so counting a section's whole drilling history would
+  // model old wells as brand new. In analog mode the wells are in OTHER sections
+  // entirely, so the only defensible count for the searched section is 1.
+  const applyWells = useNearby ? 1 : Math.max(1, Math.min(20, modern.length || horiz.length || 1));
+  const olderNote = useNearby
+    ? `<div class="wl-src" style="margin-top:6px;">These wells are in other sections of the same township, so they indicate what a well here might do — not how many wells you have. The suggestion applies one well; set the count to match what is actually drilled on your acreage.</div>`
+    : (set.length > applyWells
+        ? `<div class="wl-src" style="margin-top:6px;">${set.length} well${set.length > 1 ? 's' : ''} total on record; ${applyWells} completed in the last 5 years. Older wells are well down their decline curves, so modeling all of them at an initial rate would overstate income — raise the well count yourself if the whole unit really is producing at similar rates.</div>`
+        : '');
   const summary = set.length && applyRate > 0 ? `
     <div class="wl-summary">
       <div class="wl-summary-row">
@@ -3669,10 +3674,16 @@ function leaseStatus(msg, isErr = false) {
   el.classList.toggle('err', isErr);
 }
 
-function toggleLeasePaste() {
-  const w = $('leasePasteWrap');
-  const open = w.classList.toggle('show');
+// Class and aria state always move together — the scan-detected branch used to
+// open the panel directly, leaving the toggle announcing "collapsed"
+function setLeasePaste(open) {
+  $('leasePasteWrap').classList.toggle('show', open);
   document.querySelector('.lease-paste-toggle').setAttribute('aria-expanded', String(open));
+}
+
+function toggleLeasePaste() {
+  const open = !$('leasePasteWrap').classList.contains('show');
+  setLeasePaste(open);
   if (open) $('leasePasteText').focus();
 }
 
@@ -3680,12 +3691,20 @@ function resetLeaseAnalyzer() {
   leaseData = null;
   $('leaseResults').style.display = 'none';
   $('leaseFile').value = '';
+  $('leasePasteText').value = '';
+  setLeasePaste(false);
+  $('leaseTerms').innerHTML = '';
+  $('leaseFindings').innerHTML = '';
+  $('leaseSummaryBar').innerHTML = '';
   leaseStatus('');
   $('lease-drop').scrollIntoView({ behavior: SCROLL_B, block: 'center' });
 }
 
 async function handleLeaseFile(file) {
   if (!file) return;
+  // Clear the input so re-picking the same path (e.g. after OCR-ing in place)
+  // still fires a change event instead of appearing dead
+  $('leaseFile').value = '';
   if (file.type && file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) {
     leaseStatus('That does not look like a PDF. Choose a PDF, or paste the lease text instead.', true);
     return;
@@ -3701,8 +3720,8 @@ async function handleLeaseFile(file) {
     if (words < 120) {
       leaseStatus(
         'This PDF has little or no selectable text (' + words + ' words) — it is most likely a scan or photo. ' +
-        'The analyzer cannot read images. Run it through OCR, or paste the lease text using the link above.', true);
-      $('leasePasteWrap').classList.add('show');
+        'The analyzer cannot read images. Run it through OCR, or paste the lease text below.', true);
+      setLeasePaste(true);
       return;
     }
     runLeaseAnalysis(text, file.name);
@@ -3737,6 +3756,11 @@ function loadPdfJs() {
     };
     s.onerror = () => reject(new Error('parser failed to load'));
     document.head.appendChild(s);
+  }).catch(err => {
+    // Don't cache the failure — a dropped connection shouldn't disable the
+    // analyzer for the rest of the session
+    pdfjsReady = null;
+    throw err;
   });
   return pdfjsReady;
 }
@@ -3785,7 +3809,9 @@ function normalizeLeaseText(raw) {
     // downstream pattern simpler. Only number words are consumed, so "term of
     // two (2) years" keeps its "term of"; money and fractions ("$50.00", "1/4")
     // are untouched because their parenthetical isn't a bare integer.
-    .replace(/\b(?:(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|and)[-\s]*)+\(\s*(\d{1,4})\s*\)/gi, '$1')
+    // A leading "and" alone must not qualify, or numbered sub-item lists
+    // ("shall (1) pay ... and (2) furnish ...") get mangled.
+    .replace(/\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand)(?:[-\s]+(?:and|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand))*[-\s]*\(\s*(\d{1,4})\s*\)/gi, '$1')
     .trim();
 }
 
@@ -3809,34 +3835,50 @@ function extractLeaseTerms(text) {
   const lower = text.toLowerCase();
   const out = {};
 
-  // Royalty: numeric fraction, percent, or spelled-out fraction near "royalty"
-  const royWindow = (() => {
-    const i = lower.search(/royalt/);
-    return i < 0 ? lower : lower.slice(Math.max(0, i - 400), i + 1200);
-  })();
-  let roy = null, roySrc = '';
-  let m = /(\d{1,2})\s*\/\s*(\d{1,3})\s*(?:\(\s*[\d.]+\s*%?\s*\))?\s*(?:royalty|of\s+the\s+(?:gross|net)|part|share)/i.exec(royWindow)
-       || /royalt\w*[^.]{0,120}?(\d{1,2})\s*\/\s*(\d{1,3})/i.exec(royWindow);
-  if (m) {
-    const v = parseInt(m[1], 10) / parseInt(m[2], 10);
-    if (v > 0 && v <= 0.5) { roy = v; roySrc = m[0].trim(); }
+  // Royalty: scan the WHOLE document and collect every candidate. A printed
+  // form often recites 1/8 while a typed addendum raises it — first-match-wins
+  // would report the number the parties negotiated away from.
+  const royCandidates = [];
+  const addCand = (val, src, index) => {
+    if (!(val > 0 && val <= 0.5)) return;
+    // Ignore interest rates, which sit next to "royalty" in late-payment clauses
+    const around = text.slice(Math.max(0, index - 100), index + 140);
+    if (/interest|per\s+annum|late|past\s+due/i.test(around)) return;
+    royCandidates.push({ value: val, src: String(src).trim(), index });
+  };
+
+  let rm;
+  const fracRe = /royalt\w*[^.]{0,140}?(\d{1,2})\s*\/\s*(\d{1,3})|(\d{1,2})\s*\/\s*(\d{1,3})[^.]{0,60}?royalt/gi;
+  while ((rm = fracRe.exec(text)) !== null) {
+    const n = rm[1] || rm[3], d = rm[2] || rm[4];
+    addCand(parseInt(n, 10) / parseInt(d, 10), rm[0], rm.index);
   }
-  if (roy === null) {
-    m = /royalt\w*[^.]{0,140}?(\d{1,2}(?:\.\d+)?)\s*(?:percent|%)/i.exec(royWindow)
-     || /(\d{1,2}(?:\.\d+)?)\s*(?:percent|%)[^.]{0,60}?royalt/i.exec(royWindow);
-    if (m) {
-      const v = parseFloat(m[1]) / 100;
-      if (v > 0 && v <= 0.5) { roy = v; roySrc = m[0].trim(); }
-    }
+  const pctRe = /royalt\w*[^.]{0,140}?(\d{1,2}(?:\.\d+)?)\s*(?:percent|%)|(\d{1,2}(?:\.\d+)?)\s*(?:percent|%)[^.]{0,60}?royalt/gi;
+  while ((rm = pctRe.exec(text)) !== null) {
+    addCand(parseFloat(rm[1] || rm[2]) / 100, rm[0], rm.index);
   }
-  if (roy === null) {
-    for (const [word, val] of Object.entries(FRACTION_WORDS)) {
-      const re = new RegExp(word.replace(/[-\s]/g, '[-\\s]') + '[^.]{0,80}?royalt|royalt\\w*[^.]{0,80}?' + word.replace(/[-\s]/g, '[-\\s]'), 'i');
-      const mm = re.exec(royWindow);
-      if (mm) { roy = val; roySrc = mm[0].trim(); break; }
-    }
+  // Longest phrases first so "three-sixteenths" wins over a bare "sixteenth"
+  const fracWords = Object.entries(FRACTION_WORDS).sort((a, b) => b[0].length - a[0].length);
+  for (const [word, val] of fracWords) {
+    const w = word.replace(/[-\s]/g, '[-\\s]');
+    const re = new RegExp('royalt\\w*[^.]{0,90}?' + w + '|' + w + '[^.]{0,90}?royalt', 'gi');
+    while ((rm = re.exec(text)) !== null) addCand(val, rm[0], rm.index);
   }
-  out.royalty = roy === null ? null : { value: roy, src: roySrc };
+
+  const distinct = [...new Set(royCandidates.map(c => c.value.toFixed(6)))];
+  if (royCandidates.length === 0) {
+    out.royalty = null;
+  } else if (distinct.length === 1) {
+    out.royalty = { value: royCandidates[0].value, src: royCandidates[0].src };
+  } else {
+    // Several different rates appear — often oil vs gas, or form vs addendum.
+    // Report the highest but flag the ambiguity rather than auto-applying.
+    const best = royCandidates.reduce((a, b) => (b.value > a.value ? b : a));
+    out.royalty = {
+      value: best.value, src: best.src, ambiguous: true,
+      alternatives: distinct.map(d => parseFloat(d)).sort((a, b) => a - b),
+    };
+  }
 
   // Primary term
   let term = null, termSrc = '';
@@ -3849,16 +3891,28 @@ function extractLeaseTerms(text) {
   }
   out.term = term === null ? null : { value: term, src: termSrc };
 
-  // Gross acreage
-  let acres = null, acresSrc = '';
-  m = /(\d{1,3}(?:,\d{3})*(?:\.\d+)?)\s*(?:gross\s+)?acres,?\s*more\s+or\s+less/i.exec(text)
-   || /containing\s+(\d{1,3}(?:,\d{3})*(?:\.\d+)?)\s*acres/i.exec(text)
-   || /(\d{1,3}(?:,\d{3})*(?:\.\d+)?)\s*acres\s*(?:in|of)\s+the\s+aggregate/i.exec(text);
-  if (m) {
-    const v = parseFloat(m[1].replace(/,/g, ''));
-    if (v > 0 && v <= 20000) { acres = v; acresSrc = m[0].trim(); }
+  // Leased acreage. NOTE: this is the acreage of the leased tract, which is NOT
+  // the spacing-unit size the royalty decimal divides by — a lease can cover 160
+  // acres inside a 640-acre unit. Collected for display only, never auto-applied.
+  const acreHits = [];
+  const acreRes = [
+    /(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*(?:gross\s+)?acres,?\s*more\s+or\s+less/gi,
+    /containing\s+(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*acres/gi,
+    /(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*acres\s*(?:in|of)\s+the\s+aggregate/gi,
+  ];
+  for (const re of acreRes) {
+    let am;
+    while ((am = re.exec(text)) !== null) {
+      const v = parseFloat(am[1].replace(/,/g, ''));
+      if (v > 0 && v <= 20000 && !acreHits.some(h => h.value === v)) {
+        acreHits.push({ value: v, src: am[0].trim() });
+      }
+    }
   }
-  out.acres = acres === null ? null : { value: acres, src: acresSrc };
+  out.acres = acreHits.length
+    ? { value: acreHits[0].value, src: acreHits[0].src,
+        all: acreHits.map(h => h.value), multi: acreHits.length > 1 }
+    : null;
 
   // Legal description (Section-Township-Range)
   m = /section\s+(\d{1,2})\s*,?\s*township\s+(\d{1,3})\s*([nsNS])\w*\s*,?\s*range\s+(\d{1,3})\s*([ewEW])/i.exec(text)
@@ -3897,33 +3951,70 @@ const LEASE_RULES = [
     id: 'deductions',
     title: 'Post-production cost deductions',
     test(text) {
-      const costFree = findFirst(text, [
-        /free\s+of\s+(?:all\s+)?(?:costs?|expense)/i,
-        /without\s+deduction\s+(?:of|for)\s+(?:any\s+)?(?:costs?|expense)/i,
-        /no\s+(?:costs?|deductions?|expenses?)\s+of\s+any\s+kind\s+shall\s+be\s+(?:charged|deducted)/i,
-        /shall\s+not\s+(?:be\s+)?(?:charged|bear)\s+(?:with\s+)?any\s+(?:portion\s+of\s+the\s+)?costs?/i,
-      ]);
+      // Only POST-production costs matter. An operator bears drilling and
+      // operating costs by default everywhere, so "free of costs of drilling"
+      // is worthless boilerplate — and the Producers 88 form's "free of cost to
+      // lessor" describes oil delivered in kind at the wellhead, not deductions.
+      const POST_PROD = /(?:post[- ]?production|gathering|compress\w*|dehydrat\w*|process\w*|treat\w*|transport\w*|market\w*|downstream|point\s+of\s+sale|residue)/i;
+      const PRE_PROD_ONLY = /^(?:[^.]*?)(?:drill\w*|complet\w*|equip\w*|explor\w*|develop\w*|operat\w*|production)(?:[^.]*)$/i;
+      const IN_KIND = /(?:deliver\w*|pipe\s?line|into\s+the\s+pipe|at\s+the\s+wells?\b|in\s+kind)/i;
+
+      // [\w\s-]{0,48}? lets qualifiers sit between: "free of all POST-PRODUCTION costs"
+      const costFreeCandidates = [
+        /free\s+(?:and\s+clear\s+)?of\s+(?:any\s+|all\s+)?[\w\s-]{0,48}?(?:costs?|expenses?|deductions?)[^.]{0,200}/gi,
+        /without\s+(?:any\s+)?deductions?\s+(?:of|for)\s+(?:any\s+)?[\w\s-]{0,48}?(?:costs?|expenses?)[^.]{0,200}/gi,
+        /no\s+[\w\s-]{0,32}?(?:costs?|deductions?|expenses?)\s+of\s+any\s+kind\s+shall\s+be\s+(?:charged|deducted)[^.]{0,200}/gi,
+        /shall\s+not\s+(?:be\s+)?(?:charged|bear)\s+(?:with\s+)?(?:any\s+)?[\w\s-]{0,32}?costs?[^.]{0,200}/gi,
+      ];
+      // A cost-free clause only counts if it is about the royalty AND reaches
+      // downstream costs; otherwise it is boilerplate or an in-kind delivery term
+      let costFree = null;
+      for (const re of costFreeCandidates) {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(text)) !== null) {
+          const around = text.slice(Math.max(0, m.index - 140), m.index + m[0].length + 140);
+          if (!/royalt/i.test(around)) continue;
+          if (!POST_PROD.test(m[0]) && !POST_PROD.test(around)) continue;
+          if (IN_KIND.test(m[0]) && !POST_PROD.test(m[0])) continue;
+          if (!POST_PROD.test(m[0]) && PRE_PROD_ONLY.test(m[0])) continue;
+          costFree = m;
+          break;
+        }
+        if (costFree) break;
+      }
+
       const bearsCost = findFirst(text, [
-        /(?:less|after\s+deduct\w*|bear\w*\s+its\s+proportionate\s+share\s+of)[^.]{0,120}?(?:gathering|compress\w*|dehydrat\w*|process\w*|treat\w*|transport\w*|marketing)/i,
+        // \b on "less" — unanchored it matched inside Lessor, Lessee and unless,
+        // which graded the best cost-free clauses as costing the owner money
+        /(?:\bless\b|after\s+deduct\w*|bear\w*\s+its\s+proportionate\s+share\s+of)[^.]{0,120}?(?:gathering|compress\w*|dehydrat\w*|process\w*|treat\w*|transport\w*|marketing)/i,
         /royalt\w*[^.]{0,160}?(?:shall\s+bear|proportionate\s+share)[^.]{0,80}?costs?/i,
       ]);
       const atWellhead = findFirst(text, [
         /(?:market\s+value|proceeds?|price)\s+(?:of\s+(?:such\s+)?(?:oil|gas|production)\s+)?at\s+the\s+(?:well|wellhead|mouth\s+of\s+the\s+well)/i,
         /\bat\s+the\s+wellhead\b/i,
       ]);
-      if (costFree && !bearsCost) {
-        return { verdict: 'good', match: costFree,
-          body: 'Your lease appears to make the royalty cost-free — the operator cannot subtract gathering, compression, processing, or transportation costs before calculating your share. This is the most valuable royalty provision a mineral owner can have, and it is worth 5–25% of every check.',
-          ask: 'Nothing to fix here. Keep this language in any amendment, ratification, or new lease you sign.' };
-      }
+      const overriding = costFree && /notwithstanding|anything\s+to\s+the\s+contrary|regardless\s+of/i
+        .test(text.slice(Math.max(0, costFree.index - 90), costFree.index + 40));
+
       if (bearsCost) {
         return { verdict: 'bad', match: bearsCost,
           body: 'Your lease appears to let the operator deduct post-production costs — gathering, compression, dehydration, processing, or transportation — before computing your royalty. In practice this reduces royalty checks by roughly 5–25%, and on gas-weighted wells it can be more.',
-          ask: 'Ask for a "cost-free royalty" or "no deductions" clause stating that royalty is free of all post-production costs. Model the impact by turning on <strong>Post-Production Deductions</strong> in the calculator.' };
+          ask: 'Ask for a "cost-free royalty" clause stating that royalty is free of all post-production costs. Model the impact by turning on <strong>Post-Production Deductions</strong> in the calculator.' };
+      }
+      if (costFree && atWellhead && !overriding) {
+        return { verdict: 'warn', match: costFree,
+          body: 'Your lease contains cost-free royalty language, but it also values royalty "at the well" or "at the wellhead" somewhere in the document. These pull in opposite directions: wellhead valuation is the mechanism that lets an operator net out downstream costs, while cost-free language forbids it. Which controls depends on your state\'s case law and on whether the cost-free sentence is written to override the rest of the lease.',
+          ask: 'Have an attorney resolve the conflict before signing. The clean fix is to value royalty on <strong>gross proceeds at the point of sale</strong> and to preface the cost-free sentence with "notwithstanding anything to the contrary herein."' };
+      }
+      if (costFree) {
+        return { verdict: 'good', match: costFree,
+          body: 'Your lease appears to make the royalty cost-free as to post-production costs — the operator should not be able to subtract gathering, compression, processing, or transportation before calculating your share. That protection is typically worth 5–25% of every check.',
+          ask: 'Confirm the language covers <strong>gas as well as oil</strong> (gas is where these costs bite), and that no other provision values royalty at the wellhead.' };
       }
       if (atWellhead) {
         return { verdict: 'warn', match: atWellhead,
-          body: 'Your lease values royalty "at the well" or "at the wellhead" and does not appear to contain cost-free language. Under the case law of several producing states, wellhead valuation is what permits an operator to net out downstream costs — so this phrasing alone often allows deductions even with no explicit deduction clause.',
+          body: 'Your lease values royalty "at the well" or "at the wellhead" and the analyzer found no cost-free language tied to your royalty. Under the case law of several producing states, wellhead valuation is what permits an operator to net out downstream costs — so this phrasing alone often allows deductions even with no explicit deduction clause.',
           ask: 'Ask to value royalty on <strong>gross proceeds received by the lessee at the point of sale</strong>, and add an express "free of all post-production costs" sentence.' };
       }
       return { verdict: 'warn', match: null,
@@ -3981,7 +4072,10 @@ const LEASE_RULES = [
           body: 'The analyzer found no voluntary pooling clause. Note that in Oklahoma an operator can still force-pool your interest through the Corporation Commission, so the absence of a lease pooling clause does not mean your minerals cannot be pooled.',
           ask: 'If a pooling clause is added later, cap the unit size and require that your royalty be paid on a surface-acreage allocation.' };
       }
-      const capped = findFirst(text, [
+      // Search for the cap only inside the pooling clause — an acreage figure
+      // elsewhere (the tract description, a depth limit) is not a unit cap
+      const win = text.slice(pooling.index, pooling.index + 1500);
+      const capped = findFirst(win, [
         /(?:not\s+(?:to\s+)?exceed|no\s+(?:larger|greater)\s+than|limited\s+to)\s+(?:approximately\s+)?(\d{2,4})\s*(?:surface\s+)?acres/i,
         /units?\s+(?:shall\s+)?not\s+exceed\s+(\d{2,4})/i,
       ]);
@@ -4075,9 +4169,13 @@ const LEASE_RULES = [
     id: 'continuous',
     title: 'Continuous development after the primary term',
     test(text) {
+      // Must be tied to drilling successive wells — a bare "within N days shall
+      // elapse" also appears in shut-in, payment and re-work clauses
       const cont = findFirst(text, [
-        /continuous\s+(?:drilling|development|operations)/i,
-        /(?:not\s+more\s+than|within)\s+(?:\w+|\d{1,3})\s*\(?\s*(\d{1,3})?\s*\)?\s*days?\s+(?:shall\s+)?(?:elapse|between\s+the\s+completion)/i,
+        /continuous\s+(?:drilling|development|operations?)\s+(?:clause|program|obligation|shall|must|will)/i,
+        /continuous\s+(?:drilling|development)\b[^.]{0,200}?(?:well|drill)/i,
+        /(?:not\s+more\s+than|no\s+more\s+than)\s+\d{1,3}\s*days?\s+(?:shall\s+)?elapse[^.]{0,140}?(?:completion|commencement)[^.]{0,80}?well/i,
+        /\d{1,3}\s*days?\s+(?:shall\s+)?elapse\s+between\s+the\s+completion\s+of\s+one\s+well/i,
       ]);
       if (cont) {
         return { verdict: 'good', match: cont,
@@ -4115,12 +4213,18 @@ const LEASE_RULES = [
     id: 'payment',
     title: 'Royalty payment timing and interest',
     test(text) {
-      const timing = findFirst(text, [
+      // Exclude shut-in payment timing, which uses nearly identical wording and
+      // otherwise gets reported as a royalty-payment protection the lease lacks
+      const notShutIn = m => m && !/shut[- ]?in/i.test(
+        text.slice(Math.max(0, m.index - 120), m.index + m[0].length + 40));
+      const timing = [
         /within\s+(\d{2,3})\s+days[^.]{0,120}?(?:first\s+(?:sale|production)|royalt\w*\s+(?:shall\s+be\s+)?paid)/i,
         /royalt\w*[^.]{0,120}?(?:paid|payable)[^.]{0,80}?within\s+(\d{2,3})\s+days/i,
-      ]);
-      const interest = findFirst(text, [/interest\s+(?:at\s+the\s+rate\s+of\s+)?(\d{1,2})\s*(?:percent|%)[^.]{0,100}?(?:late|past\s+due|unpaid)/i,
-                                        /(?:late|unpaid|past\s+due)[^.]{0,100}?interest\s+at/i]);
+      ].map(re => re.exec(text)).find(notShutIn);
+      const interest = [
+        /interest\s+(?:at\s+the\s+rate\s+of\s+)?(\d{1,2})\s*(?:percent|%)[^.]{0,100}?(?:late|past\s+due|unpaid)/i,
+        /(?:late|unpaid|past\s+due)[^.]{0,100}?interest\s+at/i,
+      ].map(re => re.exec(text)).find(notShutIn);
       if (timing || interest) {
         return { verdict: 'good', match: timing || interest,
           body: 'Your lease specifies when royalty must be paid' + (interest ? ' and provides interest on late payments' : '') + '. Payment-timing language gives you a contractual remedy that is easier to enforce than a state statute.',
@@ -4179,11 +4283,20 @@ function renderLeaseTerms(t) {
       ${found && src ? `<div class="lease-term-src">“${esc(String(src).slice(0, 110))}”</div>` : ''}
     </div>`;
 
-  const royLabel = t.royalty ? fmtRoyaltyFraction(t.royalty.value) : '';
+  const royLabel = t.royalty
+    ? fmtRoyaltyFraction(t.royalty.value) + (t.royalty.ambiguous
+        ? ' — also found ' + t.royalty.alternatives.map(v => fmtRoyaltyFraction(v)).join(', ')
+        : '')
+    : '';
+  const acreLabel = t.acres
+    ? (t.acres.multi
+        ? t.acres.all.map(v => v.toLocaleString()).join(' + ') + ' acres (multiple tracts)'
+        : t.acres.value.toLocaleString() + ' acres')
+    : '';
   $('leaseTerms').innerHTML =
       cell('Royalty rate', royLabel, t.royalty && t.royalty.src, !!t.royalty)
     + cell('Primary term', t.term ? t.term.value + ' years' : '', t.term && t.term.src, !!t.term)
-    + cell('Acreage', t.acres ? t.acres.value.toLocaleString() + ' acres' : '', t.acres && t.acres.src, !!t.acres)
+    + cell('Leased acreage', acreLabel, t.acres && t.acres.src, !!t.acres)
     + cell('Legal description', t.legal ? t.legal.value : '', t.legal && t.legal.src, !!t.legal)
     + cell('County / state', t.county ? t.county.value : '', t.county && t.county.src, !!t.county)
     + cell('Lease date', t.date ? t.date.value : '', t.date && t.date.src, !!t.date)
@@ -4236,8 +4349,8 @@ function renderLeaseFindings(findings, terms) {
 function applyLeaseToCalculator() {
   if (!leaseData) return;
   const t = leaseData.terms;
-  const applied = [];
-  if (t.royalty) {
+  const applied = [], skipped = [];
+  if (t.royalty && !t.royalty.ambiguous) {
     const v = t.royalty.value;
     S.royaltyRate = v;
     const known = ['0.125', '0.16667', '0.1875', '0.2', '0.25'];
@@ -4253,12 +4366,14 @@ function applyLeaseToCalculator() {
       $('royaltyCustomWrap').classList.add('show');
     }
     applied.push('royalty rate');
+  } else if (t.royalty && t.royalty.ambiguous) {
+    skipped.push('the royalty rate (several different rates appear in the document — set it by hand)');
   }
-  if (t.acres && t.acres.value >= 1) {
-    S.grossAcres = t.acres.value;
-    $('grossAcres').value = t.acres.value;
-    syncAcreChips(t.acres.value);
-    applied.push('acreage');
+  // Leased acreage is deliberately NOT written to Gross Acres: that field is the
+  // spacing-unit size, and a lease covering 160 acres can sit inside a 640-acre
+  // unit. Auto-filling it would shrink the denominator and inflate every figure.
+  if (t.acres) {
+    skipped.push('the leased acreage (that is the tract size, not the spacing unit — Gross Acres left as is)');
   }
   if (t.term) {
     $('bonusLeaseTerm').value = Math.min(10, Math.max(1, t.term.value));
@@ -4277,9 +4392,10 @@ function applyLeaseToCalculator() {
   setTimeout(() => {
     $('calculator').scrollIntoView({ behavior: SCROLL_B, block: 'start' });
   }, 100);
-  if (!applied.length) {
-    leaseStatus('No terms could be read confidently enough to fill in — enter them by hand.', true);
-  }
+  const msg = applied.length
+    ? 'Applied ' + applied.join(', ') + '.' + (skipped.length ? ' Left for you to set: ' + skipped.join('; ') + '.' : '')
+    : 'Nothing could be filled in confidently — enter the terms by hand.' + (skipped.length ? ' Note: ' + skipped.join('; ') + '.' : '');
+  leaseStatus(msg, !applied.length);
 }
 
 async function submitWaitlist(e) {

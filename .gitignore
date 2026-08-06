@@ -4,3 +4,4 @@ print-instructions/
 *.pdf
 .claude/
 tools/.occ-cache/
+__pycache__/

@@ -89,6 +89,8 @@ This tool produces estimates, not guarantees. Actual royalty income depends on f
 
 The **Lease Analyzer** matches common lease language patterns; it does not read a document the way a lawyer does. It can miss non-standard drafting, handwritten riders, and exhibits, and a clause it fails to flag may still be present. Every finding shows the text it matched so you can verify it.
 
+Its rules are deliberately asymmetric: a false "in your favor" is far more damaging than a false warning, so a provision is only graded favorable on specific, explicit language. Cost-free royalty language, for example, only counts when it is tied to the royalty *and* reaches post-production costs — "free of the costs of drilling and development" is boilerplate the operator bears anyway, and the Producers 88 form's "free of cost to lessor" describes oil delivered in kind, not deductions. Where a lease contains both cost-free language and wellhead valuation, the analyzer reports the conflict rather than picking a winner. Leased tract acreage is never written into the calculator's Gross Acres, because the spacing unit is a different number.
+
 The **well lookup** reports operator-submitted initial test rates from OCC Form 1002A — a well's best day, not its average — and reflects a snapshot of OCC records, not live status.
 
 **Not financial or legal advice.** Consult a licensed landman, petroleum engineer, or O&G attorney before making lease or investment decisions.
