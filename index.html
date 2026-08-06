@@ -1840,12 +1840,12 @@ Glossary of Key Terms <span class="acc-icon" aria-hidden="true">+</span>
          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('leaseFile').click();}">
       <div class="lease-drop-icon" aria-hidden="true">📄</div>
       <div class="lease-drop-title">Drop your lease PDF here, or click to choose a file</div>
-      <div class="lease-drop-sub">PDF up to 25 MB · processed on your device · never uploaded</div>
+      <div class="lease-drop-sub">PDF up to 25 MB · scanned county records read automatically · processed on your device, never uploaded</div>
       <input type="file" id="leaseFile" accept="application/pdf,.pdf" hidden onchange="handleLeaseFile(this.files[0])">
     </div>
     <div style="text-align:center;margin-top:10px;">
       <button class="lease-paste-toggle" onclick="toggleLeasePaste()" aria-expanded="false" aria-controls="leasePasteWrap">
-        Scanned PDF, or prefer not to upload? Paste the lease text instead
+        Prefer not to open a file? Paste the lease text instead
       </button>
     </div>
     <div id="leasePasteWrap" class="sub-input" style="margin-top:12px;">
@@ -3731,10 +3731,27 @@ async function handleLeaseFile(file) {
     const text = await extractPdfText(file);
     const words = text.trim().split(/\s+/).filter(Boolean).length;
     if (words < 120) {
-      leaseStatus(
-        'This PDF has little or no selectable text (' + words + ' words) — it is most likely a scan or photo. ' +
-        'The analyzer cannot read images. Run it through OCR, or paste the lease text below.', true);
-      setLeasePaste(true);
+      // County records are almost always scans with no text layer. Rather than
+      // sending the user away, read the pages with OCR — still on their device.
+      leaseStatus('No selectable text found — this is a scanned document. Reading it with text recognition, which runs on your device and takes a moment…');
+      let ocrText = '';
+      try {
+        ocrText = await ocrPdf(file, (page, total, pct) => {
+          leaseStatus(`Recognizing text — page ${page} of ${total}${pct ? ' (' + pct + '%)' : ''}. This runs entirely in your browser; nothing is uploaded.`);
+        });
+      } catch (ocrErr) {
+        leaseStatus('This is a scanned document and text recognition could not run (' +
+          (ocrErr && ocrErr.message ? ocrErr.message : 'unknown error') + '). Paste the lease text below instead.', true);
+        setLeasePaste(true);
+        return;
+      }
+      const ocrWords = ocrText.trim().split(/\s+/).filter(Boolean).length;
+      if (ocrWords < 80) {
+        leaseStatus(`Text recognition read only ${ocrWords} words from this scan — the image is probably too faint or skewed to work with. Paste the lease text below instead.`, true);
+        setLeasePaste(true);
+        return;
+      }
+      runLeaseAnalysis(ocrText, file.name, { ocr: true, words: ocrWords });
       return;
     }
     runLeaseAnalysis(text, file.name);
@@ -3742,6 +3759,73 @@ async function handleLeaseFile(file) {
     leaseStatus('Could not read that PDF (' + (err && err.message ? err.message : 'unknown error') +
       '). It may be encrypted or damaged — try paste-the-text instead.', true);
   }
+}
+
+/* --- OCR for scanned records (tesseract.js, vendored — no upload) --- */
+const OCR_PAGE_CAP = 30;
+let tesseractReady = null;
+function loadTesseract() {
+  if (tesseractReady) return tesseractReady;
+  tesseractReady = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'vendor/tesseract/tesseract.min.js';
+    s.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error('OCR engine failed to load'));
+    s.onerror = () => reject(new Error('OCR engine failed to load'));
+    document.head.appendChild(s);
+  }).catch(err => { tesseractReady = null; throw err; });
+  return tesseractReady;
+}
+
+async function ocrPdf(file, onProgress) {
+  const lib = await loadPdfJs();
+  const T = await loadTesseract();
+  const buf = await file.arrayBuffer();
+  const pdf = await lib.getDocument({ data: buf }).promise;
+  const total = Math.min(pdf.numPages, OCR_PAGE_CAP);
+  let pct = 0;
+  // Absolute URLs: the worker runs from a blob context, where a relative path
+  // has nothing to resolve against and importScripts throws
+  const vendorBase = new URL('vendor/tesseract/', window.location.href).href;
+  const worker = await T.createWorker('eng', 1, {
+    workerPath: vendorBase + 'worker.min.js',
+    corePath:   vendorBase,
+    langPath:   vendorBase,
+    gzip: true,
+    logger: m => { if (m && m.status === 'recognizing text') pct = Math.round((m.progress || 0) * 100); },
+  });
+  const pages = [];
+  try {
+    for (let i = 1; i <= total; i++) {
+      onProgress(i, total, 0);
+      const page = await pdf.getPage(i);
+      // ~1800px wide is the sweet spot for typewritten records: enough detail
+      // for Tesseract without the memory cost of a full 300 dpi bitmap
+      const base = page.getViewport({ scale: 1 });
+      const scale = Math.min(3.5, Math.max(1, 1800 / base.width));
+      const vp = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(vp.width);
+      canvas.height = Math.round(vp.height);
+      const ctx = canvas.getContext('2d');
+      // Bilevel fax scans render with a transparent background; without this
+      // fill they reach the recognizer as white-on-black
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // intent:'print' keeps pdf.js off requestAnimationFrame, which browsers
+      // suspend in a hidden tab — otherwise switching tabs stalls the run
+      await page.render({ canvasContext: ctx, viewport: vp, intent: 'print' }).promise;
+      const { data } = await worker.recognize(canvas);
+      pages.push(data && data.text ? data.text : '');
+      onProgress(i, total, pct);
+      canvas.width = canvas.height = 0;   // release the bitmap before the next page
+    }
+  } finally {
+    try { await worker.terminate(); } catch {}
+  }
+  if (pdf.numPages > OCR_PAGE_CAP) {
+    pages.push(`\n[Only the first ${OCR_PAGE_CAP} of ${pdf.numPages} pages were read.]`);
+  }
+  return pages.join('\n');
 }
 
 function analyzePastedLease() {
@@ -3908,10 +3992,12 @@ function extractLeaseTerms(text) {
   // the spacing-unit size the royalty decimal divides by — a lease can cover 160
   // acres inside a 640-acre unit. Collected for display only, never auto-applied.
   const acreHits = [];
+  // [\s_.]* absorbs the fill characters printed forms use around blanks —
+  // recorded leases read "containing _120.00_ acres, more or less"
   const acreRes = [
-    /(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*(?:gross\s+)?acres,?\s*more\s+or\s+less/gi,
-    /containing\s+(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*acres/gi,
-    /(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*acres\s*(?:in|of)\s+the\s+aggregate/gi,
+    /(\d{1,4}(?:,\d{3})*(?:\.\d+)?)[\s_.]*(?:gross\s+)?acres,?\s*more\s+or\s+less/gi,
+    /containing[\s_.]*(\d{1,4}(?:,\d{3})*(?:\.\d+)?)[\s_.]*acres/gi,
+    /(\d{1,4}(?:,\d{3})*(?:\.\d+)?)[\s_.]*acres\s*(?:in|of)\s+the\s+aggregate/gi,
   ];
   for (const re of acreRes) {
     let am;
@@ -3937,9 +4023,14 @@ function extractLeaseTerms(text) {
   } : null;
 
   // County / state
-  m = /county\s+of\s+([A-Z][A-Za-z ]{2,22}?),?\s+state\s+of\s+([A-Z][A-Za-z ]{3,16})/i.exec(text)
-   || /\b([A-Z][A-Za-z]{2,18})\s+county,\s*(Oklahoma|Texas|Kansas|New Mexico|North Dakota|Colorado|Wyoming|Louisiana|Arkansas|Montana|Utah|West Virginia|Pennsylvania)\b/i.exec(text);
-  out.county = m ? { value: m[1].trim() + ' County, ' + m[2].trim(), src: m[0].trim() } : null;
+  // The state is matched against a fixed list — an open-ended capture ran past
+  // the name into the following word ("OKLAHOMA described as follows")
+  const ST = '(Oklahoma|Texas|Kansas|New Mexico|North Dakota|South Dakota|Colorado|Wyoming|Louisiana|Arkansas|Montana|Utah|West Virginia|Pennsylvania|Ohio|Michigan|Mississippi|Alabama|California|Nebraska|Illinois|Indiana|Kentucky|Tennessee|Nevada|Alaska)';
+  m = new RegExp('county\\s+of\\s+([A-Za-z][A-Za-z ]{2,22}?),?\\s+state\\s+of\\s+' + ST + '\\b', 'i').exec(text)
+   || new RegExp('\\b([A-Za-z][A-Za-z]{2,18})\\s+county,?\\s+' + ST + '\\b', 'i').exec(text);
+  out.county = m
+    ? { value: titleCase(m[1].trim()) + ' County, ' + titleCase(m[2].trim()), src: m[0].trim() }
+    : null;
 
   // Bonus / delay rental / shut-in amounts
   m = /shut[- ]?in[^.]{0,120}?\$\s?([\d,]+(?:\.\d{2})?)/i.exec(text)
@@ -3969,28 +4060,52 @@ const LEASE_RULES = [
       // is worthless boilerplate — and the Producers 88 form's "free of cost to
       // lessor" describes oil delivered in kind at the wellhead, not deductions.
       const POST_PROD = /(?:post[- ]?production|gathering|compress\w*|dehydrat\w*|process\w*|treat\w*|transport\w*|market\w*|downstream|point\s+of\s+sale|residue)/i;
-      const PRE_PROD_ONLY = /^(?:[^.]*?)(?:drill\w*|complet\w*|equip\w*|explor\w*|develop\w*|operat\w*|production)(?:[^.]*)$/i;
-      const IN_KIND = /(?:deliver\w*|pipe\s?line|into\s+the\s+pipe|at\s+the\s+wells?\b|in\s+kind)/i;
+      const IN_KIND =/(?:deliver\w*|pipe\s?line|into\s+the\s+pipe|at\s+the\s+wells?\b|in\s+kind)/i;
 
       // [\w\s-]{0,48}? lets qualifiers sit between: "free of all POST-PRODUCTION costs"
-      const costFreeCandidates = [
-        /free\s+(?:and\s+clear\s+)?of\s+(?:any\s+|all\s+)?[\w\s-]{0,48}?(?:costs?|expenses?|deductions?)[^.]{0,200}/gi,
-        /without\s+(?:any\s+)?deductions?\s+(?:of|for)\s+(?:any\s+)?[\w\s-]{0,48}?(?:costs?|expenses?)[^.]{0,200}/gi,
+      // Two tiers of evidence. "Deduction" in a lease is specifically about
+      // netting from the owner's share, so that wording stands on its own —
+      // recorded riders title it "No Deductions" with no cost list at all.
+      // Generic "free of costs" wording is ambiguous and has to be tied to the
+      // royalty AND to downstream costs, or it is drilling-cost boilerplate or
+      // the Producers 88 in-kind delivery phrase.
+      const explicitNoDeduction = [
+        /\bno\s+deductions?\b[^.]{0,220}/gi,
+        /(?:shall\s+be\s+)?without\s+(?:any\s+)?deductions?\b[^.]{0,220}/gi,
         /no\s+[\w\s-]{0,32}?(?:costs?|deductions?|expenses?)\s+of\s+any\s+kind\s+shall\s+be\s+(?:charged|deducted)[^.]{0,200}/gi,
-        /shall\s+not\s+(?:be\s+)?(?:charged|bear)\s+(?:with\s+)?(?:any\s+)?[\w\s-]{0,32}?costs?[^.]{0,200}/gi,
       ];
-      // A cost-free clause only counts if it is about the royalty AND reaches
-      // downstream costs; otherwise it is boilerplate or an in-kind delivery term
+      // Stop at clause boundaries too — a greedy run to the next period swept in
+      // "market value" from the following clause and made Producers 88's
+      // "free of cost to lessor" look like post-production protection
+      const costFreePhrasing = [
+        /free\s+(?:and\s+clear\s+)?of\s+(?:any\s+|all\s+)?[\w\s-]{0,48}?(?:costs?|expenses?|deductions?)[^.;]{0,120}/gi,
+        /without\s+(?:any\s+)?deductions?\s+(?:of|for)\s+(?:any\s+)?[\w\s-]{0,48}?(?:costs?|expenses?)[^.;]{0,120}/gi,
+        /shall\s+not\s+(?:be\s+)?(?:charged|bear)\s+(?:with\s+)?(?:any\s+)?[\w\s-]{0,32}?costs?[^.;]{0,120}/gi,
+      ];
       let costFree = null;
-      for (const re of costFreeCandidates) {
+      for (const re of explicitNoDeduction) {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(text)) !== null) {
+          const around = text.slice(Math.max(0, m.index - 300), m.index + m[0].length + 300);
+          if (!/royalt|proceeds|lessor/i.test(around)) continue;
+          costFree = m;
+          break;
+        }
+        if (costFree) break;
+      }
+      if (!costFree) for (const re of costFreePhrasing) {
         re.lastIndex = 0;
         let m;
         while ((m = re.exec(text)) !== null) {
           const around = text.slice(Math.max(0, m.index - 140), m.index + m[0].length + 140);
+          const before = text.slice(Math.max(0, m.index - 120), m.index);
           if (!/royalt/i.test(around)) continue;
-          if (!POST_PROD.test(m[0]) && !POST_PROD.test(around)) continue;
-          if (IN_KIND.test(m[0]) && !POST_PROD.test(m[0])) continue;
-          if (!POST_PROD.test(m[0]) && PRE_PROD_ONLY.test(m[0])) continue;
+          // The downstream costs must be named in the clause itself. Reading a
+          // wider window let an unrelated "market value at the wellhead" nearby
+          // vouch for a phrase that protects nothing.
+          if (!POST_PROD.test(m[0])) continue;
+          if (IN_KIND.test(m[0]) || IN_KIND.test(before)) continue;
           costFree = m;
           break;
         }
@@ -4007,9 +4122,24 @@ const LEASE_RULES = [
         /(?:market\s+value|proceeds?|price)\s+(?:of\s+(?:such\s+)?(?:oil|gas|production)\s+)?at\s+the\s+(?:well|wellhead|mouth\s+of\s+the\s+well)/i,
         /\bat\s+the\s+wellhead\b/i,
       ]);
-      const overriding = costFree && /notwithstanding|anything\s+to\s+the\s+contrary|regardless\s+of/i
-        .test(text.slice(Math.max(0, costFree.index - 90), costFree.index + 40));
+      // Riders put the override at the head of a long sentence — "It is agreed
+      // that, notwithstanding any language herein to the contrary, all proceeds
+      // … shall be without deduction" — so look well back, not just 90 chars
+      const overriding = costFree && /notwithstanding|anything\s+(?:herein\s+)?to\s+the\s+contrary|regardless\s+of/i
+        .test(text.slice(Math.max(0, costFree.index - 320), costFree.index + costFree[0].length + 120));
 
+      // A recorded lease is usually a printed form plus a typed exhibit, and the
+      // two routinely disagree. Reporting only the form would bury a rider that
+      // was negotiated precisely to override it.
+      if (bearsCost && costFree) {
+        return { verdict: 'warn', match: costFree,
+          body: 'Your lease contains <em>both</em> deduction language and no-deduction language — typically a printed form that permits post-production deductions plus a typed exhibit or rider that forbids them. ' +
+                (overriding
+                  ? 'The no-deduction language is written to override the rest of the lease ("notwithstanding anything to the contrary"), which is how it is normally made to control.'
+                  : 'Neither appears to be written as expressly overriding the other, which is what makes this the most litigated provision in oil and gas leases.') +
+                ' Riders of this kind also often carry a carve-back letting the operator charge costs that genuinely enhance the value of an already-marketable product — read the sentence to the end.',
+          ask: 'Confirm with an attorney which provision controls and whether the carve-back swallows the protection. If you are still negotiating, ask for a flat "no deductions of any kind" with no enhancement exception.' };
+      }
       if (bearsCost) {
         return { verdict: 'bad', match: bearsCost,
           body: 'Your lease appears to let the operator deduct post-production costs — gathering, compression, dehydration, processing, or transportation — before computing your royalty. In practice this reduces royalty checks by roughly 5–25%, and on gas-weighted wells it can be more.',
@@ -4119,6 +4249,9 @@ const LEASE_RULES = [
       const capped = findFirst(text, [
         /shut[- ]?in[^.]{0,220}?(?:not\s+(?:to\s+)?exceed|(?:no|not)\s+(?:be\s+\w+\s+)?(?:more\s+than)|more\s+than|maximum\s+of|limited\s+to)[^.]{0,80}?(\d{1,2})\s*(?:cumulative\s+|consecutive\s+)?years?/i,
         /shut[- ]?in[^.]{0,220}?(\d{1,2})\s*(?:cumulative|consecutive)\s+years?/i,
+        // Riders often invert it: "…longer than 2 consecutive years solely by
+        // the shut-in royalty provision"
+        /(\d{1,2})\s*(?:cumulative|consecutive)\s+years?[^.]{0,140}?shut[- ]?in/i,
       ]);
       const amt = terms.shutIn ? terms.shutIn.value : null;
       if (capped) {
@@ -4275,16 +4408,18 @@ function analyzeLeaseClauses(text, terms) {
   }).filter(Boolean);
 }
 
-function runLeaseAnalysis(rawText, sourceName) {
+function runLeaseAnalysis(rawText, sourceName, opts = {}) {
   const text = normalizeLeaseText(rawText);
   const terms = extractLeaseTerms(text);
   const findings = analyzeLeaseClauses(text, terms);
-  leaseData = { text, terms, findings, sourceName };
+  leaseData = { text, terms, findings, sourceName, ocr: !!opts.ocr };
 
   renderLeaseTerms(terms);
   renderLeaseFindings(findings, terms);
   $('leaseResults').style.display = 'block';
-  leaseStatus(`Analyzed ${sourceName} — ${text.split(/\s+/).length.toLocaleString()} words, ${findings.length} clause checks. Nothing was uploaded.`);
+  leaseStatus(`Analyzed ${sourceName} — ${text.split(/\s+/).length.toLocaleString()} words, ${findings.length} clause checks.`
+    + (opts.ocr ? ' Text was recovered by on-device recognition from a scan, so read the quoted evidence closely — misread characters are possible.' : '')
+    + ' Nothing was uploaded.');
   $('leaseSummaryBar').scrollIntoView({ behavior: SCROLL_B, block: 'start' });
 }
 

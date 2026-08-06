@@ -9,6 +9,7 @@ A free, client-side web tool for mineral owners, landmen, and investors to model
 ## Features
 
 - **Lease Analyzer** — drop in a lease PDF and get the key terms extracted plus a plain-English clause review (post-production deductions, Pugh clauses, pooling authority, shut-in caps, warranty of title, free use, continuous development, surface protection, payment timing, assignment). Parsed entirely in the browser with a vendored copy of pdf.js — the file is never uploaded
+- **Scanned records are read too** — recorded county documents have no text layer, so when none is found the analyzer OCRs the pages with a vendored copy of tesseract.js. Still fully on-device, and loaded only when a scan is actually encountered
 - **Oklahoma well lookup** — enter a Section-Township-Range and see the actual wells on record from OCC completion data: operator, formation, initial oil and gas test rates, lateral length, plus permits not yet drilled. One click calibrates the calculator's production inputs to real nearby wells
 - **Live royalty income calculator** — monthly, annual, cumulative, and NPV projections update in real time as you type
 - **Royalty decimal formula** — shows the exact math behind every number so you can verify and trust the output
@@ -69,6 +70,7 @@ The calculator is a single self-contained `index.html` with no build step and no
 | Path | Purpose |
 |---|---|
 | `vendor/pdf.min.js`, `vendor/pdf.worker.min.js` | pdf.js, vendored so the Lease Analyzer works with no CDN dependency and no upload |
+| `vendor/tesseract/` | tesseract.js + LSTM cores + English data (~10 MB), fetched by the browser only when a scanned PDF is opened |
 | `data/ok/` | Per-county Oklahoma well data — `index.json` plus one file per county, fetched on demand |
 | `tools/build_occ_data.py` | Rebuilds `data/ok/` from the OCC's published files |
 | `legal.html`, `404.html`, `robots.txt`, `sitemap.xml`, `CNAME` | Site support and SEO |
@@ -88,6 +90,8 @@ That downloads the OCC's daily-refreshed [completions and intent-to-drill workbo
 This tool produces estimates, not guarantees. Actual royalty income depends on factors not modeled here — actual decline behavior, commodity price volatility, lease-specific terms (including post-production deduction language), and title complexity.
 
 The **Lease Analyzer** matches common lease language patterns; it does not read a document the way a lawyer does. It can miss non-standard drafting, handwritten riders, and exhibits, and a clause it fails to flag may still be present. Every finding shows the text it matched so you can verify it.
+
+Text recovered by OCR from a scan will contain misread characters; the analyzer says so when it used OCR, and every finding quotes the text it matched so you can check it against the document.
 
 Its rules are deliberately asymmetric: a false "in your favor" is far more damaging than a false warning, so a provision is only graded favorable on specific, explicit language. Cost-free royalty language, for example, only counts when it is tied to the royalty *and* reaches post-production costs — "free of the costs of drilling and development" is boilerplate the operator bears anyway, and the Producers 88 form's "free of cost to lessor" describes oil delivered in kind, not deductions. Where a lease contains both cost-free language and wellhead valuation, the analyzer reports the conflict rather than picking a winner. Leased tract acreage is never written into the calculator's Gross Acres, because the spacing unit is a different number.
 
