@@ -3432,9 +3432,23 @@ function showView(tab, pushHistory = true) {
   currentView = tab;
 }
 
+const viewFromHash = () => {
+  const h = window.location.hash.slice(1);
+  return (h === 'education' || h === 'analyzer') ? h : 'main';
+};
+
 window.addEventListener('popstate', e => {
-  const tab = e.state?.view || 'main';
-  showView(tab, false);
+  // Fall back to the hash: entries created by a bare hash navigation carry no
+  // state, and defaulting those to 'main' left the URL and the view disagreeing
+  showView(e.state?.view || viewFromHash(), false);
+});
+
+// Changing only the hash is a same-document navigation, so init never re-runs.
+// Without this, pasting mineralcalc.com/#analyzer while already on the page
+// updates the address bar but not the view.
+window.addEventListener('hashchange', () => {
+  const tab = viewFromHash();
+  if (tab !== currentView) showView(tab, false);
 });
 
 /* ===== OKLAHOMA WELL LOOKUP =====
@@ -4585,9 +4599,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Decline table starts collapsed
   const dsb = $('declineSectionBody');
   if (dsb) dsb.style.maxHeight = '0';
-  // Restore view from hash on direct load (e.g. shared link or reload)
-  const hash = window.location.hash.slice(1);
-  if (hash === 'education' || hash === 'analyzer') showView(hash, false);
+  // Restore view from hash on direct load (e.g. shared link or reload). Seed the
+  // history entry with its view, or Back from here lands on a null-state entry
+  // and renders the calculator while the address bar still reads #analyzer.
+  const hash = viewFromHash();
+  if (hash !== 'main') {
+    showView(hash, false);
+    history.replaceState({ view: hash }, '', window.location.href);
+  }
   // Lease analyzer: drag-and-drop onto the drop zone
   const drop = $('lease-drop');
   if (drop) {
