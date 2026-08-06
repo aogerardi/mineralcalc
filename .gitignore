@@ -2,3 +2,5 @@ backups/
 print-instructions/
 *.zip
 *.pdf
+.claude/
+tools/.occ-cache/

@@ -60,7 +60,7 @@
 
   <div class="wrap">
     <h1 class="doc-title">Privacy Policy &amp; Terms of Use</h1>
-    <div class="updated">Last updated: June 15, 2026</div>
+    <div class="updated">Last updated: August 6, 2026</div>
 
     <div class="toc">
       <div class="toc-label">Contents</div>
@@ -69,7 +69,7 @@
     </div>
 
     <div class="callout">
-      <strong>The short version:</strong> MineralCalc runs entirely in your web browser. Your calculator inputs are never sent to us or stored on a server. The only personal information we collect is an email address, and only if you choose to join the Lease Analyzer waitlist. The calculator provides estimates for educational purposes — it is not financial, legal, or tax advice.
+      <strong>The short version:</strong> MineralCalc runs entirely in your web browser. Your calculator inputs, and any lease you analyze, are never sent to us or stored on a server. The only personal information we collect is an email address, and only if you choose to give us one. The calculator provides estimates for educational purposes — it is not financial, legal, or tax advice.
     </div>
 
     <h2 id="privacy">1 · Privacy Policy</h2>
@@ -83,12 +83,18 @@
     <h3>Information we do <em>not</em> collect</h3>
     <ul>
       <li><strong>Your calculator inputs.</strong> All royalty, acreage, production, lease, and check-verification calculations run locally in your browser. These values are never transmitted to, logged by, or stored on any server we control.</li>
+      <li><strong>Lease documents you analyze.</strong> The Lease Analyzer reads your PDF using code running inside your own browser. The file is never uploaded, never sent to any server, and never retained after you leave or reload the page — the analyzer works even with your network disconnected once the page has loaded.</li>
+      <li><strong>Well lookups.</strong> Searching a section downloads a public data file for that county to your browser and matches it locally. We do not receive or log the section you searched.</li>
       <li><strong>Shared links.</strong> When you use the "Share Link" feature, your inputs are encoded into the URL itself. That link is created on your device — we do not receive a copy. The data travels only to whomever you choose to send the link to.</li>
       <li>We do not use advertising trackers, analytics profiling, or third-party marketing cookies.</li>
     </ul>
 
     <h3>Local storage</h3>
-    <p>If you join the waitlist, we store a single flag in your browser's local storage so the site remembers not to show you the signup form again. This flag contains no personal information and never leaves your device. You can clear it at any time through your browser settings.</p>
+    <p>MineralCalc uses your browser's local storage for two things, both of which stay on your device and are never transmitted to us:</p>
+    <ul>
+      <li><strong>Your last calculator scenario</strong>, so your inputs are still there when you come back. Clear it at any time with the "Reset Defaults" button, or through your browser settings.</li>
+      <li><strong>A waitlist flag</strong>, if you sign up, so the site does not show you the signup form again. It contains no personal information.</li>
+    </ul>
 
     <h3>Third-party services</h3>
     <p>To operate the site, we rely on a few third parties, each governed by its own privacy policy:</p>
@@ -101,8 +107,12 @@
     <h3>How we use your email</h3>
     <p>A waitlist email address is used only to contact you about the Lease Analyzer feature, including launch notice and early-access details. We do not sell, rent, or trade your email address. You may ask us to delete it at any time by emailing <a href="mailto:alexogerardi@gmail.com">alexogerardi@gmail.com</a>.</p>
 
-    <h3>Lease Analyzer (not yet available)</h3>
-    <p>The Lease Analyzer is a planned future feature that would let you upload a lease document for analysis. It is not live today and does not currently collect or process any documents. When it launches, it will be covered by its own data-handling notice describing how uploaded files are processed and retained, presented to you before you use it.</p>
+    <h3>Lease Analyzer</h3>
+    <p>The Lease Analyzer reads a lease PDF entirely within your browser and screens it for common terms and clauses. Because the parsing happens on your device, there is no upload step and no server copy of your lease — we never see the document, its contents, or the results.</p>
+    <p>The analyzer matches known lease language patterns. It is a screening aid, not a substitute for legal review: it can miss non-standard drafting, riders, and exhibits, and clauses it does not flag may still be present. Have a licensed landman or oil and gas attorney review any lease before signing.</p>
+
+    <h3>Oklahoma well data</h3>
+    <p>The well lookup uses a periodically refreshed snapshot of public records published by the Oklahoma Corporation Commission (completion and intent-to-drill filings). The snapshot is served as static files from this site; the date it was built is shown in the lookup. Initial test rates are operator-reported and describe a well's early performance, not its average or current production. Verify current well status with the OCC directly.</p>
 
     <h3>Children</h3>
     <p>MineralCalc is intended for adults making decisions about mineral and royalty interests. It is not directed at children under 13, and we do not knowingly collect information from them.</p>
@@ -118,7 +128,8 @@
     </div>
 
     <h3>No guarantee of accuracy</h3>
-    <p>Royalty income depends on many real-world variables this tool cannot fully capture — actual well performance and decline behavior, volatile commodity prices, specific lease language (including post-production deduction and shut-in clauses), title and ownership complexity, regulatory action, and operator decisions. Results may differ materially from actual outcomes. Severance tax rates, market benchmarks, and other reference figures are provided for convenience and may not reflect current law or conditions; verify them with the relevant authority.</p>
+    <p>Royalty income depends on many real-world variables this tool cannot fully capture — actual well performance and decline behavior, volatile commodity prices, specific lease language (including post-production deduction and shut-in clauses), title and ownership complexity, regulatory action, and operator decisions. Results may differ materially from actual outcomes. Severance tax rates, market benchmarks, well records, and other reference figures are provided for convenience and may not reflect current law, current production, or current conditions; verify them with the relevant authority.</p>
+    <p>The Lease Analyzer's findings are automated pattern matches and may be incomplete or wrong for your document. The Oklahoma well data is a third-party public snapshot that may be outdated or contain errors originating with the filings themselves. Do not rely on either as the sole basis for a decision.</p>
 
     <h3>"As is," no warranty</h3>
     <p>The site is provided "as is" and "as available," without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the site will be uninterrupted, error-free, or that calculations are accurate or complete.</p>
